@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codeBook xmlns="ddi:codebook:2_5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ddi:codebook:2_5 https://ddialliance.org/Specification/DDI-Codebook/2.5/XMLSchema/codebook.xsd" version="2.5" ID="SYN-2020">
+  <!-- Synthetic fixture shaped like an archive export. No real data. -->
+  <docDscr>
+    <citation>
+      <titlStmt>
+        <titl>
+          Synthetic Household Survey 2020,
+          Documentation
+        </titl>
+        <IDNo>DDI-SYN-2020-v01</IDNo>
+      </titlStmt>
+      <prodStmt>
+        <producer abbr="SSO">Synthetic Statistics Office</producer>
+        <prodDate date="2021-03-01">2021-03-01</prodDate>
+        <software version="4.2">Example Exporter</software>
+      </prodStmt>
+    </citation>
+  </docDscr>
+  <stdyDscr>
+    <citation>
+      <titlStmt>
+        <titl>Synthetic Household Survey 2020</titl>
+        <altTitl>SHS 2020</altTitl>
+        <IDNo agency="SSO">SYN-SHS-2020</IDNo>
+      </titlStmt>
+      <rspStmt>
+        <AuthEnty affiliation="Ministry of Examples">Synthetic Statistics Office</AuthEnty>
+      </rspStmt>
+    </citation>
+    <stdyInfo>
+      <subject>
+        <keyword>households</keyword>
+        <keyword>assets</keyword>
+      </subject>
+      <abstract><emph>a</emph> <emph>b</emph></abstract>
+      <sumDscr>
+        <nation abbr="XX">Exampleland</nation>
+        <geogCover>
+          National coverage,
+          urban and rural areas
+        </geogCover>
+        <anlyUnit>Households</anlyUnit>
+      </sumDscr>
+    </stdyInfo>
+    <method>
+      <dataColl>
+        <collMode>Face-to-face interview</collMode>
+      </dataColl>
+    </method>
+    <othrStdyMat>
+      <relMat>Final report, see <ExtLink URI="https://example.org/report.pdf">the report</ExtLink> for tables.</relMat>
+    </othrStdyMat>
+  </stdyDscr>
+  <fileDscr ID="F1" URI="households.dat">
+    <fileTxt>
+      <fileName>households.dat</fileName>
+      <dimensns>
+        <caseQnty>1200</caseQnty>
+        <varQnty>4</varQnty>
+      </dimensns>
+    </fileTxt>
+  </fileDscr>
+  <fileDscr ID="F2" URI="persons.dat">
+    <fileTxt>
+      <fileName>persons.dat</fileName>
+      <dimensns>
+        <caseQnty>3400</caseQnty>
+        <varQnty>1</varQnty>
+      </dimensns>
+    </fileTxt>
+  </fileDscr>
+  <dataDscr>
+    <varGrp ID="VG1" type="multipleResp" var="V3 V4" name="assets">
+      <labl>Household assets</labl>
+    </varGrp>
+    <var ID="V1" name="hhid" files="F1" intrvl="discrete">
+      <location StartPos="1" EndPos="6" width="6" fileid="F1"/>
+      <labl>
+        Household
+        identifier
+      </labl>
+      <qstn>
+        <preQTxt>
+          Interviewer: copy the number
+          from the cover sheet.
+        </preQTxt>
+        <qstnLit>
+          What is the household number?
+        </qstnLit>
+      </qstn>
+      <valrng>
+        <range UNITS="INT" min="1" max="999999"/>
+      </valrng>
+      <sumStat type="vald">1200</sumStat>
+      <sumStat type="invd">0</sumStat>
+      <sumStat type="min">1</sumStat>
+      <sumStat type="max">1200</sumStat>
+      <varFormat type="numeric" schema="other"/>
+    </var>
+    <var ID="V2" name="hhid" files="F2" intrvl="discrete">
+      <location StartPos="1" EndPos="6" width="6" fileid="F2"/>
+      <labl>Household identifier</labl>
+      <varFormat type="numeric" schema="other"/>
+    </var>
+    <var ID="V3" name="tv" files="F1" intrvl="discrete">
+      <location StartPos="7" EndPos="7" width="1" fileid="F1"/>
+      <labl xml:lang="en">Owns a television</labl>
+      <labl xml:lang="ko">텔레비전 보유</labl>
+      <qstn ID="Q3" responseDomainType="category">
+        <qstnLit>
+          Does the household own
+          a working television?
+        </qstnLit>
+      </qstn>
+      <invalrng>
+        <item VALUE="9"/>
+      </invalrng>
+      <sumStat type="vald">1180</sumStat>
+      <sumStat type="invd">20</sumStat>
+      <catgry>
+        <catValu>
+          1
+        </catValu>
+        <labl>Yes</labl>
+        <catStat type="freq">900</catStat>
+        <catStat type="freq" wgtd="wgtd" wgt-var="V5">912.4</catStat>
+      </catgry>
+      <catgry excls="false">
+        <catValu>2</catValu>
+        <labl>No</labl>
+        <catStat type="freq">280</catStat>
+      </catgry>
+      <catgry missing="Y">
+        <catValu>9</catValu>
+        <labl>Don't know</labl>
+        <catStat type="freq">20</catStat>
+      </catgry>
+      <varFormat type="numeric" schema="other"/>
+      <notes>Asked of all households.</notes>
+    </var>
+    <var ID="V4" name="radio" files="F1" intrvl="discrete">
+      <location StartPos="8" EndPos="8" width="1" fileid="F1"/>
+      <labl>Owns a radio</labl>
+      <qstn>
+        <qstnLit>Does the household own a radio?</qstnLit>
+        <ivuInstr>Show card 3.</ivuInstr>
+        <qstnLit>Count only working sets.</qstnLit>
+      </qstn>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>Yes</labl>
+      </catgry>
+      <catgry>
+        <catValu>2</catValu>
+        <labl>No</labl>
+      </catgry>
+      <varFormat type="numeric" schema="other"/>
+    </var>
+    <var ID="V5" name="wgt" files="F1" intrvl="contin" wgt="wgt">
+      <location StartPos="9" EndPos="16" width="8" fileid="F1"/>
+      <labl>Household weight</labl>
+      <varFormat type="numeric" schema="other"/>
+    </var>
+    <notes>Variables are listed in file order.</notes>
+  </dataDscr>
+  <otherMat type="questionnaire" level="study" URI="https://example.org/questionnaire.pdf">
+    <labl>Household questionnaire</labl>
+  </otherMat>
+</codeBook>

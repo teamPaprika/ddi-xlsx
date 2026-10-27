@@ -1,0 +1,5 @@
+dist/
+npm/ddi-xlsx.wasm
+npm/wasm_exec.js
+node_modules/
+**/survey.csv

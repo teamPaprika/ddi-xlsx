@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codeBook xmlns="ddi:codebook:2_5" version="2.5">
+  <stdyDscr>
+    <citation>
+      <titlStmt>
+        <titl>Misordered variable</titl>
+      </titlStmt>
+    </citation>
+  </stdyDscr>
+  <dataDscr>
+    <var ID="V1" name="q1">
+      <varFormat type="numeric"/>
+      <labl>Question one</labl>
+      <notes>Checked by hand.</notes>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>Yes</labl>
+      </catgry>
+    </var>
+  </dataDscr>
+</codeBook>

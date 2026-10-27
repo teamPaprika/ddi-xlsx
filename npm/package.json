@@ -1,0 +1,13 @@
+{
+  "name": "ddi-xlsx",
+  "private": true,
+  "description": "Convert a DDI Codebook 2.5 document (XML or JSON) to an editable xlsx workbook and back, in Node and the browser.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "files": ["index.js", "index.d.ts", "wasm_exec.js", "ddi-xlsx.wasm"]
+}
