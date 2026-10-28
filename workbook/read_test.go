@@ -69,7 +69,7 @@ func set(t *testing.T, f *excelize.File, sheet, header string, row int, v string
 func TestHandEdit(t *testing.T) {
 	f := kofac(t, "kofac_2025_edu")
 	set(t, f, varSheet, "label", rowsWhere(t, f, varSheet, "name", "Q8_r1")[0], "바뀐 라벨 & <ok>")
-	set(t, f, varSheet, "xml", rowsWhere(t, f, varSheet, "ID", "V17")[0], `<location fileid="F1"/><notes>n</notes>`)
+	set(t, f, varSheet, "xml", rowsWhere(t, f, varSheet, "ID", "V17")[0], `<notes>n</notes>`)
 
 	cats := rowsWhere(t, f, catSheet, "varID", "V17")
 	row := cats[len(cats)-1] + 1
@@ -281,7 +281,7 @@ func TestUserColumnsAndBlankRows(t *testing.T) {
 func TestPlacementWarnings(t *testing.T) {
 	f := kofac(t, "kofac_2025_edu")
 	row := rowsWhere(t, f, varSheet, "ID", "V17")[0]
-	set(t, f, varSheet, "xml", row, `<location fileid="F1"/><catValu>1</catValu>`)
+	set(t, f, varSheet, "xml", row, `<catValu>1</catValu>`)
 	set(t, f, grpSheet, "vars", rowsWhere(t, f, grpSheet, "ID", "VG1")[0], "V17 V99999")
 	dd := rowsWhere(t, f, docSheet, "element", "dataDscr")[0]
 	if err := f.InsertRows(docSheet, dd+1, 1); err != nil {
@@ -442,7 +442,7 @@ func TestDocumentDepthLimit(t *testing.T) {
 
 func TestSpacedXMLCellIsSplit(t *testing.T) {
 	f := kofac(t, "kofac_2025_edu")
-	set(t, f, varSheet, "xml", rowsWhere(t, f, varSheet, "ID", "V17")[0], `<location fileid="F1"/> <sumStat type="vald">1</sumStat>`)
+	set(t, f, varSheet, "xml", rowsWhere(t, f, varSheet, "ID", "V17")[0], `<sumStat type="vald">1</sumStat> <sumStat type="invd">0</sumStat>`)
 	xo, _, err := fromFile(t, f)
 	if err != nil {
 		t.Fatal(err)
@@ -456,7 +456,7 @@ func TestSpacedXMLCellIsSplit(t *testing.T) {
 func TestCellWarnings(t *testing.T) {
 	f := kofac(t, "kofac_2025_edu")
 	v17 := rowsWhere(t, f, varSheet, "ID", "V17")[0]
-	set(t, f, varSheet, "xml", v17, `<location fileid="F1"/><!-- check --><y:notes>n</y:notes>`)
+	set(t, f, varSheet, "xml", v17, `<!-- check --><y:notes>n</y:notes>`)
 	titl := rowsWhere(t, f, docSheet, "element", "titl")[0]
 	set(t, f, docSheet, "text", titl, "a<?pi x?>b")
 	set(t, f, docSheet, "kind", titl, "xml")
@@ -646,7 +646,7 @@ func TestTablePartSizeIsBounded(t *testing.T) {
 	var buf bytes.Buffer
 	zw := zip.NewWriter(&buf)
 	for name, part := range map[string]string{
-		"xl/tables/table1.xml": `<table name="ddiVariables" ref="A3:M9"/>`,
+		"xl/tables/table1.xml": `<table name="ddiVariables" ref="A3:P9"/>`,
 		// Well-formed and named like a real table: only its 2 MiB size skips it.
 		"xl/tables/table2.xml": `<table name="ddiCategories" ref="A5:H9"/>` + strings.Repeat(" ", 2<<20),
 	} {
@@ -1000,5 +1000,20 @@ func TestTypedMergePointsAreAFixedPoint(t *testing.T) {
 				t.Errorf("converting the output again changes it:\n%s\nthen\n%s", xo, xo2)
 			}
 		})
+	}
+}
+
+// Any whitespace separates the fileids of a typed locations cell, and each
+// becomes a location in that order, ahead of the other children.
+func TestLocationsCellTokens(t *testing.T) {
+	f := open(t, codebook(`<var ID="V1"><labl>a</labl></var>`))
+	set(t, f, varSheet, "locations", 2, " F2 \n  F1 ")
+	xo, _, err := fromFile(t, f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := "<location fileid=\"F2\"/>\n<location fileid=\"F1\"/>\n<labl>a</labl>"
+	if got := ddi.WriteFragment(findVar(t, parse(t, xo), "V1").Children); got != want {
+		t.Errorf("V1 children = %q, want %q", got, want)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"encoding/xml"
 	"slices"
 	"strings"
+	"unicode"
 
 	"github.com/teamPaprika/ddi-xlsx/ddi"
 )
@@ -19,8 +20,8 @@ const (
 
 // The reader finds columns by these header names.
 var (
-	varHeaders = []string{"ID", "name", "label", "question", "questionID", "responseDomainType", "intrvl",
-		"format", "formatSchema", "formatCategory", "notes", "attributes", "xml"}
+	varHeaders = []string{"ID", "name", "label", "question", "questionID", "questionRef", "responseDomainType", "intrvl",
+		"format", "formatSchema", "formatCategory", "notes", "files", "locations", "attributes", "xml"}
 	catHeaders = []string{"varID", "varName", "code", "label", "missing", "freq", "attributes", "xml"}
 	grpHeaders = []string{"ID", "type", "name", "label", "vars", "attributes", "xml"}
 	docHeaders = []string{"level", "element", "attributes", "text", "kind"}
@@ -29,11 +30,12 @@ var (
 )
 
 // attrCol maps an attribute to the column that holds it. Each list is in the
-// order the reader puts the attributes back.
+// order the reader puts the attributes back; var's is Walla's, so a Walla
+// file in this tool's layout converts back byte for byte.
 type attrCol struct{ attr, col string }
 
 var (
-	varAttrs    = []attrCol{{"ID", "ID"}, {"name", "name"}, {"intrvl", "intrvl"}}
+	varAttrs    = []attrCol{{"ID", "ID"}, {"name", "name"}, {"files", "files"}, {"intrvl", "intrvl"}, {"qstn", "questionRef"}}
 	catAttrs    = []attrCol{{"missing", "missing"}}
 	grpAttrs    = []attrCol{{"ID", "ID"}, {"type", "type"}, {"var", "vars"}, {"name", "name"}}
 	qstnAttrs   = []attrCol{{"ID", "questionID"}, {"responseDomainType", "responseDomainType"}}
@@ -177,10 +179,12 @@ func varRow(v *ddi.Node) (map[string]string, []*ddi.Node) {
 	// The reader puts column notes and Categories rows ahead of the notes and
 	// catgry in the xml cell, so only a leading run of each may leave the cell.
 	var notes []string
-	var cats []*ddi.Node
+	var cats, locs []*ddi.Node
 	notesRun, catsRun := true, true
 	for _, c := range v.Children {
 		switch c.Name {
+		case "location":
+			locs = append(locs, c)
 		case "notes":
 			t, ok := plainText(c)
 			if notesRun = notesRun && ok && !strings.Contains(t, "\n"); notesRun {
@@ -195,7 +199,25 @@ func varRow(v *ddi.Node) (map[string]string, []*ddi.Node) {
 		}
 	}
 	s.r["notes"] = strings.Join(notes, "\n")
+	// The reader puts column locations ahead of those in the xml cell, so a
+	// var's locations leave the cell all together or not at all.
+	if !slices.ContainsFunc(locs, func(c *ddi.Node) bool { return !fileOnly(c) }) {
+		ids := make([]string, len(locs))
+		for i, c := range locs {
+			ids[i] = c.Attrs[0].Value
+			s.used[c] = true
+		}
+		s.r["locations"] = strings.Join(ids, " ")
+	}
 	return s.finish(v), cats
+}
+
+// fileOnly reports whether the locations column can hold l: it is empty but
+// for a fileid that survives as one token of the cell, which the reader
+// splits on whitespace.
+func fileOnly(l *ddi.Node) bool {
+	return len(l.Attrs) == 1 && l.Attrs[0].Name == "fileid" && cellValue(l.Attrs[0].Value) &&
+		!strings.ContainsFunc(l.Attrs[0].Value, unicode.IsSpace) && l.Text == "" && l.Raw == "" && len(l.Children) == 0
 }
 
 // catRow is the Categories row of c, without varID and varName.

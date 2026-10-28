@@ -507,6 +507,9 @@ func varColumns(t *table, i int) ([]*ddi.Node, error) {
 	for _, line := range strings.Split(t.text(i, "notes"), "\n") {
 		kids = append(kids, el("notes", ddi.NormalizeText(line))...)
 	}
+	for _, id := range strings.Fields(t.text(i, "locations")) {
+		kids = append(kids, &ddi.Node{Name: "location", Attrs: []ddi.Attr{{Name: "fileid", Value: id}}})
+	}
 	return kids, nil
 }
 

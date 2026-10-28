@@ -124,22 +124,22 @@
     <varGrp ID="VG29" type="multipleResp" var="V262 V263 V264 V265 V266 V267 V268 V269 V270 V271" name="Q91">
       <labl>QD1_1 재단 인지 경로</labl>
     </varGrp>
-    <var ID="V1" name="response_id" intrvl="discrete" files="F1">
+    <var ID="V1" name="response_id" files="F1" intrvl="discrete">
       <location fileid="F1"/>
       <labl>응답 ID</labl>
       <varFormat type="character"/>
     </var>
-    <var ID="V2" name="submitted_at" intrvl="discrete" files="F1">
+    <var ID="V2" name="submitted_at" files="F1" intrvl="discrete">
       <location fileid="F1"/>
       <labl>응답 시각</labl>
       <varFormat type="character"/>
     </var>
-    <var ID="V3" name="customer_key" intrvl="discrete" files="F1">
+    <var ID="V3" name="customer_key" files="F1" intrvl="discrete">
       <location fileid="F1"/>
       <labl>고객 키</labl>
       <varFormat type="character"/>
     </var>
-    <var ID="V4" name="Q1" intrvl="discrete" files="F1" qstn="QS1">
+    <var ID="V4" name="Q1" files="F1" intrvl="discrete" qstn="QS1">
       <location fileid="F1"/>
       <labl>SQ1 성별</labl>
       <qstn ID="QS1" responseDomainType="category">
@@ -159,13 +159,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V5" name="Q1_other" intrvl="discrete" files="F1" qstn="QS1">
+    <var ID="V5" name="Q1_other" files="F1" intrvl="discrete" qstn="QS1">
       <location fileid="F1"/>
       <labl>SQ1 성별: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V6" name="Q2" intrvl="contin" files="F1" qstn="QS2">
+    <var ID="V6" name="Q2" files="F1" intrvl="contin" qstn="QS2">
       <location fileid="F1"/>
       <labl>SQ2 연령</labl>
       <qstn ID="QS2" responseDomainType="numeric">
@@ -174,7 +174,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V7" name="Q3" intrvl="discrete" files="F1" qstn="QS3">
+    <var ID="V7" name="Q3" files="F1" intrvl="discrete" qstn="QS3">
       <location fileid="F1"/>
       <labl>SQ3_1 학교급(청소년)</labl>
       <qstn ID="QS3" responseDomainType="category">
@@ -198,13 +198,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V8" name="Q3_other" intrvl="discrete" files="F1" qstn="QS3">
+    <var ID="V8" name="Q3_other" files="F1" intrvl="discrete" qstn="QS3">
       <location fileid="F1"/>
       <labl>SQ3_1 학교급(청소년): 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V9" name="Q4" intrvl="discrete" files="F1" qstn="QS4">
+    <var ID="V9" name="Q4" files="F1" intrvl="discrete" qstn="QS4">
       <location fileid="F1"/>
       <labl>SQ3_2 고등학교 계열</labl>
       <qstn ID="QS4" responseDomainType="category">
@@ -232,13 +232,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V10" name="Q4_other" intrvl="discrete" files="F1" qstn="QS4">
+    <var ID="V10" name="Q4_other" files="F1" intrvl="discrete" qstn="QS4">
       <location fileid="F1"/>
       <labl>SQ3_2 고등학교 계열: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V11" name="Q5" intrvl="discrete" files="F1" qstn="QS5">
+    <var ID="V11" name="Q5" files="F1" intrvl="discrete" qstn="QS5">
       <location fileid="F1"/>
       <labl>SQ4 거주 지역(시도)</labl>
       <qstn ID="QS5" responseDomainType="category">
@@ -318,13 +318,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V12" name="Q5_other" intrvl="discrete" files="F1" qstn="QS5">
+    <var ID="V12" name="Q5_other" files="F1" intrvl="discrete" qstn="QS5">
       <location fileid="F1"/>
       <labl>SQ4 거주 지역(시도): 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V13" name="Q6" intrvl="discrete" files="F1" qstn="QS6">
+    <var ID="V13" name="Q6" files="F1" intrvl="discrete" qstn="QS6">
       <location fileid="F1"/>
       <labl>SQ5 거주 지역 규모</labl>
       <qstn ID="QS6" responseDomainType="category">
@@ -348,13 +348,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V14" name="Q6_other" intrvl="discrete" files="F1" qstn="QS6">
+    <var ID="V14" name="Q6_other" files="F1" intrvl="discrete" qstn="QS6">
       <location fileid="F1"/>
       <labl>SQ5 거주 지역 규모: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V15" name="Q7_r1" intrvl="discrete" files="F1" qstn="QS7">
+    <var ID="V15" name="Q7_r1" files="F1" intrvl="discrete" qstn="QS7">
       <location fileid="F1"/>
       <labl>QA1 분야별 관심도: 새로운 과학의 발견</labl>
       <qstn ID="QS7" responseDomainType="category">
@@ -378,7 +378,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V16" name="Q7_r2" intrvl="discrete" files="F1" qstn="QS7">
+    <var ID="V16" name="Q7_r2" files="F1" intrvl="discrete" qstn="QS7">
       <location fileid="F1"/>
       <labl>QA1 분야별 관심도: 새로운 발명과 기술의 활용</labl>
       <catgry>
@@ -399,13 +399,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V17" name="Q7_other" intrvl="discrete" files="F1" qstn="QS7">
+    <var ID="V17" name="Q7_other" files="F1" intrvl="discrete" qstn="QS7">
       <location fileid="F1"/>
       <labl>QA1 분야별 관심도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V18" name="Q8" intrvl="discrete" files="F1" qstn="QS8">
+    <var ID="V18" name="Q8" files="F1" intrvl="discrete" qstn="QS8">
       <location fileid="F1"/>
       <labl>QA2 과학기술 신뢰도</labl>
       <qstn ID="QS8" responseDomainType="category">
@@ -437,13 +437,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V19" name="Q8_other" intrvl="discrete" files="F1" qstn="QS8">
+    <var ID="V19" name="Q8_other" files="F1" intrvl="discrete" qstn="QS8">
       <location fileid="F1"/>
       <labl>QA2 과학기술 신뢰도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V20" name="Q9_r1" intrvl="discrete" files="F1" qstn="QS9">
+    <var ID="V20" name="Q9_r1" files="F1" intrvl="discrete" qstn="QS9">
       <location fileid="F1"/>
       <labl>QA3 과학기술 의견: 과학기술은 우리의 삶을 보다 건강하고 편리하게 만든다</labl>
       <qstn ID="QS9" responseDomainType="category">
@@ -475,7 +475,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V21" name="Q9_r2" intrvl="discrete" files="F1" qstn="QS9">
+    <var ID="V21" name="Q9_r2" files="F1" intrvl="discrete" qstn="QS9">
       <location fileid="F1"/>
       <labl>QA3 과학기술 의견: 과학기술은 현대사회가 직면한 다양한 문제를 해결할 수 있다</labl>
       <catgry>
@@ -504,7 +504,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V22" name="Q9_r3" intrvl="discrete" files="F1" qstn="QS9">
+    <var ID="V22" name="Q9_r3" files="F1" intrvl="discrete" qstn="QS9">
       <location fileid="F1"/>
       <labl>QA3 과학기술 의견: 과학기술은 경제발전과 일자리 창출에 기여한다</labl>
       <catgry>
@@ -533,7 +533,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V23" name="Q9_r4" intrvl="discrete" files="F1" qstn="QS9">
+    <var ID="V23" name="Q9_r4" files="F1" intrvl="discrete" qstn="QS9">
       <location fileid="F1"/>
       <labl>QA3 과학기술 의견: 과학과 기술로 인해 지구가 파괴되고 자연이 고갈되고 있다</labl>
       <catgry>
@@ -562,7 +562,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V24" name="Q9_r5" intrvl="discrete" files="F1" qstn="QS9">
+    <var ID="V24" name="Q9_r5" files="F1" intrvl="discrete" qstn="QS9">
       <location fileid="F1"/>
       <labl>QA3 과학기술 의견: 과학기술이 우리의 삶을 너무 빨리 변화시킨다</labl>
       <catgry>
@@ -591,7 +591,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V25" name="Q9_r6" intrvl="discrete" files="F1" qstn="QS9">
+    <var ID="V25" name="Q9_r6" files="F1" intrvl="discrete" qstn="QS9">
       <location fileid="F1"/>
       <labl>QA3 과학기술 의견: 과학기술은 미래 세대에게 더 많은 기회를 제공할 것이다</labl>
       <catgry>
@@ -620,13 +620,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V26" name="Q9_other" intrvl="discrete" files="F1" qstn="QS9">
+    <var ID="V26" name="Q9_other" files="F1" intrvl="discrete" qstn="QS9">
       <location fileid="F1"/>
       <labl>QA3 과학기술 의견: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V27" name="Q10" intrvl="discrete" files="F1" qstn="QS10">
+    <var ID="V27" name="Q10" files="F1" intrvl="discrete" qstn="QS10">
       <location fileid="F1"/>
       <labl>QA4 과학기술 긍정·부정 효과</labl>
       <qstn ID="QS10" responseDomainType="category">
@@ -658,13 +658,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V28" name="Q10_other" intrvl="discrete" files="F1" qstn="QS10">
+    <var ID="V28" name="Q10_other" files="F1" intrvl="discrete" qstn="QS10">
       <location fileid="F1"/>
       <labl>QA4 과학기술 긍정·부정 효과: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V29" name="Q11" intrvl="discrete" files="F1" qstn="QS11">
+    <var ID="V29" name="Q11" files="F1" intrvl="discrete" qstn="QS11">
       <location fileid="F1"/>
       <labl>QA5 과학자 신뢰도</labl>
       <qstn ID="QS11" responseDomainType="category">
@@ -696,13 +696,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V30" name="Q11_other" intrvl="discrete" files="F1" qstn="QS11">
+    <var ID="V30" name="Q11_other" files="F1" intrvl="discrete" qstn="QS11">
       <location fileid="F1"/>
       <labl>QA5 과학자 신뢰도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V31" name="Q12_r1" intrvl="discrete" files="F1" qstn="QS12">
+    <var ID="V31" name="Q12_r1" files="F1" intrvl="discrete" qstn="QS12">
       <location fileid="F1"/>
       <labl>QA5_1 과학자 불신 이유: 과학자들이 종종 실수를 하기 때문에</labl>
       <qstn ID="QS12" responseDomainType="category">
@@ -734,7 +734,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V32" name="Q12_r2" intrvl="discrete" files="F1" qstn="QS12">
+    <var ID="V32" name="Q12_r2" files="F1" intrvl="discrete" qstn="QS12">
       <location fileid="F1"/>
       <labl>QA5_1 과학자 불신 이유: 과학자들은 종종 자신의 기대에 맞추어 결과를 조정하기 때문에</labl>
       <catgry>
@@ -763,7 +763,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V33" name="Q12_r3" intrvl="discrete" files="F1" qstn="QS12">
+    <var ID="V33" name="Q12_r3" files="F1" intrvl="discrete" qstn="QS12">
       <location fileid="F1"/>
       <labl>QA5_1 과학자 불신 이유: 과학자들은 연구자금을 제공하는 사람에게 지나치게 의존하기 때문에</labl>
       <catgry>
@@ -792,13 +792,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V34" name="Q12_other" intrvl="discrete" files="F1" qstn="QS12">
+    <var ID="V34" name="Q12_other" files="F1" intrvl="discrete" qstn="QS12">
       <location fileid="F1"/>
       <labl>QA5_1 과학자 불신 이유: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V35" name="Q13_r1" intrvl="discrete" files="F1" qstn="QS13">
+    <var ID="V35" name="Q13_r1" files="F1" intrvl="discrete" qstn="QS13">
       <location fileid="F1"/>
       <labl>QA5_2 과학자 신뢰 이유: 과학자들은 그들의 분야에서 전문가이기 때문에</labl>
       <qstn ID="QS13" responseDomainType="category">
@@ -830,7 +830,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V36" name="Q13_r2" intrvl="discrete" files="F1" qstn="QS13">
+    <var ID="V36" name="Q13_r2" files="F1" intrvl="discrete" qstn="QS13">
       <location fileid="F1"/>
       <labl>QA5_2 과학자 신뢰 이유: 과학자들은 규칙과 표준절차에 따라 일하기 때문에</labl>
       <catgry>
@@ -859,7 +859,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V37" name="Q13_r3" intrvl="discrete" files="F1" qstn="QS13">
+    <var ID="V37" name="Q13_r3" files="F1" intrvl="discrete" qstn="QS13">
       <location fileid="F1"/>
       <labl>QA5_2 과학자 신뢰 이유: 과학자들은 공익을 위해 연구하기 때문에</labl>
       <catgry>
@@ -888,13 +888,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V38" name="Q13_other" intrvl="discrete" files="F1" qstn="QS13">
+    <var ID="V38" name="Q13_other" files="F1" intrvl="discrete" qstn="QS13">
       <location fileid="F1"/>
       <labl>QA5_2 과학자 신뢰 이유: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V39" name="Q14" intrvl="discrete" files="F1" qstn="QS14">
+    <var ID="V39" name="Q14" files="F1" intrvl="discrete" qstn="QS14">
       <location fileid="F1"/>
       <labl>QA6 관점: 전문가 vs 국민</labl>
       <qstn ID="QS14" responseDomainType="category">
@@ -914,13 +914,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V40" name="Q14_other" intrvl="discrete" files="F1" qstn="QS14">
+    <var ID="V40" name="Q14_other" files="F1" intrvl="discrete" qstn="QS14">
       <location fileid="F1"/>
       <labl>QA6 관점: 전문가 vs 국민: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V41" name="Q15" intrvl="discrete" files="F1" qstn="QS15">
+    <var ID="V41" name="Q15" files="F1" intrvl="discrete" qstn="QS15">
       <location fileid="F1"/>
       <labl>QA7 관점: 정부 규제 vs 시장</labl>
       <qstn ID="QS15" responseDomainType="category">
@@ -940,13 +940,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V42" name="Q15_other" intrvl="discrete" files="F1" qstn="QS15">
+    <var ID="V42" name="Q15_other" files="F1" intrvl="discrete" qstn="QS15">
       <location fileid="F1"/>
       <labl>QA7 관점: 정부 규제 vs 시장: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V43" name="Q16" intrvl="discrete" files="F1" qstn="QS16">
+    <var ID="V43" name="Q16" files="F1" intrvl="discrete" qstn="QS16">
       <location fileid="F1"/>
       <labl>QA8 관점: 윤리 vs 발견 가능성</labl>
       <qstn ID="QS16" responseDomainType="category">
@@ -967,13 +967,13 @@
       <varFormat type="numeric"/>
       <notes>라벨이 길어 SPSS·Stata 형식으로 변환하면 잘릴 수 있습니다.</notes>
     </var>
-    <var ID="V44" name="Q16_other" intrvl="discrete" files="F1" qstn="QS16">
+    <var ID="V44" name="Q16_other" files="F1" intrvl="discrete" qstn="QS16">
       <location fileid="F1"/>
       <labl>QA8 관점: 윤리 vs 발견 가능성: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V45" name="Q17" intrvl="discrete" files="F1" qstn="QS17">
+    <var ID="V45" name="Q17" files="F1" intrvl="discrete" qstn="QS17">
       <location fileid="F1"/>
       <labl>QA9 관점: 혜택 보장 vs 개인 문제</labl>
       <qstn ID="QS17" responseDomainType="category">
@@ -993,13 +993,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V46" name="Q17_other" intrvl="discrete" files="F1" qstn="QS17">
+    <var ID="V46" name="Q17_other" files="F1" intrvl="discrete" qstn="QS17">
       <location fileid="F1"/>
       <labl>QA9 관점: 혜택 보장 vs 개인 문제: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V47" name="Q18" intrvl="discrete" files="F1" qstn="QS18">
+    <var ID="V47" name="Q18" files="F1" intrvl="discrete" qstn="QS18">
       <location fileid="F1"/>
       <labl>QA10 혁신 제품·기술 관심도</labl>
       <qstn ID="QS18" responseDomainType="category">
@@ -1031,13 +1031,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V48" name="Q18_other" intrvl="discrete" files="F1" qstn="QS18">
+    <var ID="V48" name="Q18_other" files="F1" intrvl="discrete" qstn="QS18">
       <location fileid="F1"/>
       <labl>QA10 혁신 제품·기술 관심도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V49" name="Q19_r1" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V49" name="Q19_r1" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 반도체, 디스플레이</labl>
       <qstn ID="QS19" responseDomainType="category">
@@ -1057,7 +1057,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V50" name="Q19_r2" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V50" name="Q19_r2" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 2차전지 (예: 리튬이온전지 관련, 차세대 이차전지)</labl>
       <catgry>
@@ -1074,7 +1074,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V51" name="Q19_r3" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V51" name="Q19_r3" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 첨단 모빌리티 (예: 자율주행시스템, 전기/수소차)</labl>
       <catgry>
@@ -1091,7 +1091,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V52" name="Q19_r4" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V52" name="Q19_r4" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 차세대 원자력 (예: 소형 모듈형 원자로)</labl>
       <catgry>
@@ -1108,7 +1108,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V53" name="Q19_r5" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V53" name="Q19_r5" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 첨단 바이오 (예: 유전자·세포 치료)</labl>
       <catgry>
@@ -1125,7 +1125,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V54" name="Q19_r6" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V54" name="Q19_r6" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 우주항공, 해양 (예: 달착륙·표면탐사, 해양자원탐사)</labl>
       <catgry>
@@ -1142,7 +1142,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V55" name="Q19_r7" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V55" name="Q19_r7" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 수소 (예: 수소연료전지)</labl>
       <catgry>
@@ -1159,7 +1159,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V56" name="Q19_r8" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V56" name="Q19_r8" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 사이버보안 (예: 네트워크·클라우드 보안)</labl>
       <catgry>
@@ -1176,7 +1176,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V57" name="Q19_r9" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V57" name="Q19_r9" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 인공지능 (AI)</labl>
       <catgry>
@@ -1193,7 +1193,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V58" name="Q19_r10" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V58" name="Q19_r10" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 차세대 통신 (예: 5G, 6G)</labl>
       <catgry>
@@ -1210,7 +1210,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V59" name="Q19_r11" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V59" name="Q19_r11" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 첨단로봇·제조 (예: 로봇 자율이동, 인간·로봇 상호작용)</labl>
       <catgry>
@@ -1227,7 +1227,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V60" name="Q19_r12" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V60" name="Q19_r12" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 양자 (예: 양자컴퓨팅)</labl>
       <catgry>
@@ -1244,13 +1244,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V61" name="Q19_other" intrvl="discrete" files="F1" qstn="QS19">
+    <var ID="V61" name="Q19_other" files="F1" intrvl="discrete" qstn="QS19">
       <location fileid="F1"/>
       <labl>QA11 과학기술 분야별 관심: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V62" name="Q20_r1" intrvl="discrete" files="F1" qstn="QS20">
+    <var ID="V62" name="Q20_r1" files="F1" intrvl="discrete" qstn="QS20">
       <location fileid="F1"/>
       <labl>QA12 평소 생활태도: 생활 속에 적용되는 과학 원리에 대해 관심을 갖는 편이다</labl>
       <qstn ID="QS20" responseDomainType="category">
@@ -1282,7 +1282,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V63" name="Q20_r2" intrvl="discrete" files="F1" qstn="QS20">
+    <var ID="V63" name="Q20_r2" files="F1" intrvl="discrete" qstn="QS20">
       <location fileid="F1"/>
       <labl>QA12 평소 생활태도: 일상생활 속에서 과학적 원리를 아는 것이 필요하다고 보는 편이다</labl>
       <catgry>
@@ -1311,7 +1311,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V64" name="Q20_r3" intrvl="discrete" files="F1" qstn="QS20">
+    <var ID="V64" name="Q20_r3" files="F1" intrvl="discrete" qstn="QS20">
       <location fileid="F1"/>
       <labl>QA12 평소 생활태도: 과학적인 원리가 궁금해서 세부 자료를 찾는 경우가 있다</labl>
       <catgry>
@@ -1340,7 +1340,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V65" name="Q20_r4" intrvl="discrete" files="F1" qstn="QS20">
+    <var ID="V65" name="Q20_r4" files="F1" intrvl="discrete" qstn="QS20">
       <location fileid="F1"/>
       <labl>QA12 평소 생활태도: 과학 지식과 관련된 강연이나 프로그램을 즐겨 보는 편이다</labl>
       <catgry>
@@ -1369,7 +1369,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V66" name="Q20_r5" intrvl="discrete" files="F1" qstn="QS20">
+    <var ID="V66" name="Q20_r5" files="F1" intrvl="discrete" qstn="QS20">
       <location fileid="F1"/>
       <labl>QA12 평소 생활태도: 주변 사람에 비해 신기술 적용제품을 잘 사용하는 편이다</labl>
       <catgry>
@@ -1398,7 +1398,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V67" name="Q20_r6" intrvl="discrete" files="F1" qstn="QS20">
+    <var ID="V67" name="Q20_r6" files="F1" intrvl="discrete" qstn="QS20">
       <location fileid="F1"/>
       <labl>QA12 평소 생활태도: 사회적 이슈의 경우 객관적 사실 확인을 위해 노력한다</labl>
       <catgry>
@@ -1427,13 +1427,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V68" name="Q20_other" intrvl="discrete" files="F1" qstn="QS20">
+    <var ID="V68" name="Q20_other" files="F1" intrvl="discrete" qstn="QS20">
       <location fileid="F1"/>
       <labl>QA12 평소 생활태도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V69" name="Q21_r1" intrvl="discrete" files="F1" qstn="QS21">
+    <var ID="V69" name="Q21_r1" files="F1" intrvl="discrete" qstn="QS21">
       <location fileid="F1"/>
       <labl>QA13 과학 관련 자기 인식: 새로운 사물이나 현상을 보면 그것의 과학적 원리가 궁금하다</labl>
       <qstn ID="QS21" responseDomainType="category">
@@ -1465,7 +1465,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V70" name="Q21_r2" intrvl="discrete" files="F1" qstn="QS21">
+    <var ID="V70" name="Q21_r2" files="F1" intrvl="discrete" qstn="QS21">
       <location fileid="F1"/>
       <labl>QA13 과학 관련 자기 인식: 일상에서 과학과 관련된 생각을 할 기회가 자주 있다</labl>
       <catgry>
@@ -1494,7 +1494,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V71" name="Q21_r3" intrvl="discrete" files="F1" qstn="QS21">
+    <var ID="V71" name="Q21_r3" files="F1" intrvl="discrete" qstn="QS21">
       <location fileid="F1"/>
       <labl>QA13 과학 관련 자기 인식: 과학에 대한 새로운 지식을 알아가는 것은 매우 재미있다</labl>
       <catgry>
@@ -1523,7 +1523,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V72" name="Q21_r4" intrvl="discrete" files="F1" qstn="QS21">
+    <var ID="V72" name="Q21_r4" files="F1" intrvl="discrete" qstn="QS21">
       <location fileid="F1"/>
       <labl>QA13 과학 관련 자기 인식: 과학을 재미있게 접할 기회가 종종 있다</labl>
       <catgry>
@@ -1552,13 +1552,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V73" name="Q21_other" intrvl="discrete" files="F1" qstn="QS21">
+    <var ID="V73" name="Q21_other" files="F1" intrvl="discrete" qstn="QS21">
       <location fileid="F1"/>
       <labl>QA13 과학 관련 자기 인식: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V74" name="Q22" intrvl="discrete" files="F1" qstn="QS22">
+    <var ID="V74" name="Q22" files="F1" intrvl="discrete" qstn="QS22">
       <location fileid="F1"/>
       <labl>QA14 과학과의 관계</labl>
       <qstn ID="QS22" responseDomainType="category">
@@ -1583,13 +1583,13 @@
       <varFormat type="numeric"/>
       <notes>라벨이 길어 SPSS·Stata 형식으로 변환하면 잘릴 수 있습니다.</notes>
     </var>
-    <var ID="V75" name="Q22_other" intrvl="discrete" files="F1" qstn="QS22">
+    <var ID="V75" name="Q22_other" files="F1" intrvl="discrete" qstn="QS22">
       <location fileid="F1"/>
       <labl>QA14 과학과의 관계: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V76" name="Q23_r1" intrvl="discrete" files="F1" qstn="QS23">
+    <var ID="V76" name="Q23_r1" files="F1" intrvl="discrete" qstn="QS23">
       <location fileid="F1"/>
       <labl>QA15 과학 관련 동의: 학교에서 배운 과학은 내 일상생활에서 유용하게 사용되었다</labl>
       <qstn ID="QS23" responseDomainType="category">
@@ -1621,7 +1621,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V77" name="Q23_r2" intrvl="discrete" files="F1" qstn="QS23">
+    <var ID="V77" name="Q23_r2" files="F1" intrvl="discrete" qstn="QS23">
       <location fileid="F1"/>
       <labl>QA15 과학 관련 동의: 과학을 아는 것이 내 일상생활에서 중요하다</labl>
       <catgry>
@@ -1650,7 +1650,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V78" name="Q23_r3" intrvl="discrete" files="F1" qstn="QS23">
+    <var ID="V78" name="Q23_r3" files="F1" intrvl="discrete" qstn="QS23">
       <location fileid="F1"/>
       <labl>QA15 과학 관련 동의: 학교 교육 때문에 과학에 대한 흥미를 잃었다</labl>
       <catgry>
@@ -1679,7 +1679,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V79" name="Q23_r4" intrvl="discrete" files="F1" qstn="QS23">
+    <var ID="V79" name="Q23_r4" files="F1" intrvl="discrete" qstn="QS23">
       <location fileid="F1"/>
       <labl>QA15 과학 관련 동의: 나는 실험실, 과학 관련 시설, 산업 시설 등 과학이 연구되고 다뤄지는 곳이 불편하지 않다</labl>
       <catgry>
@@ -1708,7 +1708,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V80" name="Q23_r5" intrvl="discrete" files="F1" qstn="QS23">
+    <var ID="V80" name="Q23_r5" files="F1" intrvl="discrete" qstn="QS23">
       <location fileid="F1"/>
       <labl>QA15 과학 관련 동의: 나는 가설, 이론, 실험 및 임상 시험과 같은 과학 용어를 잘 이해한다</labl>
       <catgry>
@@ -1737,13 +1737,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V81" name="Q23_other" intrvl="discrete" files="F1" qstn="QS23">
+    <var ID="V81" name="Q23_other" files="F1" intrvl="discrete" qstn="QS23">
       <location fileid="F1"/>
       <labl>QA15 과학 관련 동의: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V82" name="Q24" intrvl="discrete" files="F1" qstn="QS24">
+    <var ID="V82" name="Q24" files="F1" intrvl="discrete" qstn="QS24">
       <location fileid="F1"/>
       <labl>QA16 과학·R&amp;D 인지 수준</labl>
       <qstn ID="QS24" responseDomainType="category">
@@ -1771,13 +1771,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V83" name="Q24_other" intrvl="discrete" files="F1" qstn="QS24">
+    <var ID="V83" name="Q24_other" files="F1" intrvl="discrete" qstn="QS24">
       <location fileid="F1"/>
       <labl>QA16 과학·R&amp;D 인지 수준: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V84" name="Q25" intrvl="discrete" files="F1" qstn="QS25">
+    <var ID="V84" name="Q25" files="F1" intrvl="discrete" qstn="QS25">
       <location fileid="F1"/>
       <labl>QA17 과학 강연 참석 빈도</labl>
       <qstn ID="QS25" responseDomainType="category">
@@ -1809,13 +1809,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V85" name="Q25_other" intrvl="discrete" files="F1" qstn="QS25">
+    <var ID="V85" name="Q25_other" files="F1" intrvl="discrete" qstn="QS25">
       <location fileid="F1"/>
       <labl>QA17 과학 강연 참석 빈도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V86" name="Q26" intrvl="discrete" files="F1" qstn="QS26">
+    <var ID="V86" name="Q26" files="F1" intrvl="discrete" qstn="QS26">
       <location fileid="F1"/>
       <labl>QA18 과학 관련 직업·공부</labl>
       <qstn ID="QS26" responseDomainType="category">
@@ -1843,13 +1843,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V87" name="Q26_other" intrvl="discrete" files="F1" qstn="QS26">
+    <var ID="V87" name="Q26_other" files="F1" intrvl="discrete" qstn="QS26">
       <location fileid="F1"/>
       <labl>QA18 과학 관련 직업·공부: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V88" name="Q27_1" intrvl="discrete" files="F1" qstn="QS27">
+    <var ID="V88" name="Q27_1" files="F1" intrvl="discrete" qstn="QS27">
       <location fileid="F1"/>
       <labl>QA19 STEM 학위·자격증: 대학원 학위 (석사, 박사 등)</labl>
       <qstn ID="QS27" responseDomainType="multiple">
@@ -1865,7 +1865,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V89" name="Q27_2" intrvl="discrete" files="F1" qstn="QS27">
+    <var ID="V89" name="Q27_2" files="F1" intrvl="discrete" qstn="QS27">
       <location fileid="F1"/>
       <labl>QA19 STEM 학위·자격증: 학부 학위</labl>
       <catgry>
@@ -1878,7 +1878,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V90" name="Q27_3" intrvl="discrete" files="F1" qstn="QS27">
+    <var ID="V90" name="Q27_3" files="F1" intrvl="discrete" qstn="QS27">
       <location fileid="F1"/>
       <labl>QA19 STEM 학위·자격증: 고등학교(기술 특성화)</labl>
       <catgry>
@@ -1891,7 +1891,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V91" name="Q27_4" intrvl="discrete" files="F1" qstn="QS27">
+    <var ID="V91" name="Q27_4" files="F1" intrvl="discrete" qstn="QS27">
       <location fileid="F1"/>
       <labl>QA19 STEM 학위·자격증: 학위 외의 과학 자격증</labl>
       <catgry>
@@ -1904,7 +1904,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V92" name="Q27_5" intrvl="discrete" files="F1" qstn="QS27">
+    <var ID="V92" name="Q27_5" files="F1" intrvl="discrete" qstn="QS27">
       <location fileid="F1"/>
       <labl>QA19 STEM 학위·자격증: 과학 관련 학위나 자격증 없음</labl>
       <catgry>
@@ -1917,13 +1917,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V93" name="Q27_other" intrvl="discrete" files="F1" qstn="QS27">
+    <var ID="V93" name="Q27_other" files="F1" intrvl="discrete" qstn="QS27">
       <location fileid="F1"/>
       <labl>QA19 STEM 학위·자격증: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값을 JSON 배열로 담습니다. 예: ["값"]</notes>
     </var>
-    <var ID="V94" name="Q28" intrvl="discrete" files="F1" qstn="QS28">
+    <var ID="V94" name="Q28" files="F1" intrvl="discrete" qstn="QS28">
       <location fileid="F1"/>
       <labl>QA20 과학 대화 빈도</labl>
       <qstn ID="QS28" responseDomainType="category">
@@ -1959,13 +1959,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V95" name="Q28_other" intrvl="discrete" files="F1" qstn="QS28">
+    <var ID="V95" name="Q28_other" files="F1" intrvl="discrete" qstn="QS28">
       <location fileid="F1"/>
       <labl>QA20 과학 대화 빈도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V96" name="Q29_1" intrvl="discrete" files="F1" qstn="QS29">
+    <var ID="V96" name="Q29_1" files="F1" intrvl="discrete" qstn="QS29">
       <location fileid="F1"/>
       <labl>QA21 과학 직종 지인: 함께 사는 가족 중에 있음</labl>
       <qstn ID="QS29" responseDomainType="multiple">
@@ -1981,7 +1981,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V97" name="Q29_2" intrvl="discrete" files="F1" qstn="QS29">
+    <var ID="V97" name="Q29_2" files="F1" intrvl="discrete" qstn="QS29">
       <location fileid="F1"/>
       <labl>QA21 과학 직종 지인: 함께 살지 않는 가족이나 친척 중에 있음</labl>
       <catgry>
@@ -1994,7 +1994,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V98" name="Q29_3" intrvl="discrete" files="F1" qstn="QS29">
+    <var ID="V98" name="Q29_3" files="F1" intrvl="discrete" qstn="QS29">
       <location fileid="F1"/>
       <labl>QA21 과학 직종 지인: 친구 또는 동료 중에 있음</labl>
       <catgry>
@@ -2007,7 +2007,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V99" name="Q29_4" intrvl="discrete" files="F1" qstn="QS29">
+    <var ID="V99" name="Q29_4" files="F1" intrvl="discrete" qstn="QS29">
       <location fileid="F1"/>
       <labl>QA21 과학 직종 지인: 없음</labl>
       <catgry>
@@ -2020,13 +2020,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V100" name="Q29_other" intrvl="discrete" files="F1" qstn="QS29">
+    <var ID="V100" name="Q29_other" files="F1" intrvl="discrete" qstn="QS29">
       <location fileid="F1"/>
       <labl>QA21 과학 직종 지인: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값을 JSON 배열로 담습니다. 예: ["값"]</notes>
     </var>
-    <var ID="V101" name="Q30_rank1" intrvl="discrete" files="F1" qstn="QS30">
+    <var ID="V101" name="Q30_rank1" files="F1" intrvl="discrete" qstn="QS30">
       <location fileid="F1"/>
       <labl>QA22 경쟁력 있는 과학기술 분야(1·2순위): 1순위</labl>
       <qstn ID="QS30" responseDomainType="category">
@@ -2083,7 +2083,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V102" name="Q30_rank2" intrvl="discrete" files="F1" qstn="QS30">
+    <var ID="V102" name="Q30_rank2" files="F1" intrvl="discrete" qstn="QS30">
       <location fileid="F1"/>
       <labl>QA22 경쟁력 있는 과학기술 분야(1·2순위): 2순위</labl>
       <catgry>
@@ -2136,13 +2136,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V103" name="Q30_other" intrvl="discrete" files="F1" qstn="QS30">
+    <var ID="V103" name="Q30_other" files="F1" intrvl="discrete" qstn="QS30">
       <location fileid="F1"/>
       <labl>QA22 경쟁력 있는 과학기술 분야(1·2순위): 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V104" name="Q31_r1" intrvl="discrete" files="F1" qstn="QS31">
+    <var ID="V104" name="Q31_r1" files="F1" intrvl="discrete" qstn="QS31">
       <location fileid="F1"/>
       <labl>QA23 국가별 과학기술 수준: 미국</labl>
       <qstn ID="QS31" responseDomainType="category">
@@ -2174,7 +2174,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V105" name="Q31_r2" intrvl="discrete" files="F1" qstn="QS31">
+    <var ID="V105" name="Q31_r2" files="F1" intrvl="discrete" qstn="QS31">
       <location fileid="F1"/>
       <labl>QA23 국가별 과학기술 수준: 중국</labl>
       <catgry>
@@ -2203,7 +2203,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V106" name="Q31_r3" intrvl="discrete" files="F1" qstn="QS31">
+    <var ID="V106" name="Q31_r3" files="F1" intrvl="discrete" qstn="QS31">
       <location fileid="F1"/>
       <labl>QA23 국가별 과학기술 수준: 일본</labl>
       <catgry>
@@ -2232,7 +2232,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V107" name="Q31_r4" intrvl="discrete" files="F1" qstn="QS31">
+    <var ID="V107" name="Q31_r4" files="F1" intrvl="discrete" qstn="QS31">
       <location fileid="F1"/>
       <labl>QA23 국가별 과학기술 수준: 인도</labl>
       <catgry>
@@ -2261,7 +2261,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V108" name="Q31_r5" intrvl="discrete" files="F1" qstn="QS31">
+    <var ID="V108" name="Q31_r5" files="F1" intrvl="discrete" qstn="QS31">
       <location fileid="F1"/>
       <labl>QA23 국가별 과학기술 수준: 유럽</labl>
       <catgry>
@@ -2290,7 +2290,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V109" name="Q31_r6" intrvl="discrete" files="F1" qstn="QS31">
+    <var ID="V109" name="Q31_r6" files="F1" intrvl="discrete" qstn="QS31">
       <location fileid="F1"/>
       <labl>QA23 국가별 과학기술 수준: 대만</labl>
       <catgry>
@@ -2319,13 +2319,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V110" name="Q31_other" intrvl="discrete" files="F1" qstn="QS31">
+    <var ID="V110" name="Q31_other" files="F1" intrvl="discrete" qstn="QS31">
       <location fileid="F1"/>
       <labl>QA23 국가별 과학기술 수준: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V111" name="Q32" intrvl="discrete" files="F1" qstn="QS32">
+    <var ID="V111" name="Q32" files="F1" intrvl="discrete" qstn="QS32">
       <location fileid="F1"/>
       <labl>QA24 기초과학 정부 투자 필요성</labl>
       <qstn ID="QS32" responseDomainType="category">
@@ -2357,13 +2357,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V112" name="Q32_other" intrvl="discrete" files="F1" qstn="QS32">
+    <var ID="V112" name="Q32_other" files="F1" intrvl="discrete" qstn="QS32">
       <location fileid="F1"/>
       <labl>QA24 기초과학 정부 투자 필요성: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V113" name="Q33" intrvl="discrete" files="F1" qstn="QS33">
+    <var ID="V113" name="Q33" files="F1" intrvl="discrete" qstn="QS33">
       <location fileid="F1"/>
       <labl>QA25 10년 후 과학기술 수준</labl>
       <qstn ID="QS33" responseDomainType="category">
@@ -2395,13 +2395,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V114" name="Q33_other" intrvl="discrete" files="F1" qstn="QS33">
+    <var ID="V114" name="Q33_other" files="F1" intrvl="discrete" qstn="QS33">
       <location fileid="F1"/>
       <labl>QA25 10년 후 과학기술 수준: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V115" name="Q34_r1" intrvl="discrete" files="F1" qstn="QS34">
+    <var ID="V115" name="Q34_r1" files="F1" intrvl="discrete" qstn="QS34">
       <location fileid="F1"/>
       <labl>QA26 이공계 인력 사회적 대우: 대학·연구기관의 과학자</labl>
       <qstn ID="QS34" responseDomainType="category">
@@ -2430,7 +2430,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V116" name="Q34_r2" intrvl="discrete" files="F1" qstn="QS34">
+    <var ID="V116" name="Q34_r2" files="F1" intrvl="discrete" qstn="QS34">
       <location fileid="F1"/>
       <labl>QA26 이공계 인력 사회적 대우: 일반기업의 연구인력</labl>
       <catgry>
@@ -2455,7 +2455,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V117" name="Q34_r3" intrvl="discrete" files="F1" qstn="QS34">
+    <var ID="V117" name="Q34_r3" files="F1" intrvl="discrete" qstn="QS34">
       <location fileid="F1"/>
       <labl>QA26 이공계 인력 사회적 대우: 기술직 및 기능인력</labl>
       <catgry>
@@ -2480,13 +2480,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V118" name="Q34_other" intrvl="discrete" files="F1" qstn="QS34">
+    <var ID="V118" name="Q34_other" files="F1" intrvl="discrete" qstn="QS34">
       <location fileid="F1"/>
       <labl>QA26 이공계 인력 사회적 대우: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V119" name="Q35" intrvl="discrete" files="F1" qstn="QS35">
+    <var ID="V119" name="Q35" files="F1" intrvl="discrete" qstn="QS35">
       <location fileid="F1"/>
       <labl>QA27 학교 과학교육 강화 동의</labl>
       <qstn ID="QS35" responseDomainType="category">
@@ -2514,13 +2514,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V120" name="Q35_other" intrvl="discrete" files="F1" qstn="QS35">
+    <var ID="V120" name="Q35_other" files="F1" intrvl="discrete" qstn="QS35">
       <location fileid="F1"/>
       <labl>QA27 학교 과학교육 강화 동의: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V121" name="Q36" intrvl="discrete" files="F1" qstn="QS36">
+    <var ID="V121" name="Q36" files="F1" intrvl="discrete" qstn="QS36">
       <location fileid="F1"/>
       <labl>QA28 초·중·고 과학교육 중요점</labl>
       <qstn ID="QS36" responseDomainType="category">
@@ -2553,13 +2553,13 @@
       <varFormat type="numeric"/>
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
     </var>
-    <var ID="V122" name="Q36_other" intrvl="discrete" files="F1" qstn="QS36">
+    <var ID="V122" name="Q36_other" files="F1" intrvl="discrete" qstn="QS36">
       <location fileid="F1"/>
       <labl>QA28 초·중·고 과학교육 중요점: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V123" name="Q37" intrvl="discrete" files="F1" qstn="QS37">
+    <var ID="V123" name="Q37" files="F1" intrvl="discrete" qstn="QS37">
       <location fileid="F1"/>
       <labl>QA29 성인 과학교양 교육 필요성</labl>
       <qstn ID="QS37" responseDomainType="category">
@@ -2587,13 +2587,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V124" name="Q37_other" intrvl="discrete" files="F1" qstn="QS37">
+    <var ID="V124" name="Q37_other" files="F1" intrvl="discrete" qstn="QS37">
       <location fileid="F1"/>
       <labl>QA29 성인 과학교양 교육 필요성: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V125" name="Q38_rank1" intrvl="discrete" files="F1" qstn="QS38">
+    <var ID="V125" name="Q38_rank1" files="F1" intrvl="discrete" qstn="QS38">
       <location fileid="F1"/>
       <labl>QA30 사회 발전 중요 인물(1·2순위): 1순위</labl>
       <qstn ID="QS38" responseDomainType="category">
@@ -2654,7 +2654,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V126" name="Q38_rank2" intrvl="discrete" files="F1" qstn="QS38">
+    <var ID="V126" name="Q38_rank2" files="F1" intrvl="discrete" qstn="QS38">
       <location fileid="F1"/>
       <labl>QA30 사회 발전 중요 인물(1·2순위): 2순위</labl>
       <catgry>
@@ -2711,13 +2711,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V127" name="Q38_other" intrvl="discrete" files="F1" qstn="QS38">
+    <var ID="V127" name="Q38_other" files="F1" intrvl="discrete" qstn="QS38">
       <location fileid="F1"/>
       <labl>QA30 사회 발전 중요 인물(1·2순위): 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V128" name="Q39_rank1" intrvl="discrete" files="F1" qstn="QS39">
+    <var ID="V128" name="Q39_rank1" files="F1" intrvl="discrete" qstn="QS39">
       <location fileid="F1"/>
       <labl>QA31 선호 직업(1·2순위): 1순위</labl>
       <qstn ID="QS39" responseDomainType="category">
@@ -2778,7 +2778,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V129" name="Q39_rank2" intrvl="discrete" files="F1" qstn="QS39">
+    <var ID="V129" name="Q39_rank2" files="F1" intrvl="discrete" qstn="QS39">
       <location fileid="F1"/>
       <labl>QA31 선호 직업(1·2순위): 2순위</labl>
       <catgry>
@@ -2835,13 +2835,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V130" name="Q39_other" intrvl="discrete" files="F1" qstn="QS39">
+    <var ID="V130" name="Q39_other" files="F1" intrvl="discrete" qstn="QS39">
       <location fileid="F1"/>
       <labl>QA31 선호 직업(1·2순위): 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V131" name="Q40" intrvl="discrete" files="F1" qstn="QS40">
+    <var ID="V131" name="Q40" files="F1" intrvl="discrete" qstn="QS40">
       <location fileid="F1"/>
       <labl>QA32 선호 대학 계열</labl>
       <qstn ID="QS40" responseDomainType="category">
@@ -2874,13 +2874,13 @@
       <varFormat type="numeric"/>
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
     </var>
-    <var ID="V132" name="Q40_other" intrvl="discrete" files="F1" qstn="QS40">
+    <var ID="V132" name="Q40_other" files="F1" intrvl="discrete" qstn="QS40">
       <location fileid="F1"/>
       <labl>QA32 선호 대학 계열: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V133" name="Q41" intrvl="discrete" files="F1" qstn="QS41">
+    <var ID="V133" name="Q41" files="F1" intrvl="discrete" qstn="QS41">
       <location fileid="F1"/>
       <labl>QA32_1 과학기술 계열 선호 이유</labl>
       <qstn ID="QS41" responseDomainType="category">
@@ -2925,13 +2925,13 @@
       <varFormat type="numeric"/>
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
     </var>
-    <var ID="V134" name="Q41_other" intrvl="discrete" files="F1" qstn="QS41">
+    <var ID="V134" name="Q41_other" files="F1" intrvl="discrete" qstn="QS41">
       <location fileid="F1"/>
       <labl>QA32_1 과학기술 계열 선호 이유: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V135" name="Q42" intrvl="discrete" files="F1" qstn="QS42">
+    <var ID="V135" name="Q42" files="F1" intrvl="discrete" qstn="QS42">
       <location fileid="F1"/>
       <labl>QA33 과학기술 이슈·뉴스 관심도</labl>
       <qstn ID="QS42" responseDomainType="category">
@@ -2963,13 +2963,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V136" name="Q42_other" intrvl="discrete" files="F1" qstn="QS42">
+    <var ID="V136" name="Q42_other" files="F1" intrvl="discrete" qstn="QS42">
       <location fileid="F1"/>
       <labl>QA33 과학기술 이슈·뉴스 관심도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V137" name="Q43" intrvl="discrete" files="F1" qstn="QS43">
+    <var ID="V137" name="Q43" files="F1" intrvl="discrete" qstn="QS43">
       <location fileid="F1"/>
       <labl>QA34 사회문제 해결 기여도</labl>
       <qstn ID="QS43" responseDomainType="category">
@@ -2997,13 +2997,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V138" name="Q43_other" intrvl="discrete" files="F1" qstn="QS43">
+    <var ID="V138" name="Q43_other" files="F1" intrvl="discrete" qstn="QS43">
       <location fileid="F1"/>
       <labl>QA34 사회문제 해결 기여도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V139" name="Q44_r1" intrvl="discrete" files="F1" qstn="QS44">
+    <var ID="V139" name="Q44_r1" files="F1" intrvl="discrete" qstn="QS44">
       <location fileid="F1"/>
       <labl>QA35 여성인력 관련 의견: 과학기술분야의 업무는 여성, 남성 모두에게 똑같이 적합하다</labl>
       <qstn ID="QS44" responseDomainType="category">
@@ -3035,7 +3035,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V140" name="Q44_r2" intrvl="discrete" files="F1" qstn="QS44">
+    <var ID="V140" name="Q44_r2" files="F1" intrvl="discrete" qstn="QS44">
       <location fileid="F1"/>
       <labl>QA35 여성인력 관련 의견: 과학기술과 관련하여 여성, 남성은 모두 같은 잠재 역량을 가지고 있다</labl>
       <catgry>
@@ -3064,13 +3064,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V141" name="Q44_other" intrvl="discrete" files="F1" qstn="QS44">
+    <var ID="V141" name="Q44_other" files="F1" intrvl="discrete" qstn="QS44">
       <location fileid="F1"/>
       <labl>QA35 여성인력 관련 의견: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V142" name="Q45_r1" intrvl="discrete" files="F1" qstn="QS45">
+    <var ID="V142" name="Q45_r1" files="F1" intrvl="discrete" qstn="QS45">
       <location fileid="F1"/>
       <labl>QA36 여성 STEM 진출 저해 이유: 여성은 어릴 때부터 학교에서 과학, 기술, 공학, 수학을 공부하도록 격려받지 못한다</labl>
       <qstn ID="QS45" responseDomainType="category">
@@ -3094,7 +3094,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V143" name="Q45_r2" intrvl="discrete" files="F1" qstn="QS45">
+    <var ID="V143" name="Q45_r2" files="F1" intrvl="discrete" qstn="QS45">
       <location fileid="F1"/>
       <labl>QA36 여성 STEM 진출 저해 이유: 여성은 남성에 비해 과학, 기술, 공학, 수학 분야에서 성공할 수 있다고 믿을 가능성이 낮다</labl>
       <catgry>
@@ -3115,7 +3115,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V144" name="Q45_r3" intrvl="discrete" files="F1" qstn="QS45">
+    <var ID="V144" name="Q45_r3" files="F1" intrvl="discrete" qstn="QS45">
       <location fileid="F1"/>
       <labl>QA36 여성 STEM 진출 저해 이유: 과학, 기술, 공학, 수학 분야에 여성 롤모델이 거의 없기 때문에 여성은 이러한 직업을 선택하지 않는다</labl>
       <catgry>
@@ -3136,7 +3136,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V145" name="Q45_r4" intrvl="discrete" files="F1" qstn="QS45">
+    <var ID="V145" name="Q45_r4" files="F1" intrvl="discrete" qstn="QS45">
       <location fileid="F1"/>
       <labl>QA36 여성 STEM 진출 저해 이유: 여성은 채용, 고용, 승진 과정에서 차별을 경험한다</labl>
       <catgry>
@@ -3157,7 +3157,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V146" name="Q45_r5" intrvl="discrete" files="F1" qstn="QS45">
+    <var ID="V146" name="Q45_r5" files="F1" intrvl="discrete" qstn="QS45">
       <location fileid="F1"/>
       <labl>QA36 여성 STEM 진출 저해 이유: 여성은 남성보다 과학, 기술, 공학, 수학에 대한 관심이 적다</labl>
       <catgry>
@@ -3178,7 +3178,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V147" name="Q45_r6" intrvl="discrete" files="F1" qstn="QS45">
+    <var ID="V147" name="Q45_r6" files="F1" intrvl="discrete" qstn="QS45">
       <location fileid="F1"/>
       <labl>QA36 여성 STEM 진출 저해 이유: 과학, 기술, 공학, 수학 관련 직업은 다른 직업에 비해 일·가정 양립을 하며 경력을 쌓기 어렵다</labl>
       <catgry>
@@ -3199,7 +3199,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V148" name="Q45_r7" intrvl="discrete" files="F1" qstn="QS45">
+    <var ID="V148" name="Q45_r7" files="F1" intrvl="discrete" qstn="QS45">
       <location fileid="F1"/>
       <labl>QA36 여성 STEM 진출 저해 이유: 과학기술 분야는 ‘여성스럽지’ 않은 분야로 여겨진다</labl>
       <catgry>
@@ -3220,13 +3220,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V149" name="Q45_other" intrvl="discrete" files="F1" qstn="QS45">
+    <var ID="V149" name="Q45_other" files="F1" intrvl="discrete" qstn="QS45">
       <location fileid="F1"/>
       <labl>QA36 여성 STEM 진출 저해 이유: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V150" name="Q46_rank1" intrvl="discrete" files="F1" qstn="QS46">
+    <var ID="V150" name="Q46_rank1" files="F1" intrvl="discrete" qstn="QS46">
       <location fileid="F1"/>
       <labl>QA37 관심 과학 활동(1·2순위): 1순위</labl>
       <qstn ID="QS46" responseDomainType="category">
@@ -3283,7 +3283,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V151" name="Q46_rank2" intrvl="discrete" files="F1" qstn="QS46">
+    <var ID="V151" name="Q46_rank2" files="F1" intrvl="discrete" qstn="QS46">
       <location fileid="F1"/>
       <labl>QA37 관심 과학 활동(1·2순위): 2순위</labl>
       <catgry>
@@ -3336,13 +3336,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V152" name="Q46_other" intrvl="discrete" files="F1" qstn="QS46">
+    <var ID="V152" name="Q46_other" files="F1" intrvl="discrete" qstn="QS46">
       <location fileid="F1"/>
       <labl>QA37 관심 과학 활동(1·2순위): 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V153" name="Q47" intrvl="discrete" files="F1" qstn="QS47">
+    <var ID="V153" name="Q47" files="F1" intrvl="discrete" qstn="QS47">
       <location fileid="F1"/>
       <labl>QB1 과학기술 인지 수준</labl>
       <qstn ID="QS47" responseDomainType="category">
@@ -3374,13 +3374,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V154" name="Q47_other" intrvl="discrete" files="F1" qstn="QS47">
+    <var ID="V154" name="Q47_other" files="F1" intrvl="discrete" qstn="QS47">
       <location fileid="F1"/>
       <labl>QB1 과학기술 인지 수준: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V155" name="Q48_r1" intrvl="discrete" files="F1" qstn="QS48">
+    <var ID="V155" name="Q48_r1" files="F1" intrvl="discrete" qstn="QS48">
       <location fileid="F1"/>
       <labl>QB2 분야별 인지 수준: 새로운 과학의 발견</labl>
       <qstn ID="QS48" responseDomainType="category">
@@ -3404,7 +3404,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V156" name="Q48_r2" intrvl="discrete" files="F1" qstn="QS48">
+    <var ID="V156" name="Q48_r2" files="F1" intrvl="discrete" qstn="QS48">
       <location fileid="F1"/>
       <labl>QB2 분야별 인지 수준: 새로운 발명과 기술의 활용</labl>
       <catgry>
@@ -3425,13 +3425,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V157" name="Q48_other" intrvl="discrete" files="F1" qstn="QS48">
+    <var ID="V157" name="Q48_other" files="F1" intrvl="discrete" qstn="QS48">
       <location fileid="F1"/>
       <labl>QB2 분야별 인지 수준: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V158" name="Q49" intrvl="discrete" files="F1" qstn="QS49">
+    <var ID="V158" name="Q49" files="F1" intrvl="discrete" qstn="QS49">
       <location fileid="F1"/>
       <labl>QB3 과학기술 정보 획득 매체</labl>
       <qstn ID="QS49" responseDomainType="category">
@@ -3480,13 +3480,13 @@
       <varFormat type="numeric"/>
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
     </var>
-    <var ID="V159" name="Q49_other" intrvl="discrete" files="F1" qstn="QS49">
+    <var ID="V159" name="Q49_other" files="F1" intrvl="discrete" qstn="QS49">
       <location fileid="F1"/>
       <labl>QB3 과학기술 정보 획득 매체: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V160" name="Q50" intrvl="discrete" files="F1" qstn="QS50">
+    <var ID="V160" name="Q50" files="F1" intrvl="discrete" qstn="QS50">
       <location fileid="F1"/>
       <labl>QB4 신규 이슈 탐색 매체</labl>
       <qstn ID="QS50" responseDomainType="category">
@@ -3535,13 +3535,13 @@
       <varFormat type="numeric"/>
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
     </var>
-    <var ID="V161" name="Q50_other" intrvl="discrete" files="F1" qstn="QS50">
+    <var ID="V161" name="Q50_other" files="F1" intrvl="discrete" qstn="QS50">
       <location fileid="F1"/>
       <labl>QB4 신규 이슈 탐색 매체: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V162" name="Q51_r1" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V162" name="Q51_r1" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 지구의 중심은 매우 뜨겁다</labl>
       <qstn ID="QS51" responseDomainType="category">
@@ -3566,7 +3566,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V163" name="Q51_r2" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V163" name="Q51_r2" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 우리가 살고 있는 대륙은 아주 오랜 기간 동안 위치가 변화되었고, 앞으로도 계속 이동할 것이다</labl>
       <catgry>
@@ -3587,7 +3587,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V164" name="Q51_r3" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V164" name="Q51_r3" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 지구는 태양의 주위를 돌고 있다</labl>
       <catgry>
@@ -3608,7 +3608,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V165" name="Q51_r4" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V165" name="Q51_r4" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 모든 방사능은 사람에 의해 만들어진 것이다</labl>
       <catgry>
@@ -3629,7 +3629,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V166" name="Q51_r5" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V166" name="Q51_r5" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 전자는 원자보다 작다</labl>
       <catgry>
@@ -3650,7 +3650,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V167" name="Q51_r6" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V167" name="Q51_r6" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 레이저는 음파(공기의 파동)를 활용하여 작동한다</labl>
       <catgry>
@@ -3671,7 +3671,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V168" name="Q51_r7" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V168" name="Q51_r7" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 우주는 거대한 폭발(빅뱅)로 시작되었다</labl>
       <catgry>
@@ -3692,7 +3692,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V169" name="Q51_r8" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V169" name="Q51_r8" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 아이가 남자아이인지 여자아이인지를 결정하는 것은 아버지의 유전자다</labl>
       <catgry>
@@ -3713,7 +3713,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V170" name="Q51_r9" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V170" name="Q51_r9" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 항생제는 박테리아뿐만 아니라 바이러스도 죽인다</labl>
       <catgry>
@@ -3734,7 +3734,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V171" name="Q51_r10" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V171" name="Q51_r10" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 오늘날 우리가 알고 있는 인간은 다른 종에서 발전해왔다</labl>
       <catgry>
@@ -3755,13 +3755,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V172" name="Q51_other" intrvl="discrete" files="F1" qstn="QS51">
+    <var ID="V172" name="Q51_other" files="F1" intrvl="discrete" qstn="QS51">
       <location fileid="F1"/>
       <labl>QB5 과학 지식 OX: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V173" name="Q52" intrvl="discrete" files="F1" qstn="QS52">
+    <var ID="V173" name="Q52" files="F1" intrvl="discrete" qstn="QS52">
       <location fileid="F1"/>
       <labl>QB6 과학적 설명의 성격(가설)</labl>
       <qstn ID="QS52" responseDomainType="category">
@@ -3793,13 +3793,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V174" name="Q52_other" intrvl="discrete" files="F1" qstn="QS52">
+    <var ID="V174" name="Q52_other" files="F1" intrvl="discrete" qstn="QS52">
       <location fileid="F1"/>
       <labl>QB6 과학적 설명의 성격(가설): 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V175" name="Q53" intrvl="discrete" files="F1" qstn="QS53">
+    <var ID="V175" name="Q53" files="F1" intrvl="discrete" qstn="QS53">
       <location fileid="F1"/>
       <labl>QB7 과학적 방법 설명</labl>
       <qstn ID="QS53" responseDomainType="category">
@@ -3823,13 +3823,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V176" name="Q53_other" intrvl="discrete" files="F1" qstn="QS53">
+    <var ID="V176" name="Q53_other" files="F1" intrvl="discrete" qstn="QS53">
       <location fileid="F1"/>
       <labl>QB7 과학적 방법 설명: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V177" name="Q54" intrvl="discrete" files="F1" qstn="QS54">
+    <var ID="V177" name="Q54" files="F1" intrvl="discrete" qstn="QS54">
       <location fileid="F1"/>
       <labl>QB8 과학적 방법에 대한 생각</labl>
       <qstn ID="QS54" responseDomainType="category">
@@ -3853,13 +3853,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V178" name="Q54_other" intrvl="discrete" files="F1" qstn="QS54">
+    <var ID="V178" name="Q54_other" files="F1" intrvl="discrete" qstn="QS54">
       <location fileid="F1"/>
       <labl>QB8 과학적 방법에 대한 생각: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V179" name="Q55_r1" intrvl="discrete" files="F1" qstn="QS55">
+    <var ID="V179" name="Q55_r1" files="F1" intrvl="discrete" qstn="QS55">
       <location fileid="F1"/>
       <labl>QB9 과학 지식 자기 평가: 나의 과학 관련 지식은 평균적으로 다른 사람과 비교해 높다</labl>
       <qstn ID="QS55" responseDomainType="category">
@@ -3891,7 +3891,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V180" name="Q55_r2" intrvl="discrete" files="F1" qstn="QS55">
+    <var ID="V180" name="Q55_r2" files="F1" intrvl="discrete" qstn="QS55">
       <location fileid="F1"/>
       <labl>QB9 과학 지식 자기 평가: 내 주변에는 내게 비과학적인 것을 강요하는 사람이 별로 없다</labl>
       <catgry>
@@ -3920,13 +3920,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V181" name="Q55_other" intrvl="discrete" files="F1" qstn="QS55">
+    <var ID="V181" name="Q55_other" files="F1" intrvl="discrete" qstn="QS55">
       <location fileid="F1"/>
       <labl>QB9 과학 지식 자기 평가: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V182" name="Q56" intrvl="contin" files="F1" qstn="QS56">
+    <var ID="V182" name="Q56" files="F1" intrvl="contin" qstn="QS56">
       <location fileid="F1"/>
       <labl>QC1_1 방문 횟수: 과학 관련 행사(축전)</labl>
       <qstn ID="QS56" responseDomainType="numeric">
@@ -3935,7 +3935,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V183" name="Q57" intrvl="contin" files="F1" qstn="QS57">
+    <var ID="V183" name="Q57" files="F1" intrvl="contin" qstn="QS57">
       <location fileid="F1"/>
       <labl>QC1_2 방문 횟수: 과학 관련 강연(대중강연, 과학교실)</labl>
       <qstn ID="QS57" responseDomainType="numeric">
@@ -3944,7 +3944,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V184" name="Q58" intrvl="contin" files="F1" qstn="QS58">
+    <var ID="V184" name="Q58" files="F1" intrvl="contin" qstn="QS58">
       <location fileid="F1"/>
       <labl>QC1_3 방문 횟수: 상설 과학관 및 과학 전시회 방문</labl>
       <qstn ID="QS58" responseDomainType="numeric">
@@ -3953,7 +3953,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V185" name="Q59" intrvl="contin" files="F1" qstn="QS59">
+    <var ID="V185" name="Q59" files="F1" intrvl="contin" qstn="QS59">
       <location fileid="F1"/>
       <labl>QC1_4 방문 횟수: 천문대</labl>
       <qstn ID="QS59" responseDomainType="numeric">
@@ -3962,7 +3962,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V186" name="Q60" intrvl="contin" files="F1" qstn="QS60">
+    <var ID="V186" name="Q60" files="F1" intrvl="contin" qstn="QS60">
       <location fileid="F1"/>
       <labl>QC1_5 방문 횟수: 박물관 및 미술관</labl>
       <qstn ID="QS60" responseDomainType="numeric">
@@ -3971,7 +3971,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V187" name="Q61" intrvl="contin" files="F1" qstn="QS61">
+    <var ID="V187" name="Q61" files="F1" intrvl="contin" qstn="QS61">
       <location fileid="F1"/>
       <labl>QC1_6 방문 횟수: 공공도서관</labl>
       <qstn ID="QS61" responseDomainType="numeric">
@@ -3980,7 +3980,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V188" name="Q62" intrvl="contin" files="F1" qstn="QS62">
+    <var ID="V188" name="Q62" files="F1" intrvl="contin" qstn="QS62">
       <location fileid="F1"/>
       <labl>QC1_7 방문 횟수: 동물원 및 수족관</labl>
       <qstn ID="QS62" responseDomainType="numeric">
@@ -3989,7 +3989,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V189" name="Q63" intrvl="discrete" files="F1" qstn="QS63">
+    <var ID="V189" name="Q63" files="F1" intrvl="discrete" qstn="QS63">
       <location fileid="F1"/>
       <labl>QC2 과학 행사·시설 미방문 이유</labl>
       <qstn ID="QS63" responseDomainType="category">
@@ -4030,13 +4030,13 @@
       <varFormat type="numeric"/>
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
     </var>
-    <var ID="V190" name="Q63_other" intrvl="discrete" files="F1" qstn="QS63">
+    <var ID="V190" name="Q63_other" files="F1" intrvl="discrete" qstn="QS63">
       <location fileid="F1"/>
       <labl>QC2 과학 행사·시설 미방문 이유: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V191" name="Q64" intrvl="discrete" files="F1" qstn="QS64">
+    <var ID="V191" name="Q64" files="F1" intrvl="discrete" qstn="QS64">
       <location fileid="F1"/>
       <labl>QC3 과학 활동 보완점</labl>
       <qstn ID="QS64" responseDomainType="category">
@@ -4069,13 +4069,13 @@
       <varFormat type="numeric"/>
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
     </var>
-    <var ID="V192" name="Q64_other" intrvl="discrete" files="F1" qstn="QS64">
+    <var ID="V192" name="Q64_other" files="F1" intrvl="discrete" qstn="QS64">
       <location fileid="F1"/>
       <labl>QC3 과학 활동 보완점: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V193" name="Q65" intrvl="contin" files="F1" qstn="QS65">
+    <var ID="V193" name="Q65" files="F1" intrvl="contin" qstn="QS65">
       <location fileid="F1"/>
       <labl>QC4 과학기술 도서 독서량</labl>
       <qstn ID="QS65" responseDomainType="numeric">
@@ -4084,7 +4084,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V194" name="Q66" intrvl="discrete" files="F1" qstn="QS66">
+    <var ID="V194" name="Q66" files="F1" intrvl="discrete" qstn="QS66">
       <location fileid="F1"/>
       <labl>QC5 의사결정 대중 참여 수준</labl>
       <qstn ID="QS66" responseDomainType="category">
@@ -4114,13 +4114,13 @@
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
       <notes>라벨이 길어 SPSS·Stata 형식으로 변환하면 잘릴 수 있습니다.</notes>
     </var>
-    <var ID="V195" name="Q66_other" intrvl="discrete" files="F1" qstn="QS66">
+    <var ID="V195" name="Q66_other" files="F1" intrvl="discrete" qstn="QS66">
       <location fileid="F1"/>
       <labl>QC5 의사결정 대중 참여 수준: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V196" name="Q67_r1" intrvl="discrete" files="F1" qstn="QS67">
+    <var ID="V196" name="Q67_r1" files="F1" intrvl="discrete" qstn="QS67">
       <location fileid="F1"/>
       <labl>QC6 과학 관련 여가: 여가나 즐거운 시간을 보낼 때 과학기술과 관련된 것을 하는 경우가 많다</labl>
       <qstn ID="QS67" responseDomainType="category">
@@ -4152,7 +4152,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V197" name="Q67_r2" intrvl="discrete" files="F1" qstn="QS67">
+    <var ID="V197" name="Q67_r2" files="F1" intrvl="discrete" qstn="QS67">
       <location fileid="F1"/>
       <labl>QC6 과학 관련 여가: 과학 관련 취미나 여가 활동을 할 기회가 충분하다</labl>
       <catgry>
@@ -4181,13 +4181,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V198" name="Q67_other" intrvl="discrete" files="F1" qstn="QS67">
+    <var ID="V198" name="Q67_other" files="F1" intrvl="discrete" qstn="QS67">
       <location fileid="F1"/>
       <labl>QC6 과학 관련 여가: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V199" name="Q68_r1" intrvl="discrete" files="F1" qstn="QS68">
+    <var ID="V199" name="Q68_r1" files="F1" intrvl="discrete" qstn="QS68">
       <location fileid="F1"/>
       <labl>QC7 과학적 판단·유사과학: 나는 일상에서 과학적 지식을 바탕으로 합리적인 판단을 내릴 수 있다</labl>
       <qstn ID="QS68" responseDomainType="category">
@@ -4219,7 +4219,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V200" name="Q68_r2" intrvl="discrete" files="F1" qstn="QS68">
+    <var ID="V200" name="Q68_r2" files="F1" intrvl="discrete" qstn="QS68">
       <location fileid="F1"/>
       <labl>QC7 과학적 판단·유사과학: 과학 관련 가짜 뉴스나 유사과학 때문에 혼란스러울 때가 자주 있다</labl>
       <catgry>
@@ -4248,13 +4248,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V201" name="Q68_other" intrvl="discrete" files="F1" qstn="QS68">
+    <var ID="V201" name="Q68_other" files="F1" intrvl="discrete" qstn="QS68">
       <location fileid="F1"/>
       <labl>QC7 과학적 판단·유사과학: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V202" name="Q69_r1" intrvl="discrete" files="F1" qstn="QS69">
+    <var ID="V202" name="Q69_r1" files="F1" intrvl="discrete" qstn="QS69">
       <location fileid="F1"/>
       <labl>QC8 과학 관련 대화·조력자: 나는 과학 관련 소재로 다른 사람과 종종 이야기를 나눈다</labl>
       <qstn ID="QS69" responseDomainType="category">
@@ -4286,7 +4286,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V203" name="Q69_r2" intrvl="discrete" files="F1" qstn="QS69">
+    <var ID="V203" name="Q69_r2" files="F1" intrvl="discrete" qstn="QS69">
       <location fileid="F1"/>
       <labl>QC8 과학 관련 대화·조력자: 과학 관련 지식을 배우거나 물어볼 수 있는 사람이 주변에 있다</labl>
       <catgry>
@@ -4315,13 +4315,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V204" name="Q69_other" intrvl="discrete" files="F1" qstn="QS69">
+    <var ID="V204" name="Q69_other" files="F1" intrvl="discrete" qstn="QS69">
       <location fileid="F1"/>
       <labl>QC8 과학 관련 대화·조력자: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V205" name="Q70_r1" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V205" name="Q70_r1" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 기후 변화 (지구온난화, 엘리뇨 등)</labl>
       <qstn ID="QS70" responseDomainType="category">
@@ -4353,7 +4353,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V206" name="Q70_r2" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V206" name="Q70_r2" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 환경 오염 (수질/대기/토양 오염 등)</labl>
       <catgry>
@@ -4382,7 +4382,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V207" name="Q70_r3" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V207" name="Q70_r3" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 에너지 부족/고갈 (석유 및 천연자원의 부족, 재생가능 에너지 개발 등)</labl>
       <catgry>
@@ -4411,7 +4411,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V208" name="Q70_r4" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V208" name="Q70_r4" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 유전자조작 (유전자 조작 식품, 유전자 조합 기술 등)</labl>
       <catgry>
@@ -4440,7 +4440,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V209" name="Q70_r5" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V209" name="Q70_r5" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 줄기세포 연구</labl>
       <catgry>
@@ -4469,7 +4469,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V210" name="Q70_r6" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V210" name="Q70_r6" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 나노기술 (신소재 개발 등)</labl>
       <catgry>
@@ -4498,7 +4498,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V211" name="Q70_r7" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V211" name="Q70_r7" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 유해물질에 의한 피해 (환경호르몬, 새집증후군 등)</labl>
       <catgry>
@@ -4527,7 +4527,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V212" name="Q70_r8" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V212" name="Q70_r8" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 자연재해 (쓰나미, 지진, 화산 등)</labl>
       <catgry>
@@ -4556,7 +4556,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V213" name="Q70_r9" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V213" name="Q70_r9" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 질병 (암, 성인병, 우울증, 신종 전염병 등)</labl>
       <catgry>
@@ -4585,7 +4585,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V214" name="Q70_r10" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V214" name="Q70_r10" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 물 부족</labl>
       <catgry>
@@ -4614,7 +4614,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V215" name="Q70_r11" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V215" name="Q70_r11" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 식량 (식량 부족, 식품의 안정성)</labl>
       <catgry>
@@ -4643,13 +4643,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V216" name="Q70_other" intrvl="discrete" files="F1" qstn="QS70">
+    <var ID="V216" name="Q70_other" files="F1" intrvl="discrete" qstn="QS70">
       <location fileid="F1"/>
       <labl>A1 과학기술 이슈 영향력: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V217" name="Q71" intrvl="discrete" files="F1" qstn="QS71">
+    <var ID="V217" name="Q71" files="F1" intrvl="discrete" qstn="QS71">
       <location fileid="F1"/>
       <labl>B1 과학기술 유튜브 시청 경험</labl>
       <qstn ID="QS71" responseDomainType="category">
@@ -4669,13 +4669,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V218" name="Q71_other" intrvl="discrete" files="F1" qstn="QS71">
+    <var ID="V218" name="Q71_other" files="F1" intrvl="discrete" qstn="QS71">
       <location fileid="F1"/>
       <labl>B1 과학기술 유튜브 시청 경험: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V219" name="Q72" intrvl="discrete" files="F1" qstn="QS72">
+    <var ID="V219" name="Q72" files="F1" intrvl="discrete" qstn="QS72">
       <location fileid="F1"/>
       <labl>B1_1 과학기술 유튜브 시청 빈도</labl>
       <qstn ID="QS72" responseDomainType="category">
@@ -4703,13 +4703,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V220" name="Q72_other" intrvl="discrete" files="F1" qstn="QS72">
+    <var ID="V220" name="Q72_other" files="F1" intrvl="discrete" qstn="QS72">
       <location fileid="F1"/>
       <labl>B1_1 과학기술 유튜브 시청 빈도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V221" name="Q73" intrvl="discrete" files="F1" qstn="QS73">
+    <var ID="V221" name="Q73" files="F1" intrvl="discrete" qstn="QS73">
       <location fileid="F1"/>
       <labl>B2 과학기술 유튜브 지식 도움</labl>
       <qstn ID="QS73" responseDomainType="category">
@@ -4737,13 +4737,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V222" name="Q73_other" intrvl="discrete" files="F1" qstn="QS73">
+    <var ID="V222" name="Q73_other" files="F1" intrvl="discrete" qstn="QS73">
       <location fileid="F1"/>
       <labl>B2 과학기술 유튜브 지식 도움: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V223" name="Q74" intrvl="discrete" files="F1" qstn="QS74">
+    <var ID="V223" name="Q74" files="F1" intrvl="discrete" qstn="QS74">
       <location fileid="F1"/>
       <labl>B3 과학기술 유튜브 신뢰도</labl>
       <qstn ID="QS74" responseDomainType="category">
@@ -4771,13 +4771,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V224" name="Q74_other" intrvl="discrete" files="F1" qstn="QS74">
+    <var ID="V224" name="Q74_other" files="F1" intrvl="discrete" qstn="QS74">
       <location fileid="F1"/>
       <labl>B3 과학기술 유튜브 신뢰도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V225" name="Q75" intrvl="discrete" files="F1" qstn="QS75">
+    <var ID="V225" name="Q75" files="F1" intrvl="discrete" qstn="QS75">
       <location fileid="F1"/>
       <labl>B4 사주·명리학 과학성</labl>
       <qstn ID="QS75" responseDomainType="category">
@@ -4805,13 +4805,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V226" name="Q75_other" intrvl="discrete" files="F1" qstn="QS75">
+    <var ID="V226" name="Q75_other" files="F1" intrvl="discrete" qstn="QS75">
       <location fileid="F1"/>
       <labl>B4 사주·명리학 과학성: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V227" name="Q76" intrvl="discrete" files="F1" qstn="QS76">
+    <var ID="V227" name="Q76" files="F1" intrvl="discrete" qstn="QS76">
       <location fileid="F1"/>
       <labl>B5 운세·점 이용</labl>
       <qstn ID="QS76" responseDomainType="category">
@@ -4835,13 +4835,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V228" name="Q76_other" intrvl="discrete" files="F1" qstn="QS76">
+    <var ID="V228" name="Q76_other" files="F1" intrvl="discrete" qstn="QS76">
       <location fileid="F1"/>
       <labl>B5 운세·점 이용: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V229" name="Q77" intrvl="discrete" files="F1" qstn="QS77">
+    <var ID="V229" name="Q77" files="F1" intrvl="discrete" qstn="QS77">
       <location fileid="F1"/>
       <labl>B6 심리테스트 경험</labl>
       <qstn ID="QS77" responseDomainType="category">
@@ -4869,13 +4869,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V230" name="Q77_other" intrvl="discrete" files="F1" qstn="QS77">
+    <var ID="V230" name="Q77_other" files="F1" intrvl="discrete" qstn="QS77">
       <location fileid="F1"/>
       <labl>B6 심리테스트 경험: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V231" name="Q78" intrvl="discrete" files="F1" qstn="QS78">
+    <var ID="V231" name="Q78" files="F1" intrvl="discrete" qstn="QS78">
       <location fileid="F1"/>
       <labl>B7 MBTI 인지</labl>
       <qstn ID="QS78" responseDomainType="category">
@@ -4895,13 +4895,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V232" name="Q78_other" intrvl="discrete" files="F1" qstn="QS78">
+    <var ID="V232" name="Q78_other" files="F1" intrvl="discrete" qstn="QS78">
       <location fileid="F1"/>
       <labl>B7 MBTI 인지: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V233" name="Q79" intrvl="discrete" files="F1" qstn="QS79">
+    <var ID="V233" name="Q79" files="F1" intrvl="discrete" qstn="QS79">
       <location fileid="F1"/>
       <labl>B8 본인 MBTI 인지</labl>
       <qstn ID="QS79" responseDomainType="category">
@@ -4921,13 +4921,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V234" name="Q79_other" intrvl="discrete" files="F1" qstn="QS79">
+    <var ID="V234" name="Q79_other" files="F1" intrvl="discrete" qstn="QS79">
       <location fileid="F1"/>
       <labl>B8 본인 MBTI 인지: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V235" name="Q80" intrvl="discrete" files="F1" qstn="QS80">
+    <var ID="V235" name="Q80" files="F1" intrvl="discrete" qstn="QS80">
       <location fileid="F1"/>
       <labl>B9 MBTI 과학성</labl>
       <qstn ID="QS80" responseDomainType="category">
@@ -4955,13 +4955,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V236" name="Q80_other" intrvl="discrete" files="F1" qstn="QS80">
+    <var ID="V236" name="Q80_other" files="F1" intrvl="discrete" qstn="QS80">
       <location fileid="F1"/>
       <labl>B9 MBTI 과학성: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V237" name="Q81" intrvl="discrete" files="F1" qstn="QS81">
+    <var ID="V237" name="Q81" files="F1" intrvl="discrete" qstn="QS81">
       <location fileid="F1"/>
       <labl>C1 AI 인지 수준</labl>
       <qstn ID="QS81" responseDomainType="category">
@@ -4989,13 +4989,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V238" name="Q81_other" intrvl="discrete" files="F1" qstn="QS81">
+    <var ID="V238" name="Q81_other" files="F1" intrvl="discrete" qstn="QS81">
       <location fileid="F1"/>
       <labl>C1 AI 인지 수준: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V239" name="Q82" intrvl="discrete" files="F1" qstn="QS82">
+    <var ID="V239" name="Q82" files="F1" intrvl="discrete" qstn="QS82">
       <location fileid="F1"/>
       <labl>C2 AI 서비스 이용 경험</labl>
       <qstn ID="QS82" responseDomainType="category">
@@ -5015,13 +5015,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V240" name="Q82_other" intrvl="discrete" files="F1" qstn="QS82">
+    <var ID="V240" name="Q82_other" files="F1" intrvl="discrete" qstn="QS82">
       <location fileid="F1"/>
       <labl>C2 AI 서비스 이용 경험: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V241" name="Q83" intrvl="discrete" files="F1" qstn="QS83">
+    <var ID="V241" name="Q83" files="F1" intrvl="discrete" qstn="QS83">
       <location fileid="F1"/>
       <labl>C3 AI의 인간·사회 영향</labl>
       <qstn ID="QS83" responseDomainType="category">
@@ -5049,13 +5049,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V242" name="Q83_other" intrvl="discrete" files="F1" qstn="QS83">
+    <var ID="V242" name="Q83_other" files="F1" intrvl="discrete" qstn="QS83">
       <location fileid="F1"/>
       <labl>C3 AI의 인간·사회 영향: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V243" name="Q84" intrvl="discrete" files="F1" qstn="QS84">
+    <var ID="V243" name="Q84" files="F1" intrvl="discrete" qstn="QS84">
       <location fileid="F1"/>
       <labl>C4 AI의 삶 영향</labl>
       <qstn ID="QS84" responseDomainType="category">
@@ -5083,13 +5083,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V244" name="Q84_other" intrvl="discrete" files="F1" qstn="QS84">
+    <var ID="V244" name="Q84_other" files="F1" intrvl="discrete" qstn="QS84">
       <location fileid="F1"/>
       <labl>C4 AI의 삶 영향: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V245" name="Q85" intrvl="discrete" files="F1" qstn="QS85">
+    <var ID="V245" name="Q85" files="F1" intrvl="discrete" qstn="QS85">
       <location fileid="F1"/>
       <labl>C5 5년 후 일 대체 정도</labl>
       <qstn ID="QS85" responseDomainType="category">
@@ -5121,13 +5121,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V246" name="Q85_other" intrvl="discrete" files="F1" qstn="QS85">
+    <var ID="V246" name="Q85_other" files="F1" intrvl="discrete" qstn="QS85">
       <location fileid="F1"/>
       <labl>C5 5년 후 일 대체 정도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V247" name="Q86" intrvl="discrete" files="F1" qstn="QS86">
+    <var ID="V247" name="Q86" files="F1" intrvl="discrete" qstn="QS86">
       <location fileid="F1"/>
       <labl>C6 20년 후 일 대체 정도</labl>
       <qstn ID="QS86" responseDomainType="category">
@@ -5159,13 +5159,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V248" name="Q86_other" intrvl="discrete" files="F1" qstn="QS86">
+    <var ID="V248" name="Q86_other" files="F1" intrvl="discrete" qstn="QS86">
       <location fileid="F1"/>
       <labl>C6 20년 후 일 대체 정도: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V249" name="Q87_r1" intrvl="discrete" files="F1" qstn="QS87">
+    <var ID="V249" name="Q87_r1" files="F1" intrvl="discrete" qstn="QS87">
       <location fileid="F1"/>
       <labl>C7 AI 관련 의견: 인공지능과 자동화로 인해 사라지는 일자리보다 새롭게 생겨나는 일자리가 더 많을 것이다</labl>
       <qstn ID="QS87" responseDomainType="category">
@@ -5193,7 +5193,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V250" name="Q87_r2" intrvl="discrete" files="F1" qstn="QS87">
+    <var ID="V250" name="Q87_r2" files="F1" intrvl="discrete" qstn="QS87">
       <location fileid="F1"/>
       <labl>C7 AI 관련 의견: 인공지능기술로 개인정보침해나 프라이버시침해 우려가 커질 것이다</labl>
       <catgry>
@@ -5218,7 +5218,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V251" name="Q87_r3" intrvl="discrete" files="F1" qstn="QS87">
+    <var ID="V251" name="Q87_r3" files="F1" intrvl="discrete" qstn="QS87">
       <location fileid="F1"/>
       <labl>C7 AI 관련 의견: 인공지능기술로 가짜뉴스 등 허위조작정보 문제가 심각해질 것이다</labl>
       <catgry>
@@ -5243,7 +5243,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V252" name="Q87_r4" intrvl="discrete" files="F1" qstn="QS87">
+    <var ID="V252" name="Q87_r4" files="F1" intrvl="discrete" qstn="QS87">
       <location fileid="F1"/>
       <labl>C7 AI 관련 의견: 인공지능기술의 발전은 우리 사회의 불평등을 더욱 심화시킬 것이다</labl>
       <catgry>
@@ -5268,13 +5268,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V253" name="Q87_other" intrvl="discrete" files="F1" qstn="QS87">
+    <var ID="V253" name="Q87_other" files="F1" intrvl="discrete" qstn="QS87">
       <location fileid="F1"/>
       <labl>C7 AI 관련 의견: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V254" name="Q88_r1" intrvl="discrete" files="F1" qstn="QS88">
+    <var ID="V254" name="Q88_r1" files="F1" intrvl="discrete" qstn="QS88">
       <location fileid="F1"/>
       <labl>C8 AI 의료 진단 편안함: 이 기술이 인간 의사를 돕기 위해 사용되나 최종적인 판단은 의사가 내리는 경우</labl>
       <qstn ID="QS88" responseDomainType="category">
@@ -5302,7 +5302,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V255" name="Q88_r2" intrvl="discrete" files="F1" qstn="QS88">
+    <var ID="V255" name="Q88_r2" files="F1" intrvl="discrete" qstn="QS88">
       <location fileid="F1"/>
       <labl>C8 AI 의료 진단 편안함: 이 기술이 인간 의사를 완전히 대체하여 사용된다면</labl>
       <catgry>
@@ -5327,13 +5327,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V256" name="Q88_other" intrvl="discrete" files="F1" qstn="QS88">
+    <var ID="V256" name="Q88_other" files="F1" intrvl="discrete" qstn="QS88">
       <location fileid="F1"/>
       <labl>C8 AI 의료 진단 편안함: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V257" name="Q89_r1" intrvl="discrete" files="F1" qstn="QS89">
+    <var ID="V257" name="Q89_r1" files="F1" intrvl="discrete" qstn="QS89">
       <location fileid="F1"/>
       <labl>C9 로봇 수술 편안함: 이 기술이 인간 외과의사의 감독 하에 사용된다면</labl>
       <qstn ID="QS89" responseDomainType="category">
@@ -5361,7 +5361,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V258" name="Q89_r2" intrvl="discrete" files="F1" qstn="QS89">
+    <var ID="V258" name="Q89_r2" files="F1" intrvl="discrete" qstn="QS89">
       <location fileid="F1"/>
       <labl>C9 로봇 수술 편안함: 이 기술이 인간 외과의사를 완전히 대체하여 사용된다면</labl>
       <catgry>
@@ -5386,13 +5386,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V259" name="Q89_other" intrvl="discrete" files="F1" qstn="QS89">
+    <var ID="V259" name="Q89_other" files="F1" intrvl="discrete" qstn="QS89">
       <location fileid="F1"/>
       <labl>C9 로봇 수술 편안함: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>행마다 현재 보기에 없는 값을 행 라벨을 키로 하는 JSON 객체로 담습니다.</notes>
     </var>
-    <var ID="V260" name="Q90" intrvl="discrete" files="F1" qstn="QS90">
+    <var ID="V260" name="Q90" files="F1" intrvl="discrete" qstn="QS90">
       <location fileid="F1"/>
       <labl>QD1 한국과학창의재단 인지</labl>
       <qstn ID="QS90" responseDomainType="category">
@@ -5412,13 +5412,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V261" name="Q90_other" intrvl="discrete" files="F1" qstn="QS90">
+    <var ID="V261" name="Q90_other" files="F1" intrvl="discrete" qstn="QS90">
       <location fileid="F1"/>
       <labl>QD1 한국과학창의재단 인지: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V262" name="Q91_1" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V262" name="Q91_1" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: 신문(인쇄/온라인)</labl>
       <qstn ID="QS91" responseDomainType="multiple">
@@ -5434,7 +5434,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V263" name="Q91_2" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V263" name="Q91_2" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: 잡지(인쇄/온라인)</labl>
       <catgry>
@@ -5447,7 +5447,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V264" name="Q91_3" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V264" name="Q91_3" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: 인터넷(포털,커뮤니티)</labl>
       <catgry>
@@ -5460,7 +5460,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V265" name="Q91_4" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V265" name="Q91_4" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: 유튜브</labl>
       <catgry>
@@ -5473,7 +5473,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V266" name="Q91_5" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V266" name="Q91_5" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: SNS(페이스북, 트위터 등)</labl>
       <catgry>
@@ -5486,7 +5486,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V267" name="Q91_6" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V267" name="Q91_6" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: 서적/기타 인쇄물</labl>
       <catgry>
@@ -5499,7 +5499,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V268" name="Q91_7" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V268" name="Q91_7" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: TV</labl>
       <catgry>
@@ -5512,7 +5512,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V269" name="Q91_8" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V269" name="Q91_8" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: 라디오/팟캐스트</labl>
       <catgry>
@@ -5525,7 +5525,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V270" name="Q91_9" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V270" name="Q91_9" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: 주변 지인(가족/친구/동료 등)</labl>
       <catgry>
@@ -5538,7 +5538,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V271" name="Q91_10" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V271" name="Q91_10" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: 기타</labl>
       <catgry>
@@ -5551,14 +5551,14 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V272" name="Q91_other" intrvl="discrete" files="F1" qstn="QS91">
+    <var ID="V272" name="Q91_other" files="F1" intrvl="discrete" qstn="QS91">
       <location fileid="F1"/>
       <labl>QD1_1 재단 인지 경로: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값을 JSON 배열로 담습니다. 예: ["값"]</notes>
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
     </var>
-    <var ID="V273" name="Q92" intrvl="discrete" files="F1" qstn="QS92">
+    <var ID="V273" name="Q92" files="F1" intrvl="discrete" qstn="QS92">
       <location fileid="F1"/>
       <labl>QD1_2 재단 재원(복권기금 등) 인지</labl>
       <qstn ID="QS92" responseDomainType="category">
@@ -5578,13 +5578,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V274" name="Q92_other" intrvl="discrete" files="F1" qstn="QS92">
+    <var ID="V274" name="Q92_other" files="F1" intrvl="discrete" qstn="QS92">
       <location fileid="F1"/>
       <labl>QD1_2 재단 재원(복권기금 등) 인지: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V275" name="Q93" intrvl="discrete" files="F1" qstn="QS93">
+    <var ID="V275" name="Q93" files="F1" intrvl="discrete" qstn="QS93">
       <location fileid="F1"/>
       <labl>DQ1 고등학교 계열(청소년)</labl>
       <qstn ID="QS93" responseDomainType="category">
@@ -5621,13 +5621,13 @@
       <varFormat type="numeric"/>
       <notes>직접 입력을 받는 문항이라, 이전 게시본의 선택지 값도 '기타'로 분류됩니다.</notes>
     </var>
-    <var ID="V276" name="Q93_other" intrvl="discrete" files="F1" qstn="QS93">
+    <var ID="V276" name="Q93_other" files="F1" intrvl="discrete" qstn="QS93">
       <location fileid="F1"/>
       <labl>DQ1 고등학교 계열(청소년): 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V277" name="Q94" intrvl="discrete" files="F1" qstn="QS94">
+    <var ID="V277" name="Q94" files="F1" intrvl="discrete" qstn="QS94">
       <location fileid="F1"/>
       <labl>DQ2 월평균 가구소득</labl>
       <qstn ID="QS94" responseDomainType="category">
@@ -5683,13 +5683,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V278" name="Q94_other" intrvl="discrete" files="F1" qstn="QS94">
+    <var ID="V278" name="Q94_other" files="F1" intrvl="discrete" qstn="QS94">
       <location fileid="F1"/>
       <labl>DQ2 월평균 가구소득: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V279" name="Q95" intrvl="discrete" files="F1" qstn="QS95">
+    <var ID="V279" name="Q95" files="F1" intrvl="discrete" qstn="QS95">
       <location fileid="F1"/>
       <labl>DQ3 직업</labl>
       <qstn ID="QS95" responseDomainType="category">
@@ -5757,13 +5757,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V280" name="Q95_other" intrvl="discrete" files="F1" qstn="QS95">
+    <var ID="V280" name="Q95_other" files="F1" intrvl="discrete" qstn="QS95">
       <location fileid="F1"/>
       <labl>DQ3 직업: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V281" name="Q96" intrvl="discrete" files="F1" qstn="QS96">
+    <var ID="V281" name="Q96" files="F1" intrvl="discrete" qstn="QS96">
       <location fileid="F1"/>
       <labl>DQ4 자녀 유무</labl>
       <qstn ID="QS96" responseDomainType="category">
@@ -5783,13 +5783,13 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V282" name="Q96_other" intrvl="discrete" files="F1" qstn="QS96">
+    <var ID="V282" name="Q96_other" files="F1" intrvl="discrete" qstn="QS96">
       <location fileid="F1"/>
       <labl>DQ4 자녀 유무: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>
       <notes>현재 보기에 없는 값(직접 입력 포함)의 원문입니다. 값이 여러 개면 줄바꿈으로 구분합니다.</notes>
     </var>
-    <var ID="V283" name="Q97" intrvl="contin" files="F1" qstn="QS97">
+    <var ID="V283" name="Q97" files="F1" intrvl="contin" qstn="QS97">
       <location fileid="F1"/>
       <labl>DQ4a 자녀 수</labl>
       <qstn ID="QS97" responseDomainType="numeric">
@@ -5798,7 +5798,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V284" name="Q98" intrvl="contin" files="F1" qstn="QS98">
+    <var ID="V284" name="Q98" files="F1" intrvl="contin" qstn="QS98">
       <location fileid="F1"/>
       <labl>DQ4_1a 첫 번째 자녀 연령</labl>
       <qstn ID="QS98" responseDomainType="numeric">
@@ -5807,7 +5807,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V285" name="Q99" intrvl="contin" files="F1" qstn="QS99">
+    <var ID="V285" name="Q99" files="F1" intrvl="contin" qstn="QS99">
       <location fileid="F1"/>
       <labl>DQ4_1b 두 번째 자녀 연령</labl>
       <qstn ID="QS99" responseDomainType="numeric">
@@ -5816,7 +5816,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V286" name="Q100" intrvl="contin" files="F1" qstn="QS100">
+    <var ID="V286" name="Q100" files="F1" intrvl="contin" qstn="QS100">
       <location fileid="F1"/>
       <labl>DQ4_1c 세 번째 자녀 연령</labl>
       <qstn ID="QS100" responseDomainType="numeric">
@@ -5825,7 +5825,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V287" name="Q101" intrvl="contin" files="F1" qstn="QS101">
+    <var ID="V287" name="Q101" files="F1" intrvl="contin" qstn="QS101">
       <location fileid="F1"/>
       <labl>DQ4_1d 네 번째 자녀 연령</labl>
       <qstn ID="QS101" responseDomainType="numeric">
@@ -5834,7 +5834,7 @@
       </qstn>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V288" name="Q102" intrvl="discrete" files="F1" qstn="QS102">
+    <var ID="V288" name="Q102" files="F1" intrvl="discrete" qstn="QS102">
       <location fileid="F1"/>
       <labl>DQ5 최종 학력</labl>
       <qstn ID="QS102" responseDomainType="category">
@@ -5882,7 +5882,7 @@
       </catgry>
       <varFormat type="numeric"/>
     </var>
-    <var ID="V289" name="Q102_other" intrvl="discrete" files="F1" qstn="QS102">
+    <var ID="V289" name="Q102_other" files="F1" intrvl="discrete" qstn="QS102">
       <location fileid="F1"/>
       <labl>DQ5 최종 학력: 기타·범주 밖 응답 원문</labl>
       <varFormat type="character"/>

@@ -305,3 +305,96 @@ func TestMixedTextAtMergePointsIsKept(t *testing.T) {
 		t.Run(dataDscr, func(t *testing.T) { roundTrip(t, codebook(dataDscr)) })
 	}
 }
+
+// var/@files, var/@qstn and the location elements that only name a file have
+// columns. A value a column cannot hold stays in the attributes or xml cell,
+// and so do all of a var's locations when one of them cannot leave it, so
+// their order is kept.
+func TestFilesAndLocations(t *testing.T) {
+	doc := func(vars string) []byte {
+		return []byte(`<codeBook xmlns="ddi:codebook:2_5" version="2.5"><stdyDscr><citation><titlStmt><titl>t</titl></titlStmt>` +
+			`</citation></stdyDscr><fileDscr ID="F1"/><fileDscr ID="F2"/><dataDscr>` + vars + `</dataDscr></codeBook>`)
+	}
+	for _, tc := range []struct {
+		name, vars string
+		want       map[string]string
+		valid      bool // the input passes the XSD
+	}{
+		{
+			name: "Walla layout",
+			vars: `<var ID="V1" name="q1" files="F1 F2" intrvl="discrete" qstn="QS1"><location fileid="F1"/><location fileid="F2"/>` +
+				`<labl>l</labl><qstn ID="QS1"><qstnLit>q</qstnLit></qstn></var>`,
+			want:  map[string]string{"files": "F1 F2", "questionRef": "QS1", "locations": "F1 F2", "attributes": "", "xml": ""},
+			valid: true,
+		},
+		{
+			name:  "a location with StartPos after a fileid-only one",
+			vars:  `<var ID="V1" name="n"><location fileid="F1"/><location fileid="F2" StartPos="1"/><labl>l</labl></var>`,
+			want:  map[string]string{"locations": "", "label": "l", "xml": "<location fileid=\"F1\"/>\n<location fileid=\"F2\" StartPos=\"1\"/>"},
+			valid: true,
+		},
+		{
+			name:  "a location with StartPos before a fileid-only one",
+			vars:  `<var ID="V1" name="n"><location fileid="F2" StartPos="1"/><location fileid="F1"/><labl>l</labl></var>`,
+			want:  map[string]string{"locations": "", "label": "l", "xml": "<location fileid=\"F2\" StartPos=\"1\"/>\n<location fileid=\"F1\"/>"},
+			valid: true,
+		},
+		{
+			name:  "a location with another attribute",
+			vars:  `<var ID="V1" name="n"><location fileid="F1" width="2"/></var>`,
+			want:  map[string]string{"locations": "", "xml": `<location fileid="F1" width="2"/>`},
+			valid: true,
+		},
+		{
+			name: "a fileid holding a space",
+			vars: `<var ID="V1"><location fileid="F1 F2"/></var>`,
+			want: map[string]string{"locations": "", "xml": `<location fileid="F1 F2"/>`},
+		},
+		{
+			name: "an empty fileid",
+			vars: `<var ID="V1"><location fileid=""/></var>`,
+			want: map[string]string{"locations": "", "xml": `<location fileid=""/>`},
+		},
+		{
+			name: "a location with text",
+			vars: `<var ID="V1"><location fileid="F1">x</location></var>`,
+			want: map[string]string{"locations": "", "xml": `<location fileid="F1">x</location>`},
+		},
+		{
+			name: "empty files and qstn",
+			vars: `<var ID="V1" files="" qstn=""/>`,
+			want: map[string]string{"files": "", "questionRef": "", "attributes": `files="" qstn=""`},
+		},
+		{
+			name: "files with a leading space",
+			vars: `<var ID="V1" files=" F1"/>`,
+			want: map[string]string{"files": "", "attributes": `files=" F1"`},
+		},
+		{
+			name:  "no files, qstn or location",
+			vars:  `<var ID="V1" name="n"><labl>l</labl></var>`,
+			want:  map[string]string{"files": "", "questionRef": "", "locations": "", "attributes": "", "xml": ""},
+			valid: true,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			in := doc(tc.vars)
+			vars := records(t, open(t, in), varSheet)
+			if len(vars) != 1 {
+				t.Fatalf("%d Variables rows", len(vars))
+			}
+			checkFields(t, "var", vars[0], tc.want)
+			xo, _, _ := roundTrip(t, in)
+			if tc.valid {
+				xsdtest.Validate(t, xo)
+			}
+		})
+	}
+	// The reader puts var's attributes back in Walla's order, so a Walla file
+	// in this tool's layout comes back byte for byte.
+	in := ddi.WriteXML(parse(t, doc(`<var ID="V1" name="q1" files="F1 F2" intrvl="discrete" qstn="QS1">`+
+		`<location fileid="F1"/><location fileid="F2"/><labl>l</labl><qstn ID="QS1"><qstnLit>q</qstnLit></qstn></var>`)))
+	if xo, _, _ := convert(t, in); !bytes.Equal(xo, in) {
+		t.Errorf("output differs from the input:\n%s\n%s", in, xo)
+	}
+}

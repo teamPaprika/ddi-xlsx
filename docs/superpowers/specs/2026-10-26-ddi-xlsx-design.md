@@ -156,8 +156,8 @@ type Node struct {
 
 | 열 | 내용 |
 |---|---|
-| `attributes` | 다른 열에 들어가지 않는 그 요소의 속성. XML 속성 문법으로 쓴다(`files="F1" dcml="0"`) |
-| `xml` | 다른 열에 들어가지 않는 자식 요소들의 XML 원문 조각(`<location .../><sumStat type="vald">580</sumStat>`) |
+| `attributes` | 다른 열에 들어가지 않는 그 요소의 속성. XML 속성 문법으로 쓴다(`dcml="0" nature="nominal"`) |
+| `xml` | 다른 열에 들어가지 않는 자식 요소들의 XML 원문 조각(`<location fileid="F1" StartPos="1"/><sumStat type="vald">580</sumStat>`) |
 
 - 내용이 행에 붙어 다니므로, 행을 옮기거나 ID를 고쳐도 다른 시트와의 연결이 끊기지 않는다.
 - 셀 내용이 잘 구성되지 않았으면 셀 주소와 함께 오류를 낸다.
@@ -171,12 +171,15 @@ type Node struct {
 | label | `labl` | `labl`이 정확히 하나이고, 속성이 없고, 텍스트 요소일 때 |
 | question | `qstn/qstnLit` | `qstn`이 하나이고, 그 자식이 속성 없는 텍스트 요소 `qstnLit` 하나뿐일 때 |
 | questionID | `qstn/@ID` | 위 조건을 만족하는 `qstn`의 속성 |
+| questionRef | `var/@qstn` | 값이 비어 있지 않고, 앞뒤 공백과 둘째 줄부터의 줄 앞 공백이 없을 때. 아니면 `attributes`로 간다 |
 | responseDomainType | `qstn/@responseDomainType` | 위와 같음. `qstn`에 이 두 속성 외의 속성이 있으면 `qstn` 전체를 `xml`로 보낸다 |
 | intrvl | `var/@intrvl` | |
 | format | `varFormat/@type` | `varFormat`이 하나이고, 텍스트가 없고, 속성이 type/schema/category뿐일 때 |
 | formatSchema | `varFormat/@schema` | |
 | formatCategory | `varFormat/@category` | |
 | notes | `notes` | 속성이 없는 텍스트 요소 `notes`들. 한 줄에 하나씩 쓴다. 그 밖의 `notes`는 `xml`로 간다 |
+| files | `var/@files` | questionRef와 같은 조건 |
+| locations | `location/@fileid` | `var`의 모든 `location`이 속성으로 `fileid` 하나만 가지고, 그 값이 비어 있지 않고 공백을 담지 않으며, 내용이 없을 때. 값을 문서 순서대로 공백 하나로 구분해 쓴다(`F1 F2`). 하나라도 맞지 않으면 그 `var`의 `location`은 모두 `xml`로 간다. 열 쪽을 앞에 두는 되돌리기에서 `location` 사이의 순서를 잃지 않기 위해서다 |
 | attributes, xml | 공통 열 | |
 
 - `catgry`는 `Categories` 시트로 간다.
@@ -232,6 +235,9 @@ type Node struct {
 - §5.4의 위치 값으로 안정 정렬한다.
 - 스키마에 없는 요소는 바로 앞 형제의 위치 값을 물려받는다.
 - 스키마 순서를 지킨 입력이라면 이 정렬로 입력 순서가 그대로 재현된다.
+- `locations` 셀은 공백으로 나눈 값마다 `<location fileid="…"/>` 하나가 되어, 값의 순서대로 열에서 온 자식에 들어간다. 그래서 정렬 뒤 `var`의 맨 앞(`location`의 스키마 위치)에 온다. 빈 셀은 열에서 오는 `location`이 없다는 뜻이다.
+
+**속성 순서**: 열에 든 속성을 정해진 순서로 먼저 놓고, 그 뒤에 `attributes` 셀의 속성을 셀에 쓰인 순서대로 놓는다. `var`는 `ID, name, files, intrvl, qstn` 순서다. Walla가 쓰는 순서이므로, 이 도구의 레이아웃을 따른 Walla 파일은 §7의 5번처럼 바이트 단위로 같게 돌아온다.
 
 **검사**: 아래는 오류로 처리한다.
 - ID가 고유하지 않다.

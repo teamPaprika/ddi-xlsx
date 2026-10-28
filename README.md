@@ -314,8 +314,8 @@ DDI를 워크북으로 바꿀 때(`to-xlsx`)는 ID를 붙이지 않습니다. �
 
 | 열 | 내용 |
 |---|---|
-| `attributes` | 다른 열에 들어가지 않는 그 요소의 속성입니다. XML 속성 문법으로 씁니다. 예: `files="F1" dcml="0"` |
-| `xml` | 다른 열에 들어가지 않는 자식 요소들의 XML 원문입니다. 예: `<location fileid="F1"/><sumStat type="vald">580</sumStat>` |
+| `attributes` | 다른 열에 들어가지 않는 그 요소의 속성입니다. XML 속성 문법으로 씁니다. 예: `dcml="0" nature="nominal"` |
+| `xml` | 다른 열에 들어가지 않는 자식 요소들의 XML 원문입니다. 예: `<location fileid="F1" StartPos="1"/><sumStat type="vald">580</sumStat>` |
 
 - 내용이 행에 붙어 다니므로, 행을 옮겨도 다른 시트와의 연결이 끊기지 않습니다.
 - 변수의 `ID`를 고칠 때는 그 변수를 가리키는 `Categories` 시트의 `varID`와 `Groups` 시트의 `vars`도 함께 고쳐야 합니다. `varID`를 고치지 않으면 오류가 나고, `vars`를 고치지 않으면 경고가 납니다.
@@ -336,15 +336,21 @@ DDI를 워크북으로 바꿀 때(`to-xlsx`)는 ID를 붙이지 않습니다. �
 | `label` | `labl` | `labl`이 하나이고, 속성이 없고, 텍스트만 있을 때 |
 | `question` | `qstn/qstnLit` | `qstn`이 하나이고, 그 자식이 속성 없는 텍스트 `qstnLit` 하나뿐이고, `qstn`의 속성이 `ID`와 `responseDomainType`뿐일 때 |
 | `questionID` | `qstn/@ID` | `question`과 같은 조건 |
+| `questionRef` | `var/@qstn` | 값이 비어 있지 않고, 앞뒤 공백과 둘째 줄부터의 줄 앞 공백이 없을 때입니다. 아니면 `attributes` 셀로 갑니다. |
 | `responseDomainType` | `qstn/@responseDomainType` | `question`과 같은 조건 |
 | `intrvl` | `var/@intrvl` | |
 | `format` | `varFormat/@type` | `varFormat`이 하나이고, 내용이 없고, 속성이 있으며 그 속성이 `type`·`schema`·`category`뿐일 때 |
 | `formatSchema` | `varFormat/@schema` | `format`과 같은 조건 |
 | `formatCategory` | `varFormat/@category` | `format`과 같은 조건 |
 | `notes` | `notes` | 속성이 없는 한 줄 텍스트 `notes`입니다. 한 줄에 하나씩 씁니다. 조건에 맞지 않는 `notes`가 나오면, 그것과 그 뒤의 `notes`는 `xml` 셀로 갑니다. |
+| `files` | `var/@files` | `questionRef`와 같은 조건 |
+| `locations` | `location/@fileid` | 그 변수의 모든 `location`이 `fileid` 속성 하나만 가지고, 그 값이 비어 있지 않고 공백이 없으며, 내용이 없을 때입니다. 값을 문서 순서대로 공백으로 구분해 씁니다. 예: `F1 F2`. 하나라도 맞지 않으면 그 변수의 `location`은 모두 `xml` 셀로 갑니다. `location` 사이의 순서를 지키기 위해서입니다. |
 | `attributes`, `xml` | 공통 열 | |
 
 조건에 맞지 않는 요소는 `xml` 셀로 갑니다. `catgry`는 `Categories` 시트로 갑니다.
+
+- `locations` 셀의 값은 공백이나 줄바꿈으로 나눈 값마다 `<location fileid="…"/>` 하나가 되어, 그 변수의 자식 중 맨 앞에 씁니다.
+- 출력의 `var` 속성은 `ID`, `name`, `files`, `intrvl`, `qstn` 순서로 쓰고, 그 뒤에 `attributes` 셀의 속성을 씁니다. Walla가 쓰는 순서와 같습니다.
 
 ### `Categories`: `catgry`마다 한 행
 

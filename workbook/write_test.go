@@ -82,7 +82,8 @@ func checkFields(t *testing.T, what string, got, want map[string]string) {
 func TestSheetsAndHeaders(t *testing.T) {
 	f := kofac(t, "kofac_2025_edu")
 	want := map[string][]string{
-		"Variables":  {"ID", "name", "label", "question", "questionID", "responseDomainType", "intrvl", "format", "formatSchema", "formatCategory", "notes", "attributes", "xml"},
+		"Variables": {"ID", "name", "label", "question", "questionID", "questionRef", "responseDomainType", "intrvl", "format",
+			"formatSchema", "formatCategory", "notes", "files", "locations", "attributes", "xml"},
 		"Categories": {"varID", "varName", "code", "label", "missing", "freq", "attributes", "xml"},
 		"Groups":     {"ID", "type", "name", "label", "vars", "attributes", "xml"},
 		"Document":   {"level", "element", "attributes", "text", "kind"},
@@ -116,8 +117,11 @@ func TestKofacVariableRow(t *testing.T) {
 		"format":             "numeric",
 		"formatSchema":       "",
 		"notes":              "",
-		"attributes":         `files="F1" qstn="QS8"`,
-		"xml":                `<location fileid="F1"/>`,
+		"files":              "F1",
+		"questionRef":        "QS8",
+		"locations":          "F1",
+		"attributes":         "",
+		"xml":                "",
 	})
 }
 
@@ -312,7 +316,7 @@ func TestSplitRules(t *testing.T) {
 		{
 			name: "attribute values a column cannot hold",
 			vars: "<var ID=\"V1\" name=\"\" intrvl=\" d\" files=\"F1\"/>",
-			want: map[string]string{"ID": "V1", "name": "", "intrvl": "", "attributes": `name="" intrvl=" d" files="F1"`},
+			want: map[string]string{"ID": "V1", "name": "", "intrvl": "", "files": "F1", "attributes": `name="" intrvl=" d"`},
 		},
 		{
 			name: "catStat",
