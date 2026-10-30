@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  KOSAC survey-meta 3.3 extension, draft.
+
+  The official DDI 2.5 XSD accepts kosac nodes in no position, so a codebook
+  is validated as two projections: DDI without kosac, and this schema on
+  <projection>, where each <place> holds the kosac content of one DDI element.
+
+  Besides <projection>, only the kosac elements that sit directly under a DDI
+  element and the kosac attributes of var and varGrp are global, since <place>
+  takes exactly those.
+  Everything below them is local: package/file and the file under fileDscr
+  share a name with different shapes, and two globals of one name do not
+  compile.
+
+  References are NCName/NMTOKENS, not IDREF: the projection holds none of the
+  IDs they point at, so an XSD 1.0 validator would reject every one. Outside
+  the schema, the REF check resolves the var and file references against the
+  document. package/file@fileRef and cleansing@rawFileRef name package files,
+  not IDs in the document, so they are passed through as given.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:kosac="urn:kosac:survey-meta:3.3"
+           targetNamespace="urn:kosac:survey-meta:3.3"
+           elementFormDefault="qualified"
+           version="3.3">
+
+  <!-- Value lists -->
+
+  <xs:simpleType name="ynType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Y"/>
+      <xs:enumeration value="N"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="roleType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ID"/>
+      <xs:enumeration value="WEIGHT"/>
+      <xs:enumeration value="ITEM"/>
+      <xs:enumeration value="DERIVED"/>
+      <xs:enumeration value="FILTER"/>
+      <xs:enumeration value="LINK"/>
+      <xs:enumeration value="SYSTEM"/>
+      <xs:enumeration value="TEXT"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="measLevelType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="nominal"/>
+      <xs:enumeration value="ordinal"/>
+      <xs:enumeration value="scale"/>
+      <xs:enumeration value="text"/>
+      <xs:enumeration value="date"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="dimMeasureType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DIM"/>
+      <xs:enumeration value="MEASURE"/>
+      <xs:enumeration value="BOTH"/>
+      <xs:enumeration value="ATTR"/>
+      <xs:enumeration value="WEIGHT"/>
+      <xs:enumeration value="KEY"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="codeTypeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="VALID"/>
+      <xs:enumeration value="MISSING"/>
+      <xs:enumeration value="DK"/>
+      <xs:enumeration value="NA"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="mappingType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CODE"/>
+      <xs:enumeration value="LABEL"/>
+      <xs:enumeration value="PASSTHRU"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="actionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="REPLACE"/>
+      <xs:enumeration value="MISSING_9"/>
+      <xs:enumeration value="MISSING_8"/>
+      <xs:enumeration value="MISSING_7"/>
+      <xs:enumeration value="MASK"/>
+      <xs:enumeration value="SWAP"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="waveTypeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="main"/>
+      <xs:enumeration value="pre"/>
+      <xs:enumeration value="post"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="linkLevelType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="RESPONDENT"/>
+      <xs:enumeration value="SCHOOL"/>
+      <xs:enumeration value="HOUSEHOLD"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="sensLevelType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="1"/>
+      <xs:enumeration value="2"/>
+      <xs:enumeration value="3"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="fileRoleType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="codebook"/>
+      <xs:enumeration value="data"/>
+      <xs:enumeration value="data_raw"/>
+      <xs:enumeration value="cleansing"/>
+      <xs:enumeration value="questionnaire"/>
+      <xs:enumeration value="report"/>
+      <xs:enumeration value="extra"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="sourceKindType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="upload"/>
+      <xs:enumeration value="native"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="scaleDirType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="POS"/>
+      <xs:enumeration value="NEG"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="textFormatType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TEXT"/>
+      <xs:enumeration value="JSON_OBJ"/>
+      <xs:enumeration value="JSON_ARR"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="mrTypeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="보기별 열"/>
+      <xs:enumeration value="순위별 열"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Value forms -->
+
+  <xs:simpleType name="sha256Type">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-fA-F]{64}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- {a}, {a}-{b}, or {a}- when the range runs to the end -->
+  <xs:simpleType name="pagesType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]+(-[0-9]*)?"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="yearType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Validation wrapper -->
+
+  <xs:element name="projection">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="place" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:any namespace="##targetNamespace" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="path" type="xs:string" use="required"/>
+            <xs:anyAttribute namespace="##targetNamespace" processContents="strict"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Attributes of var (mrGroup also of varGrp) -->
+
+  <xs:attribute name="seq" type="xs:positiveInteger"/>
+  <xs:attribute name="role" type="kosac:roleType"/>
+  <xs:attribute name="measLevel" type="kosac:measLevelType"/>
+  <xs:attribute name="pii" type="kosac:ynType"/>
+  <xs:attribute name="sensitive" type="kosac:ynType"/>
+  <xs:attribute name="reverse" type="kosac:ynType"/>
+  <xs:attribute name="mrType" type="kosac:mrTypeType"/>
+  <xs:attribute name="mrGroup" type="xs:string"/>
+  <xs:attribute name="rowLabel" type="xs:string"/>
+  <xs:attribute name="rankNo" type="xs:positiveInteger"/>
+  <xs:attribute name="cleansed" type="kosac:ynType"/>
+  <xs:attribute name="textFormat" type="kosac:textFormatType"/>
+  <xs:attribute name="parentVar" type="xs:NCName"/>
+
+  <!-- docDscr -->
+
+  <xs:element name="package">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="sourceSurvey" minOccurs="0">
+          <xs:complexType>
+            <xs:attribute name="wallaId" type="xs:string"/>
+            <xs:attribute name="kind" type="kosac:sourceKindType"/>
+            <xs:attribute name="publishedVersion" type="xs:string"/>
+            <xs:attribute name="templateVersion" type="xs:string"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="file" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="role" type="kosac:fileRoleType"/>
+            <xs:attribute name="fileRef" type="xs:NCName"/>
+            <xs:attribute name="name" type="xs:string"/>
+            <xs:attribute name="bytes" type="xs:nonNegativeInteger"/>
+            <xs:attribute name="sha256" type="kosac:sha256Type"/>
+            <xs:attribute name="pages" type="kosac:pagesType"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="validation" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="validationNote" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="passedAt" type="xs:string"/>
+            <xs:attribute name="ruleset" type="xs:string"/>
+            <xs:attribute name="warningCount" type="xs:nonNegativeInteger"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="exportId" type="xs:string"/>
+      <xs:attribute name="codebookVersion" type="xs:positiveInteger"/>
+      <xs:attribute name="previousVersion" type="xs:string"/>
+      <xs:attribute name="approvedBy" type="xs:string"/>
+      <xs:attribute name="approvedAt" type="xs:string"/>
+      <xs:attribute name="cleansed" type="kosac:ynType"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- stdyDscr -->
+
+  <xs:element name="study">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="round" minOccurs="0">
+          <xs:complexType>
+            <xs:attribute name="year" type="kosac:yearType"/>
+            <xs:attribute name="waveType" type="kosac:waveTypeType"/>
+            <xs:attribute name="waveNo" type="xs:positiveInteger"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="bizName" type="xs:string" minOccurs="0"/>
+        <xs:element name="popSource" type="xs:string" minOccurs="0"/>
+        <!-- The text is the reason; @file or @var says which 02 or 03 row the KEY belongs to. -->
+        <xs:element name="unverified" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="key" type="xs:string" use="required"/>
+                <xs:attribute name="file" type="xs:NCName"/>
+                <xs:attribute name="var" type="xs:NCName"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="ruleVersion" type="xs:string"/>
+      <xs:attribute name="surveyType" type="xs:string"/>
+      <xs:attribute name="dataNo" type="xs:string"/>
+      <xs:attribute name="categoryCode" type="xs:string"/>
+      <xs:attribute name="validN" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="schoolCodeYear" type="kosac:yearType"/>
+      <xs:attribute name="bizYear" type="kosac:yearType"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- dataColl -->
+
+  <xs:element name="sampling">
+    <xs:complexType>
+      <xs:attribute name="type" type="xs:string"/>
+      <xs:attribute name="frame" type="xs:string"/>
+      <xs:attribute name="strataVars" type="xs:NMTOKENS"/>
+      <xs:attribute name="clusterVar" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="splitBallot">
+    <xs:complexType>
+      <xs:attribute name="yn" type="kosac:ynType"/>
+      <xs:attribute name="var" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="weight">
+    <xs:complexType>
+      <xs:attribute name="yn" type="kosac:ynType"/>
+      <xs:attribute name="var" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="excludeN" type="xs:nonNegativeInteger"/>
+  <xs:element name="excludeRule" type="xs:string"/>
+
+  <!-- anlyInfo -->
+
+  <xs:element name="contactN" type="xs:nonNegativeInteger"/>
+  <xs:element name="rrFormula" type="xs:string"/>
+
+  <!-- fileDscr -->
+
+  <xs:element name="file">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="idVar" minOccurs="0">
+          <xs:complexType>
+            <xs:attribute name="ref" type="xs:NCName" use="required"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="systemIdVar" minOccurs="0">
+          <xs:complexType>
+            <xs:attribute name="ref" type="xs:NCName" use="required"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="link" minOccurs="0">
+          <xs:complexType>
+            <xs:attribute name="var" type="xs:NCName"/>
+            <xs:attribute name="fileRef" type="xs:NCName"/>
+            <xs:attribute name="level" type="kosac:linkLevelType"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="fileNo" type="xs:positiveInteger"/>
+      <xs:attribute name="unit" type="xs:string"/>
+      <xs:attribute name="sensLevel" type="kosac:sensLevelType"/>
+      <xs:attribute name="sha256" type="kosac:sha256Type"/>
+      <xs:attribute name="bytes" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="rawSha256" type="kosac:sha256Type"/>
+      <xs:attribute name="rawBytes" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="rawName" type="xs:string"/>
+      <xs:attribute name="sourceName" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="cleansing">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="rule" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="map" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="from" type="xs:string"/>
+                        <xs:attribute name="to" type="xs:string"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string"/>
+            <xs:attribute name="var" type="xs:NCName"/>
+            <xs:attribute name="action" type="kosac:actionType"/>
+            <xs:attribute name="condition" type="xs:string"/>
+            <xs:attribute name="rows" type="xs:nonNegativeInteger"/>
+            <xs:attribute name="source" type="xs:string"/>
+            <!-- The request makes the reason mandatory for every rule. -->
+            <xs:attribute name="reason" type="xs:string" use="required"/>
+            <xs:attribute name="evidence" type="xs:string"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="appliedBy" type="xs:string"/>
+      <xs:attribute name="appliedAt" type="xs:string"/>
+      <xs:attribute name="rawFileRef" type="xs:NCName"/>
+      <xs:attribute name="cellsChanged" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="rowsAffected" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="logFile" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- varGrp -->
+
+  <xs:element name="noneOption">
+    <xs:complexType>
+      <xs:attribute name="yn" type="kosac:ynType"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- var -->
+
+  <xs:element name="fk">
+    <xs:complexType>
+      <xs:attribute name="codeSet" type="xs:string"/>
+      <xs:attribute name="dimTable" type="xs:string"/>
+      <xs:attribute name="keyColumn" type="xs:string"/>
+      <xs:attribute name="mapping" type="kosac:mappingType"/>
+      <xs:attribute name="codeSystem" type="xs:string"/>
+      <xs:attribute name="refYear" type="kosac:yearType"/>
+      <xs:attribute name="linkKey" type="kosac:ynType"/>
+      <xs:attribute name="codeSetVersion" type="xs:string"/>
+      <xs:attribute name="validatedAt" type="xs:string"/>
+      <xs:attribute name="matchedRows" type="xs:nonNegativeInteger"/>
+      <xs:attribute name="unmatchedRows" type="xs:nonNegativeInteger"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="scale">
+    <xs:complexType>
+      <xs:attribute name="min" type="xs:decimal"/>
+      <xs:attribute name="max" type="xs:decimal"/>
+      <xs:attribute name="dir" type="kosac:scaleDirType"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Codes joined by ";", as "-8;-7;-9" -->
+  <xs:element name="missingCodes" type="xs:string"/>
+  <xs:element name="codeSetId" type="xs:string"/>
+
+  <xs:element name="analysis">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="synonym" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="physicalName" type="xs:string"/>
+      <xs:attribute name="dimMeasure" type="kosac:dimMeasureType"/>
+      <xs:attribute name="aggRules" type="xs:string"/>
+      <xs:attribute name="includeYn" type="kosac:ynType"/>
+      <xs:attribute name="logicalName" type="xs:string"/>
+      <xs:attribute name="fkRef" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- catgry -->
+
+  <xs:element name="codeType" type="kosac:codeTypeType"/>
+
+  <xs:element name="stdCode">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="set" type="xs:string"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- otherMat -->
+
+  <xs:element name="pages" type="kosac:pagesType"/>
+  <xs:element name="sha256" type="kosac:sha256Type"/>
+  <xs:element name="bytes" type="xs:nonNegativeInteger"/>
+
+</xs:schema>

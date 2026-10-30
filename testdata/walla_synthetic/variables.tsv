@@ -1,0 +1,53 @@
+name	label	source
+walla_response_id	응답 ID	{"kind":"responseId"}
+walla_row_no	응답 순번	{"kind":"rowNo"}
+walla_customer_key	고객 키	{"kind":"customerKey"}
+walla_submitted_at	제출 시각	{"kind":"submittedAt"}
+walla_started_at	응답 시작 시각	{"kind":"startedAt"}
+walla_duration_sec	응답 소요 시간(초)	{"kind":"durationSec"}
+f_6558d0ad57	성별	{"kind":"single","key":"3f2a1b4c-9d8e-4f7a-8b6c-1d2e3f4a5b6c","codes":[{"value":"1","code":"1"},{"value":"2","code":"2"}],"unmatchedCode":"-6"}
+f_6558d0ad57__other	성별: 기타·범주 밖 응답 원문	{"kind":"otherText","key":"3f2a1b4c-9d8e-4f7a-8b6c-1d2e3f4a5b6c","values":["1","2"]}
+f_Qx7Lm2Pz9a	가장 자주 쓰는 기기	{"kind":"single","key":"Qx7Lm2Pz9a","codes":[{"value":"휴대폰","code":"1"},{"value":"노트북","code":"2"}],"unmatchedCode":"3"}
+f_Qx7Lm2Pz9a__other	가장 자주 쓰는 기기: 기타·범주 밖 응답 원문	{"kind":"otherText","key":"Qx7Lm2Pz9a","values":["휴대폰","노트북"]}
+f_Rk8Mn3Tq1b_cD7eF9gH2	이용 경로(복수 선택): 검색	{"kind":"flag","key":"Rk8Mn3Tq1b","value":"검색"}
+f_Rk8Mn3Tq1b_other	이용 경로(복수 선택): SNS	{"kind":"flag","key":"Rk8Mn3Tq1b","value":"SNS"}
+f_Rk8Mn3Tq1b_custom	이용 경로(복수 선택): 지인 추천	{"kind":"flag","key":"Rk8Mn3Tq1b","value":"지인 추천"}
+f_Rk8Mn3Tq1b__custom	이용 경로(복수 선택): 기타	{"kind":"customFlag","key":"Rk8Mn3Tq1b","values":["검색","SNS","지인 추천"]}
+f_Rk8Mn3Tq1b__other	이용 경로(복수 선택): 기타·범주 밖 응답 원문	{"kind":"otherList","key":"Rk8Mn3Tq1b","values":["검색","SNS","지인 추천"]}
+f_Sv2Bx9Wc4d	거주 지역	{"kind":"single","key":"Sv2Bx9Wc4d","codes":[{"value":"서울","code":"1"},{"value":"부산","code":"2"}],"unmatchedCode":"-6"}
+f_Sv2Bx9Wc4d__other	거주 지역: 기타·범주 밖 응답 원문	{"kind":"otherText","key":"Sv2Bx9Wc4d","values":["서울","부산"]}
+f_Tw5Cy8Xe7f	전반적 만족도	{"kind":"single","key":"Tw5Cy8Xe7f","codes":[{"value":"1","code":"1"},{"value":"2","code":"2"},{"value":"3","code":"3"},{"value":"4","code":"4"},{"value":"5","code":"5"}],"unmatchedCode":"-6"}
+f_Tw5Cy8Xe7f__other	전반적 만족도: 기타·범주 밖 응답 원문	{"kind":"otherText","key":"Tw5Cy8Xe7f","values":["1","2","3","4","5"]}
+f_Ux1Dz4Yf2g_kQ3mZpR8a	항목별 만족도: 가격	{"kind":"single","key":"Ux1Dz4Yf2g::kQ3mZpR8a","codes":[{"value":"만족","code":"1"},{"value":"보통","code":"2"},{"value":"불만족","code":"3"}],"unmatchedCode":"-6"}
+f_Ux1Dz4Yf2g_Wn5tYb2Lc	항목별 만족도: 품질	{"kind":"single","key":"Ux1Dz4Yf2g::Wn5tYb2Lc","codes":[{"value":"만족","code":"1"},{"value":"보통","code":"2"},{"value":"불만족","code":"3"}],"unmatchedCode":"-6"}
+f_Ux1Dz4Yf2g__other	항목별 만족도: 기타·범주 밖 응답 원문	{"kind":"otherGrid","rows":[{"key":"Ux1Dz4Yf2g::kQ3mZpR8a","label":"가격"},{"key":"Ux1Dz4Yf2g::Wn5tYb2Lc","label":"품질"}],"values":["만족","보통","불만족"],"keepLeftovers":true}
+f_Vy6Ea7Zg3h_kQ3mZpR8a_e5f393a1	항목별 개선 필요 영역: 가격 - 만족	{"kind":"flag","key":"Vy6Ea7Zg3h::kQ3mZpR8a","value":"만족"}
+f_Vy6Ea7Zg3h_kQ3mZpR8a_acca4583	항목별 개선 필요 영역: 가격 - 보통	{"kind":"flag","key":"Vy6Ea7Zg3h::kQ3mZpR8a","value":"보통"}
+f_Vy6Ea7Zg3h_kQ3mZpR8a_11d6ddce	항목별 개선 필요 영역: 가격 - 불만족	{"kind":"flag","key":"Vy6Ea7Zg3h::kQ3mZpR8a","value":"불만족"}
+f_Vy6Ea7Zg3h_Wn5tYb2Lc_e5f393a1	항목별 개선 필요 영역: 품질 - 만족	{"kind":"flag","key":"Vy6Ea7Zg3h::Wn5tYb2Lc","value":"만족"}
+f_Vy6Ea7Zg3h_Wn5tYb2Lc_acca4583	항목별 개선 필요 영역: 품질 - 보통	{"kind":"flag","key":"Vy6Ea7Zg3h::Wn5tYb2Lc","value":"보통"}
+f_Vy6Ea7Zg3h_Wn5tYb2Lc_11d6ddce	항목별 개선 필요 영역: 품질 - 불만족	{"kind":"flag","key":"Vy6Ea7Zg3h::Wn5tYb2Lc","value":"불만족"}
+f_Vy6Ea7Zg3h__other	항목별 개선 필요 영역: 기타·범주 밖 응답 원문	{"kind":"otherGrid","rows":[{"key":"Vy6Ea7Zg3h::kQ3mZpR8a","label":"가격"},{"key":"Vy6Ea7Zg3h::Wn5tYb2Lc","label":"품질"}],"values":["만족","보통","불만족"],"keepLeftovers":false}
+f_Wz9Fb2Ah4i__rank1	중요도 순위: 1순위	{"kind":"single","key":"Wz9Fb2Ah4i::s1","codes":[{"value":"가격","code":"1"},{"value":"품질","code":"2"},{"value":"서비스","code":"3"}],"unmatchedCode":"-6"}
+f_Wz9Fb2Ah4i__rank2	중요도 순위: 2순위	{"kind":"single","key":"Wz9Fb2Ah4i::s2","codes":[{"value":"가격","code":"1"},{"value":"품질","code":"2"},{"value":"서비스","code":"3"}],"unmatchedCode":"-6"}
+f_Wz9Fb2Ah4i__other	중요도 순위: 기타·범주 밖 응답 원문	{"kind":"otherGrid","rows":[{"key":"Wz9Fb2Ah4i::s1","label":"1"},{"key":"Wz9Fb2Ah4i::s2","label":"2"}],"values":["가격","품질","서비스"],"keepLeftovers":true}
+f_Xa3Gc5Bi6j_m01_cnt	월별 이용 횟수: 1월 - 횟수	{"kind":"raw","key":"Xa3Gc5Bi6j::m01::cnt"}
+f_Xa3Gc5Bi6j_m01_memo	월별 이용 횟수: 1월 - 메모	{"kind":"raw","key":"Xa3Gc5Bi6j::m01::memo"}
+f_Xa3Gc5Bi6j_m02_cnt	월별 이용 횟수: 2월 - 횟수	{"kind":"raw","key":"Xa3Gc5Bi6j::m02::cnt"}
+f_Xa3Gc5Bi6j_m02_memo	월별 이용 횟수: 2월 - 메모	{"kind":"raw","key":"Xa3Gc5Bi6j::m02::memo"}
+f_Yb7Hd8Cj9k	나이	{"kind":"raw","key":"Yb7Hd8Cj9k"}
+f_Zc1Ie2Dk3l	이름	{"kind":"raw","key":"Zc1Ie2Dk3l"}
+f_Ad4Jf5El6m	자유 의견	{"kind":"raw","key":"Ad4Jf5El6m"}
+f_Be8Kg9Fm1n	방문일	{"kind":"raw","key":"Be8Kg9Fm1n"}
+f_Cf2Lh3Gn4o	방문 시각	{"kind":"raw","key":"Cf2Lh3Gn4o"}
+f_Dg5Mi6Ho7p__lat	현재 위치: 위도	{"kind":"raw","key":"Dg5Mi6Ho7p::latitude"}
+f_Dg5Mi6Ho7p__lon	현재 위치: 경도	{"kind":"raw","key":"Dg5Mi6Ho7p::longitude"}
+f_Eh9Nj1Ip2q	증빙 파일	{"kind":"raw","key":"Eh9Nj1Ip2q"}
+f_Fi3Ok4Jq5r__status	참가비 결제: 결제 상태	{"kind":"raw","key":"Fi3Ok4Jq5r::status"}
+f_Fi3Ok4Jq5r__amount	참가비 결제: 결제 금액	{"kind":"raw","key":"Fi3Ok4Jq5r::amount"}
+f_Fi3Ok4Jq5r__orderid	참가비 결제: 주문번호	{"kind":"raw","key":"Fi3Ok4Jq5r::orderId"}
+f_Gj6Pl7Kr8s_zip_code	주소 입력(커스텀): zip_code	{"kind":"raw","key":"Gj6Pl7Kr8s::zip_code"}
+f_Gj6Pl7Kr8s_327ca42e6dce	주소 입력(커스텀): 도로명	{"kind":"raw","key":"Gj6Pl7Kr8s::도로명"}
+f_Gj6Pl7Kr8s_floor	주소 입력(커스텀): floor	{"kind":"raw","key":"Gj6Pl7Kr8s::floor"}
+f_Gj6Pl7Kr8s__other	주소 입력(커스텀): 기타·범주 밖 응답 원문	{"kind":"otherKeys","key":"Gj6Pl7Kr8s","declared":["zip_code","도로명","floor"]}
+h_utmSrc001	utm_source	{"kind":"raw","key":"hidden-utmSrc001"}
