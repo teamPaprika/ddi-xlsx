@@ -3,17 +3,29 @@ package main
 import (
 	"bytes"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/teamPaprika/ddi-xlsx/internal/xsdtest"
+	"github.com/teamPaprika/ddi-xlsx/kosac"
+	"github.com/teamPaprika/ddi-xlsx/kosac/check"
+	ktemplate "github.com/teamPaprika/ddi-xlsx/kosac/template"
+	"github.com/xuri/excelize/v2"
 )
 
 func runCLI(args ...string) (code int, stderr string) {
+	code, _, stderr = runOut(args...)
+	return code, stderr
+}
+
+func runOut(args ...string) (code int, stdout, stderr string) {
 	var out, errb bytes.Buffer
 	code = run(args, &out, &errb)
-	return code, errb.String()
+	return code, out.String(), errb.String()
 }
 
 func TestToAndFrom(t *testing.T) {
@@ -161,7 +173,10 @@ func TestDefaultTargetExists(t *testing.T) {
 func TestUsage(t *testing.T) {
 	const usage = "usage: ddi-xlsx to-xlsx <in.xml|in.json> [-o out.xlsx]\n" +
 		"       ddi-xlsx from-xlsx <in.xlsx> [--xml out.xml] [--json out.json]\n" +
-		"       ddi-xlsx template [-o template.xlsx]\n"
+		"       ddi-xlsx template [-o template.xlsx]\n" +
+		"       ddi-xlsx kosac-check <양식.xlsx>\n" +
+		"       ddi-xlsx kosac-xml <양식.xlsx> [-o out.xml]\n" +
+		"       ddi-xlsx kosac-template [-o kosac-template.xlsx]\n"
 	for _, args := range [][]string{
 		nil,
 		{"bogus"},
@@ -170,6 +185,10 @@ func TestUsage(t *testing.T) {
 		{"from-xlsx", "a.xlsx", "--nope"},
 		{"template", "a.xlsx"},
 		{"template", "--nope"},
+		{"kosac-check"},
+		{"kosac-check", "a.xlsx", "-o", "b"},
+		{"kosac-xml", "a.xlsx", "b.xlsx"},
+		{"kosac-template", "a.xlsx"},
 	} {
 		code, stderr := runCLI(args...)
 		if code != 2 {
@@ -227,5 +246,142 @@ func TestTemplate(t *testing.T) {
 	}
 	if got, _ := os.ReadFile("template.xlsx"); !bytes.Equal(got, keep) {
 		t.Error("template overwrote template.xlsx")
+	}
+}
+
+var kosacSample = filepath.Join(xsdtest.Root(), "testdata", "kosac", "v32_sample_2024.xlsx")
+
+func TestKosacCheck(t *testing.T) {
+	code, stdout, stderr := runOut("kosac-check", kosacSample)
+	if code != 1 || !strings.Contains(stdout, "R C07 03_변수정의!") {
+		t.Errorf("sample: exit %d, stdout %q, stderr %q", code, stdout, stderr)
+	}
+
+	// SQ1 has no codes in the sample, its only R; give it two in a copy.
+	f, err := excelize.OpenFile(kosacSample)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	row := 4
+	for v, _ := f.GetCellValue(kosac.SheetCodes, "B4"); v != ""; v, _ = f.GetCellValue(kosac.SheetCodes, "B"+strconv.Itoa(row)) {
+		row++
+	}
+	for i, label := range []string{"남자", "여자"} {
+		for col, v := range []string{"1", "SQ1", strconv.Itoa(i + 1), label} {
+			if err := f.SetCellStr(kosac.SheetCodes, string(rune('A'+col))+strconv.Itoa(row+i), v); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	fixed := filepath.Join(t.TempDir(), "fixed.xlsx")
+	if err := f.SaveAs(fixed); err != nil {
+		t.Fatal(err)
+	}
+	if code, stdout, stderr := runOut("kosac-check", fixed); code != 0 {
+		t.Errorf("fixed sample: exit %d, stdout %q, stderr %q", code, stdout, stderr)
+	}
+}
+
+func TestKosacXML(t *testing.T) {
+	src, err := os.ReadFile(kosacSample)
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	in := filepath.Join(dir, "sample.xlsx")
+	if err := os.WriteFile(in, src, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if code, stdout, stderr := runOut("kosac-xml", in); code != 0 || stdout != "" {
+		t.Fatalf("kosac-xml: exit %d, stdout %q, stderr %q", code, stdout, stderr)
+	}
+	b, err := os.ReadFile(filepath.Join(dir, "sample.xml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := kosac.Parse(b); err != nil {
+		t.Errorf("Parse: %v", err)
+	}
+	if code, stderr := runCLI("kosac-xml", in); code != 1 || !strings.Contains(stderr, "already exists") {
+		t.Errorf("default path taken: exit %d, stderr %q", code, stderr)
+	}
+
+	if _, err := exec.LookPath("xmllint"); err == nil {
+		bad := bytes.Replace(b, []byte("</stdyDscr>"), []byte("<bogus/></stdyDscr>"), 1)
+		is := check.ValidateXML(bad, xmllint)
+		if len(is) != 1 || is[0].Rule != "XSD-DDI" || !strings.Contains(is[0].Actual, "bogus") {
+			t.Fatalf("xmllint on a broken document: %+v", is)
+		}
+		var out bytes.Buffer
+		printIssues(&out, is)
+		if want := "R XSD-DDI " + is[0].Message + ": " + is[0].Actual + "\n"; out.String() != want {
+			t.Errorf("XSD line %q, want %q", out.String(), want)
+		}
+	}
+
+	t.Setenv("PATH", t.TempDir())
+	code, stdout, stderr := runOut("kosac-xml", in, "-o", filepath.Join(dir, "o.xml"))
+	if code != 0 || stdout != "" || stderr != "XSD 검증 건너뜀: xmllint 없음\n" {
+		t.Errorf("without xmllint: exit %d, stdout %q, stderr %q", code, stdout, stderr)
+	}
+}
+
+func TestKosacTemplate(t *testing.T) {
+	p := filepath.Join(t.TempDir(), "k.xlsx")
+	if code, stderr := runCLI("kosac-template", "-o", p); code != 0 {
+		t.Fatalf("kosac-template -o: exit %d, stderr %q", code, stderr)
+	}
+	if got, _ := os.ReadFile(p); !bytes.Equal(got, ktemplate.Blank()) {
+		t.Error("kosac-template -o did not write the blank")
+	}
+
+	t.Chdir(t.TempDir())
+	if code, stderr := runCLI("kosac-template"); code != 0 {
+		t.Fatalf("kosac-template: exit %d, stderr %q", code, stderr)
+	}
+	keep := []byte("keep")
+	if err := os.WriteFile("kosac-template.xlsx", keep, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	code, stderr := runCLI("kosac-template")
+	if want := "error: kosac-template.xlsx already exists; pass -o to choose the output file\n"; code != 1 || stderr != want {
+		t.Errorf("kosac-template onto an existing file: exit %d, stderr %q, want 1 and %q", code, stderr, want)
+	}
+	if got, _ := os.ReadFile("kosac-template.xlsx"); !bytes.Equal(got, keep) {
+		t.Error("kosac-template overwrote kosac-template.xlsx")
+	}
+}
+
+func TestPrintIssues(t *testing.T) {
+	var out bytes.Buffer
+	err := printIssues(&out, []kosac.Issue{
+		{Rule: "C07", Level: kosac.R, Sheet: "03_변수정의", Cell: "B5", Actual: "0", Message: "m1."},
+		{Rule: "XSD-KOSAC", Level: kosac.R, Path: "dataDscr/var[@ID='V1']", Actual: "-:3: bad", Message: "m2."},
+		{Rule: "XSD-DDI", Level: kosac.R, Actual: "xmllint: exit status 5", Message: "m3."},
+		{Rule: "C08", Level: kosac.W, Message: "m4."},
+	})
+	want := "R C07 03_변수정의!B5 m1.\n" +
+		"R XSD-KOSAC dataDscr/var[@ID='V1'] m2.: -:3: bad\n" +
+		"R XSD-DDI m3.: xmllint: exit status 5\n" +
+		"W C08 m4.\n"
+	if out.String() != want || err != errRejected {
+		t.Errorf("got %q, %v\nwant %q", out.String(), err, want)
+	}
+}
+
+// An exit 3 whose every line is filtered out must still fail the document.
+func TestXmllintExit3WithoutProblems(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("the fake xmllint is a shell script")
+	}
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "xmllint"), []byte("#!/bin/sh\necho '- fails to validate' >&2\nexit 3\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("PATH", dir)
+	problems, err := xmllint(check.SchemaDDI, []byte("<x/>"))
+	if err != nil || len(problems) != 1 || problems[0] != "- fails to validate" {
+		t.Errorf("problems %q, err %v", problems, err)
 	}
 }
