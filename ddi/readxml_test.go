@@ -89,6 +89,64 @@ func TestRawCRLFNormalized(t *testing.T) {
 	}
 }
 
+func TestSplitCharacterData(t *testing.T) {
+	inner := "\n  " + strings.Repeat(`a<![CDATA[b]]>&amp;<!--c--><?p?>`, 32) + "\n"
+	fragment := "<labl>" + inner + "</labl>"
+	root, warns, err := ParseXML(doc(fragment))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := strings.Repeat("ab&", 32)
+	if n := root.Children[0]; n.Text != want || n.Raw != "" || len(n.Children) != 0 {
+		t.Fatalf("labl = %s, want text %q", dump(n), want)
+	}
+	var wantWarns []string
+	for range 32 {
+		wantWarns = append(wantWarns, "comment dropped at line 2", "processing instruction <?p?> dropped at line 2")
+	}
+	if !reflect.DeepEqual(warns, wantWarns) {
+		t.Errorf("ParseXML warnings = %q, want %q", warns, wantWarns)
+	}
+	nodes, warns, err := ParseFragmentWithWarnings(fragment, nil)
+	if err != nil || len(nodes) != 1 || !Equal(nodes[0], root.Children[0]) || !reflect.DeepEqual(warns, wantWarns) {
+		t.Fatalf("ParseFragmentWithWarnings = %v %q %v", nodes, warns, err)
+	}
+	input := &Node{Name: "codeBook", Attrs: []Attr{{"xmlns", Namespace}}, Children: []*Node{{Name: "labl", Raw: inner}}}
+	fromJSON, err := ParseJSON(WriteJSON(input))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if d := Diff(root, fromJSON); d != "" {
+		t.Errorf("JSON #xml rebuild: %s", d)
+	}
+}
+
+func TestSplitCharacterDataRaw(t *testing.T) {
+	part := strings.Repeat(`a<![CDATA[b]]><!--kept--><?kept?>`, 8)
+	raw := part + `<emph>x<!--inside-->y</emph>` + part
+	root, warns, err := ParseXML(doc(`<labl>before<!--first--></labl><abstract>` + raw + `</abstract><notes>after<?last?></notes>`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(root.Children) != 3 {
+		t.Fatalf("children = %d, want 3: %s", len(root.Children), dump(root))
+	}
+	if n := root.Children[1]; n.Raw != raw || n.Text != "" || n.Children != nil {
+		t.Fatalf("abstract = %s, want Raw %q", dump(n), raw)
+	}
+	wantWarns := []string{"comment dropped at line 1", "processing instruction <?last?> dropped at line 1"}
+	if !reflect.DeepEqual(warns, wantWarns) {
+		t.Errorf("warnings = %q, want %q", warns, wantWarns)
+	}
+	fromJSON, err := ParseJSON(WriteJSON(root))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if d := Diff(root, fromJSON); d != "" {
+		t.Errorf("JSON Raw roundtrip: %s", d)
+	}
+}
+
 func TestNamespaces(t *testing.T) {
 	root := mustParse(t, []byte(`<codeBook xmlns="ddi:codebook:2_5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ddi:codebook:2_5 codebook.xsd" xml:lang="en" xmlns:xhtml="http://www.w3.org/1999/xhtml"><stdyDscr><xhtml:p>x</xhtml:p></stdyDscr></codeBook>`))
 	want := []Attr{

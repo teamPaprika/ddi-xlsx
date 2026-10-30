@@ -73,7 +73,8 @@ type frame struct {
 	qname string            // as written, to match the end tag
 	ns    map[string]string // prefix -> URI declared on this element
 	texts []string          // texts[i] is the character data after the i-th child
-	start int64             // input offset of the inner XML
+	text  strings.Builder
+	start int64 // input offset of the inner XML
 	warns []string
 }
 
@@ -128,7 +129,7 @@ func parse(data []byte, fragment bool) (*Node, []string, error) {
 			if root != nil {
 				return nil, nil, &xml.SyntaxError{Msg: "more than one root element", Line: line}
 			}
-			f := &frame{qname: qname(t.Name), ns: map[string]string{}, texts: []string{""}, start: d.InputOffset(), node: &Node{}}
+			f := &frame{qname: qname(t.Name), ns: map[string]string{}, start: d.InputOffset(), node: &Node{}}
 			// The decoder does not check this well-formedness rule. A map keeps
 			// an element with very many attributes from costing quadratic time.
 			seen := make(map[string]bool, len(t.Attr))
@@ -182,6 +183,7 @@ func parse(data []byte, fragment bool) (*Node, []string, error) {
 				return nil, nil, &xml.SyntaxError{Msg: "unexpected end element </" + qname(t.Name) + ">", Line: line}
 			}
 			f := stack[len(stack)-1]
+			f.texts = append(f.texts, f.text.String())
 			stack = stack[:len(stack)-1]
 			if fragment && len(stack) == 0 {
 				for _, s := range f.texts {
@@ -203,7 +205,8 @@ func parse(data []byte, fragment bool) (*Node, []string, error) {
 			}
 			p := stack[len(stack)-1]
 			p.node.Children = append(p.node.Children, f.node)
-			p.texts = append(p.texts, "")
+			p.texts = append(p.texts, p.text.String())
+			p.text.Reset()
 			p.warns = append(p.warns, f.warns...)
 		case xml.CharData:
 			if len(stack) == 0 {
@@ -213,7 +216,7 @@ func parse(data []byte, fragment bool) (*Node, []string, error) {
 				break
 			}
 			f := stack[len(stack)-1]
-			f.texts[len(f.texts)-1] += string(t)
+			f.text.Write(t)
 		case xml.Comment:
 			warn(line, "comment dropped")
 		case xml.ProcInst:
