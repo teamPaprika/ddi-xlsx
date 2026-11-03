@@ -12,15 +12,33 @@ import (
 	"github.com/teamPaprika/ddi-xlsx/ddi"
 )
 
-// Tree assembles the codebook as a DDI 2.5 tree with kosac extensions. DDI
+// profileTree assembles the legacy internal profile for validation and grouping. DDI
 // elements are built in XSD order and the kosac ones follow the DDI children
 // of their parent, so no sorting is needed. It fails, listing every item, when
 // TITLE is blank, a var has no ID, a name or FILE_NO reference resolves to
 // nothing, or a native codebook's Package names another source kind.
-func (cb *Codebook) Tree() (*ddi.Node, error) {
+func (cb *Codebook) profileTree() (*ddi.Node, error) {
+	if cb.HasV4Fields() && cb.Template.Version.Value != "4.0" {
+		return nil, fmt.Errorf("v4.0 항목에는 양식 버전 4.0이 필요합니다")
+	}
 	b := newBuilder(cb)
 	root := add(el("codeBook", "xmlns", ddi.Namespace, "xmlns:kosac", Namespace, "version", "2.5", "ID", b.codebookID()),
 		b.docDscr(), b.stdyDscr())
+	if cb.Template.Version.Value == "4.0" {
+		for _, s := range root.Children {
+			if s.Name == "stdyDscr" {
+				cb.v4Native(s)
+				at := len(s.Children)
+				for i, n := range s.Children {
+					if isKosac(n.Name) {
+						at = i
+						break
+					}
+				}
+				s.Children = slices.Insert(s.Children, at, cb.v4Notes()...)
+			}
+		}
+	}
 	for i, f := range cb.Files {
 		add(root, b.fileDscr(i, f))
 	}
@@ -151,6 +169,11 @@ func (b *builder) ref(fileNo, name string) (string, bool) {
 	if v := b.vars[[2]string{fileNo, name}]; v != nil {
 		return v.ID, true
 	}
+	for i, n := range b.cb.SourceSystemVars {
+		if attr(n, "name") == name && slices.Contains(strings.Fields(attr(n, "files")), "F"+fileNo) {
+			return "S" + strconv.Itoa(i+1), true
+		}
+	}
 	if i, ok := b.fileIdx[fileNo]; ok && IsSystemVar(name) {
 		return sysID(i, name), true
 	}
@@ -160,6 +183,7 @@ func (b *builder) ref(fileNo, name string) (string, bool) {
 // fileVar resolves a reference made within file fileNo; what names the
 // referring item in the error.
 func (b *builder) fileVar(fileNo, what, name string) string {
+	name = b.absentRef(name)
 	if name == "" {
 		return ""
 	}
@@ -173,6 +197,7 @@ func (b *builder) fileVar(fileNo, what, name string) string {
 // studyVar resolves a reference of 01 KEY key. The 01 sheet names no file, so
 // the lowest FILE_NO that has the var wins.
 func (b *builder) studyVar(key, name string) string {
+	name = b.absentRef(name)
 	if name == "" {
 		return ""
 	}
@@ -189,7 +214,7 @@ func (b *builder) studyVar(key, name string) string {
 // lets contractors separate names with ";", "," or spaces.
 func (b *builder) studyVars(key string) string {
 	var ids []string
-	for _, name := range strings.FieldsFunc(typed(b.cb.Study.Get(key)), func(r rune) bool {
+	for _, name := range strings.FieldsFunc(b.absentRef(typed(b.cb.Study.Get(key))), func(r rune) bool {
 		return r == ';' || r == ',' || unicode.IsSpace(r)
 	}) {
 		ids = append(ids, b.studyVar(key, name))
@@ -365,7 +390,7 @@ func (b *builder) stdyDscr() *ddi.Node {
 	anlyInfo := add(el("anlyInfo"), text("respRate", g("RESPONSE_RATE")),
 		text("kosac:contactN", integer(g("CONTACT_N"))), text("kosac:rrFormula", g("RR_FORMULA")))
 	study := add(el("kosac:study", "ruleVersion", typed(g("RULE_VERSION")), "surveyType", typed(g("SURVEY_TYPE")),
-		"dataNo", typed(g("DATA_NO")), "categoryCode", b.cb.Admin.CategoryCode, "validN", integer(g("VALID_N")),
+		"dataNo", typed(g("DATA_NO")), "categoryCode", b.cb.Admin.CategoryCode, "validN", integer(b.cb.StudyValidN()),
 		"schoolCodeYear", integer(g("SCHOOL_CODE_YEAR")), "bizYear", integer(g("BIZ_YEAR"))),
 		el("kosac:round", "year", r.Year, "waveType", r.WaveType, "waveNo", r.WaveNo),
 		text("kosac:bizName", g("BIZ_NAME")), text("kosac:popSource", g("POP_SOURCE")))
@@ -443,7 +468,7 @@ func (b *builder) fileDscr(i int, f *File) *ddi.Node {
 		add(el("dimensns"), text("caseQnty", integer(g("VALID_N"))),
 			text("varQnty", strconv.Itoa(len(SystemVars)+b.varCount[no]))),
 		text("fileType", g("FILE_FORMAT"), "charset", "UTF-8"))
-	link := typed(g("LINK_FILE_NO"))
+	link := b.absentRef(typed(g("LINK_FILE_NO")))
 	if _, ok := b.fileIdx[link]; link != "" && !ok {
 		b.fail("F%s LINK_FILE_NO: 파일 %s 없음", no, link)
 		link = ""

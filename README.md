@@ -15,13 +15,12 @@ CLI, Go 라이브러리, Node·브라우저용 WASM SDK를 제공합니다. npm 
 | 기능 | 입력과 출력 | 현재 범위 |
 |---|---|---|
 | 범용 변환기 | DDI 2.5 XML·JSON ↔ 편집용 Excel | `Variables`, `Categories`, `Groups`, `Document` 시트를 사용합니다. |
-| 재단 양식 엔진 | 재단 v3.2 Excel ↔ 재단 모델·XML | 양식 읽기·쓰기와 코드북 규칙 검사를 제공합니다. 현재 XML은 `kosac:` 확장을 포함합니다. |
+| 재단 양식 엔진 | 재단 v3.2·v4.0 Excel ↔ 재단 모델 → DDI 2.5 XML·JSON | 양식 검사와 표준 요소 매핑을 제공합니다. 관리 정보는 해당 범위의 설명에 기록합니다. |
 | Node·브라우저 SDK | DDI XML·JSON ↔ 편집용 Excel | 범용 변환과 빈 양식 생성 함수를 WASM으로 제공합니다. |
 
-**재단 엔진의 현재 XML은 공식 DDI 2.5 XSD를 단독으로 통과하지 않습니다.**
-현재 검사는 확장 부분을 분리한 두 문서를 각각 검사합니다.
-재단 v4.0과 브라우저 검사 API·REPL은 개발 중이며, 현재 공개 버전에는 포함하지 않습니다.
-재단 양식은 입력 가이드로 사용하고, 최종 XML을 DDI 2.5 표준 요소로 표현하는 작업은 아직 완료하지 않았습니다.
+재단 출력은 `kosac:` 확장과 전용 JSON 보존 노트 없이 생성합니다.
+`ValidateXML`은 출력 전체를 공식 DDI 2.5 XSD로 검사합니다. XSD 검증기는 호출자가 제공합니다.
+재단 양식의 상세 매핑과 이전 출력에서 바뀐 계약은 [표준 매핑 안내](docs/kosac-ddi25-mapping.md)를 참고하세요.
 
 이 도구는 코드북을 변환하고 검사합니다. 응답 데이터 정제, Parquet 생성, 승인, 데이터 플랫폼 적재는 호출하는 시스템에서 처리합니다.
 
@@ -44,7 +43,7 @@ Windows 빌드는 [CLI 실행 파일](#cli-실행-파일)을 참고하세요.
 - [설치](#설치): CLI, Go 라이브러리, 로컬 npm 패키지
 - [CLI 사용법](#cli-사용법): 변환과 빈 양식 생성
 - [재단 코드북 엔진](#재단-코드북kosac-엔진): 양식 검사·변환과 XML 제한
-- [개발 중인 기능](#개발-중인-기능): 재단 v4.0, 브라우저 검사 API·REPL
+- [개발 중인 기능](#개발-중인-기능): 브라우저 검사 API·REPL
 - [라이선스](#라이선스): 도구와 함께 포함한 스키마의 상태
 
 ## 받는 입력
@@ -204,7 +203,7 @@ ddi-xlsx to-xlsx   <in.xml|in.json> [-o out.xlsx]
 ddi-xlsx from-xlsx <in.xlsx> [--xml out.xml] [--json out.json]
 ddi-xlsx template  [-o template.xlsx]
 ddi-xlsx kosac-check    <양식.xlsx>
-ddi-xlsx kosac-xml      <양식.xlsx> [-o out.xml]
+ddi-xlsx kosac-xml      <양식.xlsx> [-o out.xml] [--json out.json]
 ddi-xlsx kosac-template [-o kosac-template.xlsx]
 ```
 
@@ -526,187 +525,110 @@ level  element   text
 
 ## 재단 코드북(KOSAC) 엔진
 
-현재 공개 버전은 재단 코드북 양식 KOSAC-SURVEY-META v3.2(xlsx)를 다룹니다.
-재단 양식은 앞에서 설명한 범용 워크북과 다른 형식입니다.
+재단 KOSAC-SURVEY-META v3.2·v4.0 양식을 읽고 모델로 보관합니다.
+재단 양식은 앞의 범용 DDI 편집 워크북과 다른 형식입니다.
+`Codebook.Tree`, `XML`, `JSON`은 DDI Codebook 2.5 표준 요소만 출력합니다.
+필드별 대상과 해석 조건은 [108개 항목 매핑표](docs/kosac-ddi25-mapping.md)에 있습니다.
 
-**현재 구현:** 출력 XML은 확장 네임스페이스 `urn:kosac:survey-meta:3.3`을 포함합니다.
-양식 버전 3.2와 XML 확장 버전 3.3은 다른 번호입니다.
-현재 출력은 재단의 최종 제출 XML로 확정되지 않았습니다.
-
-**후속 작업:** 재단 양식의 항목을 DDI 2.5 표준 요소에 매핑하고, 최종 XML을 공식 XSD로 직접 검사해야 합니다.
-`kosac:` 확장은 이 작업의 완료 기준이 아닙니다.
-
-엔진이 하는 일은 아래와 같습니다.
-
-- 용역사가 채운 v3.2 양식을 읽고 검사합니다. 양식 구조 검사는 S05, 내용 규칙은 C01~C18입니다.
-- 분석 메타(역할, 차원·측정 구분, 집계 규칙, 다중응답·grid 묶음 등)와 결측 코드의 초안을 자동으로 채웁니다.
-- 변수에 ID를 붙이고 코드북 XML을 조립합니다. 조립한 XML은 `kosac.Parse`로 다시 모델로 읽습니다.
-- Walla 내보내기(DDI)를 모델로 바꿉니다(네이티브 경로).
-- XML을 두 투영으로 나누어 XSD로 검증할 수 있게 합니다.
-- 모델을 v3.2 양식 xlsx로 씁니다.
-
-엔진 패키지는 파일, 네트워크, 외부 프로세스를 쓰지 않습니다. 바이트를 받아 모델과 바이트를 돌려줍니다. `xmllint`를 실행하는 곳은 CLI뿐입니다.
-
-| 경로 | 내용 |
+| 경로 | 역할 |
 |---|---|
-| `kosac/` | 모델, XML 조립과 읽기, 자동 판정, ID 부여, Walla 변환입니다. |
-| `kosac/template/` | v3.2 양식 읽기·쓰기와 내장 빈 양식입니다. |
-| `kosac/check/` | C01~C18과 XML 검증(PLACE, REF, 두 투영)입니다. |
-| `kosac/universe/` | 응답대상(RESP_UNIVERSE)과 클린징 조건의 파서·평가기입니다. |
-| `kosac/xsd/` | kosac 3.3 XSD 초안과 재단 승인용 변경 기록(`CHANGES.md`)입니다. |
+| `kosac/` | 재단 모델, 표준 XML·JSON 생성, 자동 초안, ID 부여, Walla 입력 변환 |
+| `kosac/template/` | 버전별 양식 읽기·쓰기, 공식 v4.0 빈 양식 |
+| `kosac/check/` | 양식 내용 규칙과 전체 XML 검증 |
+| `kosac/universe/` | 기계식 응답대상·정제 조건의 파서와 평가기 |
+| `kosac/xsd/` | 과거 확장 형식의 XSD와 설계 기록. 새 출력 검증에는 사용하지 않음 |
 
-### KOSAC CLI
+엔진은 바이트와 모델만 처리합니다. 파일 입출력과 `xmllint` 실행은 CLI가 맡습니다.
+응답 정제 실행, 코드표 조회, 데이터 적재는 호출 시스템의 책임입니다.
 
-```text
-ddi-xlsx kosac-check    <양식.xlsx>
-ddi-xlsx kosac-xml      <양식.xlsx> [-o out.xml]
-ddi-xlsx kosac-template [-o kosac-template.xlsx]
+### CLI
+
+```bash
+ddi-xlsx kosac-check survey.xlsx
+ddi-xlsx kosac-xml survey.xlsx -o codebook.xml --json codebook.json
+ddi-xlsx kosac-template -o blank-v4.xlsx
 ```
 
-`kosac-check`는 양식에 S05와 C01~C18 검사를 돌립니다. 용역사가 제출 전에 스스로 확인할 때 씁니다.
+`kosac-check`는 S05 구조 검사 후 내용 규칙을 실행합니다.
+v3.2는 C01~C18, v4.0은 버전별 추가 규칙을 적용합니다.
+규칙은 재단 프로파일의 요구사항이며 DDI 자체의 필수 조건과 구분합니다.
 
-- 결과를 stdout에 한 줄에 하나씩 씁니다. 형식은 `<수준> <규칙> <시트>!<셀> <메시지>`입니다.
-- 수준은 `R`(반려)이나 `W`(경고)입니다.
-- 셀이 없는 결과는 `<시트>!<셀>` 자리에 XML 경로를 씁니다. 셀도 경로도 없으면 그 자리를 뺍니다.
-- XSD-DDI와 XSD-KOSAC 결과는 메시지 뒤에 `: <검증기 메시지>`를 붙입니다. 이 두 규칙은 메시지가 늘 같아서, 무엇이 틀렸는지는 검증기(xmllint)의 원문만 알려 주기 때문입니다. 검증을 실행하지 못한 경우에도 그 원인이 붙습니다.
-- `R`이 하나라도 있으면 종료 코드 1, 없으면 0으로 끝납니다.
-- S05에서 `R`이 나오면 C01~C18은 돌리지 않습니다. 양식 구조가 틀리면 다른 칸을 잘못 읽기 때문입니다.
-- CLI는 재단 기준 자료(표준 항목 사전, 코드셋, 업로드 파일 목록, PDF 쪽수)를 받지 않습니다. 그래서 이 자료가 필요한 검사는 건너뜁니다.
+- 결과 형식은 `<수준> <규칙> <시트>!<셀> <메시지>`입니다.
+- `R`은 반려, `W`는 경고입니다. `R`이 있으면 종료 코드 1, 없으면 0입니다.
+- S05가 구조를 반려하면 내용 규칙을 실행하지 않습니다.
+- CLI는 외부 코드표, 응답 원자료, 업로드 파일 목록, PDF 쪽수를 받지 않습니다. 해당 자료가 필요한 검사는 실행하지 않습니다.
 
-```text
-W C01 01_조사정보!E19 POP_SOURCE의 값이 확인 불가로 적혀 있습니다.
-R C07 03_변수정의!B5 명목·서열 변수에는 결측 코드가 아닌 코드가 두 개 이상 있어야 합니다.
-R XSD-DDI DDI 투영이 DDI 2.5 XSD를 통과하지 못했습니다.: -:46: element bogus: Schemas validity error : …
-```
+`kosac-xml`은 구조를 읽고, `DeriveDefaults`와 `AssignIDs`를 거쳐 표준 XML을 씁니다.
+`--json`을 주면 같은 트리의 JSON도 씁니다. JSON은 이 라이브러리의 트리 표현이며 별도의 공식 DDI JSON 스키마가 아닙니다.
 
-`kosac-xml`은 양식을 읽고, 초안을 채우고(`DeriveDefaults`), ID를 붙여(`AssignIDs`) 코드북 XML을 씁니다. 미리보기와 디버깅용입니다.
+- 내용 규칙은 별도 `kosac-check`로 실행합니다. XML 생성 성공은 제출 승인과 다릅니다.
+- 결측 여부가 미확정인 v4.0 코드는 오류로 거부합니다. DDI의 기본값 `missing="N"`으로 추정하지 않습니다.
+- 출력 후 REF와 전체 XSD를 검사합니다. 검증 반려 시에도 검토용 출력은 남습니다.
+- `xmllint`가 없으면 XSD를 건너뛰었다고 stderr에 표시합니다. 참조 검사는 계속합니다.
+- `-o`를 생략하면 입력과 같은 이름의 `.xml`을 씁니다. 그 파일이 있으면 오류로 멈춥니다.
+- 명시한 출력 경로는 덮어씁니다. 입력·XML·JSON이 같은 파일을 가리키면 거부합니다.
 
-- FK, 클린징, 패키지 정보(`kosac:package`)는 넣지 않습니다. 그래서 출력에 `docDscr`가 없습니다.
-- 담당자 입력 항목에는 `DeriveDefaults`가 채운 자동 기본값만 들어갑니다. 예: 조사 분류 코드, 조사 연도, 차수 유형 `main`, 파일 민감도 `3`.
-- C01~C18은 돌리지 않습니다. 내용 검사는 `kosac-check`로 해 주세요. S05에서 `R`이 나오면 XML을 쓰지 않고, 그 결과만 출력하고 종료 코드 1로 끝납니다.
-- XML을 쓴 다음, S05 경고와 XML 검증 결과를 `kosac-check`와 같은 형식으로 출력합니다. `R`이 있으면 종료 코드 1로 끝나지만, 쓴 파일은 남습니다.
-- `PATH`에 `xmllint`가 있으면 두 투영의 XSD 검증까지 합니다. 없으면 stderr에 `XSD 검증 건너뜀: xmllint 없음`을 쓰고, PLACE와 REF만 검사합니다.
-- `-o`를 생략하면 입력 파일의 확장자를 `.xml`로 바꾼 경로에 씁니다.
-
-`kosac-template`은 내장 빈 양식을 씁니다. `-o`를 생략하면 현재 디렉터리의 `kosac-template.xlsx`에 씁니다.
-
-`kosac-xml`과 `kosac-template`의 출력 경로 규칙은 다른 명령과 같습니다. 기본 경로에 파일이 이미 있으면 덮어쓰지 않고 오류로 끝나고, `-o`로 지정한 경로는 덮어씁니다.
-
-### Go API
-
-호출 순서는 아래와 같습니다. 모든 함수는 바이트와 모델만 주고받습니다.
+### Go API와 보관 경계
 
 ```go
-import (
-	"github.com/teamPaprika/ddi-xlsx/kosac"
-	"github.com/teamPaprika/ddi-xlsx/kosac/check"
-	"github.com/teamPaprika/ddi-xlsx/kosac/template"
-	"github.com/teamPaprika/ddi-xlsx/kosac/universe"
-)
-
-// 업로드형: 용역사가 채운 양식에서 코드북 XML을 만듭니다.
-// prev는 이전 XML을 kosac.Parse로 읽은 모델이거나 nil입니다.
-func upload(xlsx []byte, ref kosac.RefData, prev *kosac.Codebook, validator check.Validator) ([]byte, []kosac.Issue, error) {
-	cb, issues, err := template.Read(xlsx, template.ReadOptions{}) // S05
-	if err != nil {
-		return nil, nil, err // xlsx가 아니거나 압축 해제 한도를 넘었습니다.
-	}
-	if cb == nil {
-		return nil, issues, nil // S05에서 R이 나왔습니다. 양식 구조가 틀렸으므로 C01~C18을 돌리지 않습니다.
-	}
-	issues = append(issues, check.Check(cb, ref)...) // C01~C18
-	kosac.DeriveDefaults(cb, ref)                    // 빈 칸을 채웁니다. 돌려주는 STD_ID·FK 후보는 담당자에게 보여 줍니다.
-
-	// 담당자 확인: cb.Admin, cb.File("1").SensLevel 등을 고칩니다.
-	// cb.Var와 cb.File은 해당 행이 없으면 nil을 돌려줍니다.
-	if v := cb.Var("1", "SQ4"); v != nil {
-		v.FK = &kosac.FK{CodeSet: "CC_SIDO"}
-		if err := kosac.ApplyFK(cb, v, ref.CodeSetDefs["CC_SIDO"]); err != nil {
-			return nil, nil, err
-		}
-	}
-	if f := cb.File("1"); f != nil {
-		f.Cleansing = &kosac.Cleansing{ /* … */ }
-	}
-
-	if err := kosac.AssignIDs(cb, prev); err != nil {
-		return nil, nil, err
-	}
-	cb.Package = &kosac.Package{ /* … */ } // 해시는 호출자가 계산합니다.
-	xml, err := cb.XML()                   // cb.JSON()도 있습니다.
-	if err != nil {
-		return nil, nil, err
-	}
-	return xml, append(issues, check.ValidateXML(xml, validator)...), nil
-}
-
-// 네이티브형: Walla 내보내기에서 담당자가 볼 v3.2 양식을 만듭니다.
-// groups는 VAR_NAME → Walla 폼의 그룹(페이지) 라벨입니다.
-func native(export []byte, hints, groups map[string]string) ([]byte, []kosac.Issue, error) {
-	cb, issues, err := kosac.FromWallaDDI(export, kosac.WallaOptions{MeasHints: hints})
-	if err != nil {
-		return nil, nil, err
-	}
-	for _, v := range cb.Vars {
-		v.Rec.Set("VAR_GROUP", groups[v.Rec.Get("VAR_NAME")]) // 비워 두면 C06 R이 납니다.
-	}
-	draft, err := template.Write(cb)
-	return draft, issues, err
-}
-
-// 응답대상이나 클린징 조건이 응답 한 행에 맞는지 봅니다.
-// row는 변수 이름으로 원래 값을 주는 universe.Row입니다.
-func applies(row universe.Row) (bool, error) {
-	e, err := universe.ParseCondition("SQ3!=1 AND SQ3_1!=-8", "SQ3_1")
-	if err != nil {
-		return false, err
-	}
-	return e.Eval(row)
-}
+cb, issues, err := template.Read(input, template.ReadOptions{})
+if err != nil { return err }
+if cb == nil { return fmt.Errorf("양식 구조 반려: %v", issues) }
+issues = append(issues, check.Check(cb, referenceData)...)
+// 호출자가 반려·경고를 확인하고 초안과 담당자 입력을 확정합니다.
+kosac.DeriveDefaults(cb, referenceData)
+if err := kosac.AssignIDs(cb, previousModel); err != nil { return err }
+root, err := cb.Tree()
+if err != nil { return err }
+xmlOut, jsonOut := ddi.WriteXML(root), ddi.WriteJSON(root)
+issues = append(issues, check.ValidateXML(xmlOut, validator)...)
 ```
 
-- `ref`는 `kosac.RefData`입니다. 비어 있는 필드는 그 자료가 필요한 검사와 판정을 건너뜁니다.
-- `issues`의 각 항목에는 규칙(`Rule`), 수준(`Level`), 위치(`Sheet`·`Cell` 또는 `Path`), 기계용 키(`FileNo`·`VarName`·`Code`), 한 문장 메시지(`Message`)가 있습니다.
+위 코드는 호출 순서 예시입니다. `issues`의 반려·승인 정책과 실제 파일 저장은 호출자가 구현합니다.
+`previousModel`은 보관한 재단 모델입니다. 새 표준 XML을 `kosac.Parse`로 역변환하는 모델이 아닙니다.
 
-### 자동 판정(`DeriveDefaults`)
+- `template.Read` → `template.Write` → `template.Read`는 버전별 원본 레코드를 보존합니다. 모델의 분석·승인·연결 정보는 양식에 없는 열까지 저장하지 않습니다.
+- `Tree/XML/JSON`은 입력 모델을 수정하지 않습니다. `DeriveDefaults`와 `AssignIDs`는 모델을 수정하므로 원본 모델을 별도로 보관하세요.
+- 표준 출력의 구조화되지 않은 관리 항목은 해당 범위의 `notes` 또는 `txt`로 기록합니다. 설명문을 전용 역변환 규약으로 사용하지 않습니다.
+- 새 출력은 `ddi.Parse`와 범용 `workbook.ToXLSX/FromXLSX`로 읽고 편집합니다. 이 워크북은 재단 제출 양식과 다릅니다.
+- `kosac.Parse`는 과거 `urn:kosac:survey-meta:3.3` 확장 XML·JSON의 읽기 호환용입니다. 새 표준 출력의 입력 API가 아닙니다.
+- 재단 양식의 관리 필드까지 다시 편집하려면 원본 XLSX와 모델을 보관해야 합니다.
 
-- 비어 있는 칸만 채웁니다. 그래서 담당자가 고친 값은 다시 불러도 그대로 남고, 두 번 불러도 결과가 같습니다.
-- 판정에 쓴 값(예: 역할)을 나중에 바꿔도, 그 값에서 나온 칸(예: 차원·측정 구분)은 다시 계산하지 않습니다. 다시 계산하려면 그 칸을 비우고 `DeriveDefaults`를 다시 부릅니다.
-- `GridGroup`은 묶음 단위로 계산합니다. 멤버 중 하나라도 값이 있는 묶음은 건드리지 않습니다. 그래서 다시 계산하려면 그 묶음의 모든 멤버에서 `GridGroup`을 비워야 합니다.
+### 자동 초안과 Walla 입력
 
-#### 자동 판정 한계
+`DeriveDefaults`는 빈 항목에 분석 역할·묶음·결측 분류 등의 초안을 채웁니다.
+이미 채운 항목은 덮어쓰지 않습니다. 초안은 담당자가 확인해야 합니다.
+v4.0에서는 입력에 없는 결측 코드를 추가하지 않습니다.
 
-- grid를 찾을 때 문항 문장(Q_TEXT) 끝의 행 표시를 떼고 비교합니다. 지금 아는 행 표시는 2024 작성 예시의 `▶ [행]` 하나뿐입니다.
-- 다른 표기(예: `문항 - 행`, `문항(행)`)는 행 표시로 보지 않고 Q_TEXT 전체를 비교합니다. 그래서 실제로는 grid인 문항이 묶이지 않을 수 있습니다. 잘못 묶는 것보다 안전하기 때문입니다.
-- 묶이지 않은 grid는 담당자가 확인 화면(F5)에서 GRID_GROUP을 확정할 때까지 묶이지 않은 채로 남습니다.
+`FromWallaDDI`는 Walla XML·JSON에서 CSV 기준의 재단 초안을 만듭니다.
+중복 Parquet 파일은 제외하고, 입력에 선언된 시스템 변수는 `SourceSystemVars`에 보관합니다.
+외부 기관 Excel에는 Walla 시스템 변수를 추가하지 않습니다.
 
-### 네이티브 코드북(Walla 내보내기)
+- Walla 묶음은 원본 `varGrp`에서 가져옵니다. 변수명 접두로 grid를 추정하지 않습니다.
+- `Native`는 내부 모델 상태입니다. 새 XML의 제품 전용 표시로 저장하지 않습니다.
+- 영역, 조사 정보, 추가 v4.0 항목은 호출자가 채워야 합니다. 이 어댑터는 Walla XML 전체의 무손실 변환기가 아닙니다.
 
-- `kosac.FromWallaDDI`가 만든 모델은 `Codebook.Native`가 참입니다. 네이티브 코드북에서는 변수 이름으로 grid를 판정하지 않습니다. Walla 변수 이름은 접두가 모두 `f`라서, 같은 페이지에서 문장이 같은 단일선택 문항이 가짜 grid로 묶이기 때문입니다. 묶음은 Walla의 varGrp 멤버십으로만 정합니다.
-- `Codebook.Native`는 XML에 `kosac:package/kosac:sourceSurvey@kind="native"`로 남습니다. `FromWallaDDI`는 `cb.Package`를 nil로 둡니다. 이때도 조립은 `docDscr` 아래에 이 표시만 씁니다. 그래서 `kosac.Parse`로 다시 읽으면 `Native`가 참이고 `Package`는 nil입니다.
-- 나중에 `cb.Package`를 채우면 `Source.Kind` 자리에 `native`가 들어갑니다. `Source.Kind`는 비워 두거나 `"native"`로 두어 주세요. 다른 값(예: `"upload"`)이면 `cb.XML()`이 오류를 냅니다.
-- 네이티브 초안은 VAR_GROUP(영역)을 비워 둡니다. Walla 내보내기에는 영역 정보가 없기 때문입니다. 비워 두면 C06 `R`이 나오므로, 호출자가 Walla 폼의 그룹(페이지) 라벨을 채워야 합니다. 예: `v.Rec.Set("VAR_GROUP", pageLabel)`
+### XML 검증
 
-### XML 검증(`check.ValidateXML`)
+`check.ValidateXML`은 먼저 ID 형식·중복과 지원하는 참조의 대상을 확인합니다.
+`kosac:` 확장이 있으면 `DDI-EXTENSION`으로 반려합니다.
+검증기가 있으면 **입력 XML 전체를 그대로** 공식 DDI 2.5 XSD로 한 번 검사합니다.
+확장을 제거한 투영 문서의 통과를 표준 문서의 통과로 보고하지 않습니다.
 
-공식 DDI 2.5 XSD에는 다른 네임스페이스의 요소를 받는 자리가 없습니다. 그래서 kosac 요소가 든 코드북은 공식 XSD를 그대로 통과할 수 없습니다. `ValidateXML`은 아래 네 단계로 검사하고, 찾은 문제를 모두 `R`로 냅니다.
+`validator == nil`이면 XSD 검증을 실행하지 않습니다.
+이 결과를 표준 적합성 확인으로 사용하지 마세요.
+XSD는 `xsd.FS` 전체를 같은 디렉터리에 풀어 상대 경로 import가 작동하게 해야 합니다.
+구현은 `cmd/ddi-xlsx/xmllint.go`를 참고하세요.
 
-1. **PLACE**: kosac 요소와 속성이 정해진 DDI 요소 아래에만 있는지 Go 코드로 확인합니다.
-2. **REF**: ID 형식과 유일성, ID를 가리키는 참조가 끊기지 않았는지 Go 코드로 확인합니다. libxml2가 IDREF의 대상을 확인하지 않기 때문입니다.
-3. **XSD-DDI**: kosac 요소와 속성을 모두 걷어낸 문서(DDI 투영)를 공식 DDI 2.5 XSD로 검증합니다.
-4. **XSD-KOSAC**: kosac 내용만 모은 문서(kosac 투영)를 kosac 3.3 XSD로 검증합니다.
+### 양식과 예제
 
-- 3과 4의 XSD 검증은 호출자가 넘긴 `check.Validator`가 합니다. 엔진은 외부 프로세스를 실행하지 않기 때문입니다.
-- `Validator`가 `nil`이면 3과 4를 건너뛰고 PLACE와 REF만 검사합니다.
-- XSD 파일은 `xsd.FS`(DDI 2.5)와 `kosac/xsd.FS`(kosac 3.3)로 공개합니다. 두 패키지의 이름이 모두 `xsd`이므로 import할 때 별칭을 붙여 주세요.
-- `codebook.xsd`는 다른 XSD 파일을 상대 경로로 가져옵니다. 그래서 `Validator`를 구현할 때는 FS 전체를 한 디렉터리에 풀어야 합니다. CLI의 구현(`cmd/ddi-xlsx/xmllint.go`)을 참고해 주세요.
-- 두 투영의 구조, 그리고 요청서와 다르게 정한 점은 `kosac/xsd/CHANGES.md`에 있습니다.
+`template.Blank()`와 `kosac-template`은 재단의 2026-10-19 개정 공식 v4.0 빈 양식을 반환합니다.
+`template.Write`는 모델의 명시된 버전으로 씁니다. 버전이 없으면 v4.0입니다.
+v4.0 항목을 v3.2로 쓰려 하면 유실을 막기 위해 거부합니다.
 
-### 양식 파일
-
-- **임시 내장본**: `kosac-template`, `template.Blank`, `template.Write`가 쓰는 빈 양식은 재단의 작성 예시에서 값을 지워 만든 임시본입니다. `_meta` 시트에 `NOTE | 임시 내장본, 원본 교체 예정`이 있습니다. 재단이 공식 빈 양식을 주면 `kosac/template/blank_v3.2.xlsx`만 바꿉니다.
-- **목록이 걸린 행**: 목록(데이터 유효성)은 원본 양식의 범위까지만 걸려 있습니다. `02_데이터파일`은 23행, `03_변수정의`는 3003행까지입니다. `04_코드값`에는 목록이 없습니다. 이보다 아래 행에서는 Excel이 목록 밖의 값을 막지 않으므로, `kosac-check`로 확인해 주세요.
-- **검증용 예시**: 재단 작성 예시와 XML·JSON 변환 결과, 검사 결과를 포함합니다. 응답자별 응답 원자료는 포함하지 않습니다. 출처와 용도는 [예시 자료 안내](testdata/kosac/README.md)에 있습니다.
+원본 Excel의 목록 검증 범위에는 빈 구간이 있을 수 있습니다.
+Excel 입력 목록만으로 값의 타당성을 판단하지 마세요.
+제공 예제, 표준 출력 기준 파일, 과거 형식 fixture의 출처는 [예제 안내](testdata/kosac/README.md)에 있습니다.
 
 ## 개발
 
@@ -787,7 +709,6 @@ GNU Lesser General Public License의 전문은 아직 저장소에 넣지 않았
 
 다음 기능은 로컬 개발 작업에 있으며 현재 공개 버전에는 포함하지 않습니다.
 
-- 재단 v4.0 양식 읽기·쓰기와 추가 규칙 검사
 - `checkCodebook`, `kosacTemplateXlsx` WASM API
 - 단일 HTML로 실행하는 브라우저 검사실과 JavaScript REPL
 

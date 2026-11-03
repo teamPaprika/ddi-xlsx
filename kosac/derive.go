@@ -104,7 +104,7 @@ func (d *deriver) missingLabels(code string) []string {
 	if l := d.ref.MissingLabels[code]; len(l) > 0 {
 		return l
 	}
-	return DefaultMissingLabels[code]
+	return MissingLabelsFor(d.cb.Template.Version.Value)[code]
 }
 
 // missingCodes declares -8, -7 and -9 on every 명목·서열·연속 survey var that
@@ -123,6 +123,9 @@ func (d *deriver) missingCodes() {
 		if IsSystemVar(v.Rec.Get("VAR_NAME")) {
 			continue
 		}
+		if d.cb.Template.Version.Value == "4.0" {
+			continue
+		} // v4 declares missingness explicitly; do not invent categories.
 		k := varKey(v)
 		for _, mc := range MissingCodes {
 			m := mc.Code
@@ -145,6 +148,18 @@ func (d *deriver) missingCodes() {
 
 func (d *deriver) typeCode(c *Code) {
 	code := codeOf(c)
+	if d.cb.Template.Version.Value == "4.0" {
+		if DeclaredMissing(c.Rec.Get("IS_MISSING")) {
+			kind := "MISSING"
+			if code == "-7" {
+				kind = "DK"
+			}
+			fill(&c.Type, kind)
+		} else {
+			fill(&c.Type, "VALID")
+		}
+		return
+	}
 	m, missing := missingCode(code)
 	if !missing {
 		fill(&c.Type, "VALID")
@@ -214,6 +229,9 @@ func dimMeasure(v *Var) string {
 	case typed(v.Rec.Get("MR_TYPE")) == "보기별 열":
 		return "MEASURE"
 	}
+	if MeasurementLevel(v) == "scale" {
+		return "MEASURE"
+	}
 	return levelDim[typed(v.Rec.Get("MEAS_LEVEL"))]
 }
 
@@ -235,7 +253,7 @@ func aggRules(v *Var, weighted bool) string {
 		}
 		return "AVG;COUNT;RATIO"
 	case "MEASURE":
-		if typed(v.Rec.Get("MEAS_LEVEL")) == "연속" {
+		if MeasurementLevel(v) == "scale" {
 			return "AVG;MIN;MAX;SUM"
 		}
 	}

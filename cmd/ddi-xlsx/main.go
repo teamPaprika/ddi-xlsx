@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/teamPaprika/ddi-xlsx/ddi"
 	"github.com/teamPaprika/ddi-xlsx/kosac"
 	"github.com/teamPaprika/ddi-xlsx/kosac/check"
 	ktemplate "github.com/teamPaprika/ddi-xlsx/kosac/template"
@@ -22,7 +23,7 @@ const usage = "usage: ddi-xlsx to-xlsx <in.xml|in.json> [-o out.xlsx]\n" +
 	"       ddi-xlsx from-xlsx <in.xlsx> [--xml out.xml] [--json out.json]\n" +
 	"       ddi-xlsx template [-o template.xlsx]\n" +
 	"       ddi-xlsx kosac-check <양식.xlsx>\n" +
-	"       ddi-xlsx kosac-xml <양식.xlsx> [-o out.xml]\n" +
+	"       ddi-xlsx kosac-xml <양식.xlsx> [-o out.xml] [--json out.json]\n" +
 	"       ddi-xlsx kosac-template [-o kosac-template.xlsx]\n"
 
 var (
@@ -173,6 +174,7 @@ func kosacCheck(args []string, stdout io.Writer) error {
 func kosacXML(args []string, stdout, stderr io.Writer) error {
 	fs := flag.NewFlagSet("kosac-xml", flag.ContinueOnError)
 	out := fs.String("o", "", "")
+	outJSON := fs.String("json", "", "")
 	in, err := parse(fs, args)
 	if err != nil {
 		return err
@@ -181,6 +183,13 @@ func kosacXML(args []string, stdout, stderr io.Writer) error {
 		*out = withExt(in, ".xml")
 		if err := mustBeNew(*out, "-o"); err != nil {
 			return err
+		}
+	}
+	if *outJSON != "" {
+		for _, pair := range [][2]string{{in, *outJSON}, {*out, *outJSON}} {
+			if sameFile(pair[0], pair[1]) {
+				return fmt.Errorf("XML, JSON and input paths must differ")
+			}
 		}
 	}
 	cb, issues, err := readKosac(in)
@@ -194,12 +203,18 @@ func kosacXML(args []string, stdout, stderr io.Writer) error {
 	if err := kosac.AssignIDs(cb, nil); err != nil {
 		return err
 	}
-	x, err := cb.XML()
+	root, err := cb.Tree()
 	if err != nil {
 		return err
 	}
+	x := ddi.WriteXML(root)
 	if err := write(in, *out, x); err != nil {
 		return err
+	}
+	if *outJSON != "" {
+		if err := write(in, *outJSON, ddi.WriteJSON(root)); err != nil {
+			return err
+		}
 	}
 	var v check.Validator
 	if _, err := exec.LookPath("xmllint"); err == nil {
@@ -284,7 +299,7 @@ func withExt(path, ext string) string {
 // write refuses to replace the input: a workbook saved as book.xml would
 // otherwise be lost to the default from-xlsx output path.
 func write(in, out string, data []byte) error {
-	if filepath.Clean(in) == filepath.Clean(out) {
+	if sameFile(in, out) {
 		return fmt.Errorf("%s: refusing to overwrite the input file", out)
 	}
 	return os.WriteFile(out, data, 0o644)
@@ -294,4 +309,16 @@ func warn(stderr io.Writer, warns []string) {
 	for _, w := range warns {
 		fmt.Fprintf(stderr, "warning: %s\n", w)
 	}
+}
+
+// sameFile also catches absolute-path, symlink and hard-link aliases.
+func sameFile(a, b string) bool {
+	aa, ea := filepath.Abs(a)
+	bb, eb := filepath.Abs(b)
+	if ea == nil && eb == nil && aa == bb {
+		return true
+	}
+	ai, ea := os.Stat(a)
+	bi, eb := os.Stat(b)
+	return ea == nil && eb == nil && os.SameFile(ai, bi)
 }

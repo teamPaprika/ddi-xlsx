@@ -21,7 +21,7 @@ type WallaOptions struct {
 
 // wallaRules are walla's naming and missing-code rules for one export.
 type wallaRules struct {
-	system []string       // walla's own columns, which assembly makes again
+	system []string       // system columns retained separately from 03 rows
 	rank   *regexp.Regexp // a rank column: its group, then k
 	suffix *regexp.Regexp // a column that belongs to var $1, then its suffix
 	typed  []string       // codes typed here; DeriveDefaults types the rest
@@ -62,8 +62,8 @@ func wallaKind(names map[string]bool) wallaRules {
 // fills TITLE, the walla ID, one CSV file, a 03 row per survey var with its
 // MR, grid and rank group and its parent, and a 04 row per category, all of
 // which DeriveDefaults keeps. VAR_GROUP, Q_NO and the 01 sheet but TITLE are
-// left to the caller. The Parquet file holds the CSV's data again and walla's
-// system vars are made again at assembly, so neither is read.
+// left to the caller. The duplicate Parquet file is omitted; declared system
+// columns are retained in SourceSystemVars, scoped to the CSV file.
 func FromWallaDDI(b []byte, opt WallaOptions) (*Codebook, []Issue, error) {
 	for _, name := range slices.Sorted(maps.Keys(opt.MeasHints)) {
 		if lv := opt.MeasHints[name]; MeasLevels[lv] == "" {
@@ -121,6 +121,14 @@ func FromWallaDDI(b []byte, opt WallaOptions) (*Codebook, []Issue, error) {
 	for _, n := range vars {
 		name := attr(n, "name")
 		if slices.Contains(rules.system, name) {
+			system := copyNode(n)
+			system.Attrs = slices.DeleteFunc(system.Attrs, func(a ddi.Attr) bool { return a.Name == "files" })
+			system.Attrs = append(system.Attrs, ddi.Attr{Name: "files", Value: "F1"})
+			system.Children = slices.DeleteFunc(system.Children, func(c *ddi.Node) bool { return c.Name == "location" && attr(c, "fileid") != "F1" })
+			cb.SourceSystemVars = append(cb.SourceSystemVars, system)
+			if name == "response_id" || name == "walla_response_id" {
+				f.Rec.Set("ID_VAR", name)
+			}
 			continue
 		}
 		v := &Var{Rec: record(VarKeys)}

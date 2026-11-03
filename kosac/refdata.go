@@ -3,13 +3,16 @@ package kosac
 // RefData is the foundation's master data a caller passes in. A nil field
 // skips the checks that need it, unless noted.
 type RefData struct {
-	StdItems      map[string]StdItem    // by STD_ID
-	CodeSetDefs   map[string]CodeSetDef // by CODE_SET_ID
-	CodeSets      map[string][]StdCode  // by CODE_SET_ID
-	MissingLabels map[string][]string   // "-8" → accepted labels, the first being the prescribed one; nil uses the defaults
-	UploadedFiles []string
-	PDFPages      map[string]int // file name → page count
-	ReservedWords []string       // nil uses the default list
+	AccessLevels       []string              // v4: ordered from widest to narrowest; nil uses the official template list.
+	TransformTypes     []string              // v4: approved transformation types; nil accepts free text, empty rejects all.
+	PendingRecodeLimit float64               // v4: maximum pending fraction; zero uses 0.10.
+	StdItems           map[string]StdItem    // by STD_ID
+	CodeSetDefs        map[string]CodeSetDef // by CODE_SET_ID
+	CodeSets           map[string][]StdCode  // by CODE_SET_ID
+	MissingLabels      map[string][]string   // "-8" → accepted labels, the first being the prescribed one; nil uses the defaults
+	UploadedFiles      []string
+	PDFPages           map[string]int // file name → page count
+	ReservedWords      []string       // nil uses the default list
 }
 
 // StdItem is a row of std_items.csv. List columns are split on ";".

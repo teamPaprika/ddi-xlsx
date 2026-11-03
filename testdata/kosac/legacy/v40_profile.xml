@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codeBook xmlns="ddi:codebook:2_5" xmlns:kosac="urn:kosac:survey-meta:3.3" version="2.5">
+  <stdyDscr>
+    <citation>
+      <titlStmt>
+        <titl>합성 레거시 보관 검증</titl>
+      </titlStmt>
+      <serStmt>
+        <serName>테스트 시리즈</serName>
+      </serStmt>
+    </citation>
+    <notes type="KOFAC-SURVEY-META-v4.0" subject="_meta">{"template":{"ID":{"Value":"KOFAC-SURVEY-META","Loc":{"Sheet":"","Cell":""}},"Version":{"Value":"4.0","Loc":{"Sheet":"","Cell":""}},"Created":{"Value":"","Loc":{"Sheet":"","Cell":""}}}}</notes>
+    <notes type="KOFAC-SURVEY-META-v4.0" subject="01_조사정보">{"fields":{"CLEANING_LOG":"","SCALE_EXCEPTION":"","SOURCE_FILES":"synthetic.csv","STUDY_ROUND":"","VALID_N":"1 (중복 없음)"}}</notes>
+    <notes type="KOFAC-SURVEY-META-v4.0" subject="02_데이터파일">{"fileNo":"1","fields":{"SURVEY_TIME":"","TIME_VAR":"","UNIQUE_KEY":"ID","VARIABLE_N":"1"}}</notes>
+    <notes type="KOFAC-SURVEY-META-v4.0" subject="03_변수정의">{"fileNo":"1","variable":"ID","fields":{"ACCESS_LEVEL":"","CODE_SYSTEM":"","DATA_TYPE":"문자","DDI_INTERVAL":"discrete","MEAS_LEVEL":"명목","MISSING_STATUS_VAR":"","RECODE_STATUS":"확인 필요","SOURCE_VAR":"raw_id"}}</notes>
+    <notes type="KOFAC-SURVEY-META-v4.0" subject="04_코드값">{"fileNo":"1","variable":"ID","code":"01","fields":{"IS_MISSING":"아니오","MISSING_REASON":"","RECODE_STATUS":"확인 필요"}}</notes>
+    <notes type="KOFAC-SURVEY-META-v4.0" subject="05_재코딩이력">{"fields":{"BASIS":"합성 검증","FILE_NO":"1","NOTE":"","RECORD_COUNT":"","SOURCE_CODE_OR_CONDITION":"","SOURCE_FILE":"raw_synthetic.csv","SOURCE_VAR":"raw_id","STATUS":"확인 필요","TARGET_CODE_OR_RULE":"01","TARGET_VAR":"ID","TRANSFORM_TYPE":"형식 변환"}}</notes>
+    <kosac:study validN="1"/>
+  </stdyDscr>
+  <fileDscr ID="F1">
+    <fileTxt>
+      <fileName>synthetic.csv</fileName>
+      <dimensns>
+        <caseQnty>1</caseQnty>
+        <varQnty>7</varQnty>
+      </dimensns>
+      <fileType charset="UTF-8">CSV</fileType>
+    </fileTxt>
+    <kosac:file fileNo="1">
+      <kosac:systemIdVar ref="S1"/>
+    </kosac:file>
+  </fileDscr>
+  <dataDscr>
+    <var ID="S1" name="walla_response_id" files="F1" intrvl="discrete" kosac:seq="1" kosac:role="SYSTEM" kosac:measLevel="text" kosac:pii="N">
+      <location fileid="F1"/>
+      <labl>왈라 응답 ID</labl>
+      <varFormat type="character"/>
+      <kosac:analysis physicalName="walla_response_id" dimMeasure="KEY" includeYn="N"/>
+    </var>
+    <var ID="S2" name="walla_row_no" files="F1" intrvl="contin" kosac:seq="2" kosac:role="SYSTEM" kosac:measLevel="scale" kosac:pii="N">
+      <location fileid="F1"/>
+      <labl>왈라 행 번호</labl>
+      <varFormat type="numeric"/>
+      <kosac:analysis physicalName="walla_row_no" dimMeasure="KEY" includeYn="N"/>
+    </var>
+    <var ID="S3" name="walla_customer_key" files="F1" intrvl="discrete" kosac:seq="3" kosac:role="SYSTEM" kosac:measLevel="text" kosac:pii="Y">
+      <location fileid="F1"/>
+      <labl>왈라 고객 키</labl>
+      <varFormat type="character"/>
+      <kosac:analysis physicalName="walla_customer_key" dimMeasure="KEY" includeYn="N"/>
+    </var>
+    <var ID="S4" name="walla_submitted_at" files="F1" intrvl="discrete" kosac:seq="4" kosac:role="SYSTEM" kosac:measLevel="date" kosac:pii="Y">
+      <location fileid="F1"/>
+      <labl>왈라 제출 시각</labl>
+      <varFormat type="character" category="date"/>
+      <kosac:analysis physicalName="walla_submitted_at" dimMeasure="KEY" includeYn="N"/>
+    </var>
+    <var ID="S5" name="walla_started_at" files="F1" intrvl="discrete" kosac:seq="5" kosac:role="SYSTEM" kosac:measLevel="date" kosac:pii="Y">
+      <location fileid="F1"/>
+      <labl>왈라 시작 시각</labl>
+      <varFormat type="character" category="date"/>
+      <kosac:analysis physicalName="walla_started_at" dimMeasure="KEY" includeYn="N"/>
+    </var>
+    <var ID="S6" name="walla_duration_sec" files="F1" intrvl="contin" kosac:seq="6" kosac:role="SYSTEM" kosac:measLevel="scale" kosac:pii="N">
+      <location fileid="F1"/>
+      <labl>왈라 응답 소요 시간(초)</labl>
+      <varFormat type="numeric"/>
+      <kosac:analysis physicalName="walla_duration_sec" dimMeasure="KEY" includeYn="N"/>
+    </var>
+    <var ID="V1" name="ID" files="F1" intrvl="discrete" kosac:seq="7" kosac:measLevel="nominal">
+      <location fileid="F1"/>
+      <labl>합성 식별자</labl>
+      <catgry>
+        <catValu>01</catValu>
+        <labl>합성 코드</labl>
+      </catgry>
+      <varFormat type="character"/>
+    </var>
+  </dataDscr>
+</codeBook>

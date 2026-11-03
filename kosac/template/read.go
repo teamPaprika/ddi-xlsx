@@ -1,5 +1,4 @@
-// Package template reads and writes the foundation's KOSAC-SURVEY-META v3.2
-// workbook.
+// Package template reads and writes the foundation's v3.2 and v4.0 workbooks.
 package template
 
 import (
@@ -23,10 +22,10 @@ const (
 )
 
 type ReadOptions struct {
-	AllowedVersions []string // TEMPLATE_VERSION values to accept; empty means "3.2"
+	AllowedVersions []string // Empty accepts v3.2 and v4.0; their layouts remain distinct.
 }
 
-// Read reads a v3.2 workbook. The model is nil when the structure check (S05)
+// Read selects the v3.2 or v4.0 layout from _meta before reading records. The model is nil when the structure check (S05)
 // rejects the workbook; the issues say why. The error is for a file that is
 // not a workbook or unzips past the size limit.
 func Read(xlsx []byte, opt ReadOptions) (*kosac.Codebook, []kosac.Issue, error) {
@@ -41,6 +40,13 @@ func Read(xlsx []byte, opt ReadOptions) (*kosac.Codebook, []kosac.Issue, error) 
 	}
 
 	cb := &kosac.Codebook{}
+	if rows, ok, err := r.rows(kosac.SheetMeta); err != nil {
+		return nil, nil, err
+	} else if ok {
+		cb.Template = r.meta(rows, opt.AllowedVersions)
+	}
+	r.version = strings.TrimSpace(cb.Template.Version.Value)
+	layout := kosac.LayoutFor(r.version)
 	if rows, ok, err := r.rows(kosac.SheetStudy); err != nil {
 		return nil, nil, err
 	} else if ok {
@@ -50,7 +56,7 @@ func Read(xlsx []byte, opt ReadOptions) (*kosac.Codebook, []kosac.Issue, error) 
 	for _, t := range []struct {
 		sheet string
 		keys  []string
-	}{{kosac.SheetFiles, kosac.FileKeys}, {kosac.SheetVars, kosac.VarKeys}, {kosac.SheetCodes, kosac.CodeKeys}} {
+	}{{kosac.SheetFiles, layout.Files}, {kosac.SheetVars, layout.Vars}, {kosac.SheetCodes, layout.Codes}} {
 		rows, ok, err := r.rows(t.sheet)
 		if err != nil {
 			return nil, nil, err
@@ -59,10 +65,12 @@ func Read(xlsx []byte, opt ReadOptions) (*kosac.Codebook, []kosac.Issue, error) 
 			tables[t.sheet] = r.table(t.sheet, t.keys, rows)
 		}
 	}
-	if rows, ok, err := r.rows(kosac.SheetMeta); err != nil {
-		return nil, nil, err
-	} else if ok {
-		cb.Template = r.meta(rows, opt.AllowedVersions)
+	if r.version == "4.0" {
+		if rows, ok, err := r.rows(kosac.SheetRecodes); err != nil {
+			return nil, nil, err
+		} else if ok {
+			cb.Recodes = r.table(kosac.SheetRecodes, kosac.RecodeKeys, rows)
+		}
 	}
 
 	// A rejected structure stops here, so no rule runs on a misread sheet.
@@ -82,6 +90,7 @@ func Read(xlsx []byte, opt ReadOptions) (*kosac.Codebook, []kosac.Issue, error) 
 }
 
 type reader struct {
+	version   string
 	f         *excelize.File
 	date1904  bool
 	dateStyle map[int]bool // by style index
@@ -229,7 +238,7 @@ func (r *reader) study(rows [][]string) kosac.Record {
 		_, dup := rec[k]
 		switch {
 		case k == "":
-		case !slices.Contains(kosac.StudyKeys, k):
+		case !slices.Contains(kosac.LayoutFor(r.version).Study, k):
 			r.add(kosac.R, sheet, cellName(keyCol, i), k, "", fmt.Sprintf("%s 시트의 KEY %s는 양식에 없습니다.", sheet, k))
 		case dup:
 			r.add(kosac.R, sheet, cellName(keyCol, i), k, "", fmt.Sprintf("%s 시트에 KEY %s 행이 두 번 이상 있습니다.", sheet, k))
@@ -237,7 +246,7 @@ func (r *reader) study(rows [][]string) kosac.Record {
 			rec[k] = kosac.Field{Value: cellAt(rows[i], valCol), Loc: kosac.Loc{Sheet: sheet, Cell: cellName(valCol, i)}}
 		}
 	}
-	for _, k := range kosac.StudyKeys {
+	for _, k := range kosac.LayoutFor(r.version).Study {
 		if _, ok := rec[k]; !ok {
 			r.add(kosac.R, sheet, "", "", k, fmt.Sprintf("%s 시트에 KEY %s 행이 없습니다.", sheet, k))
 		}
@@ -245,12 +254,12 @@ func (r *reader) study(rows [][]string) kosac.Record {
 	return rec
 }
 
-// table reads a 02-04 sheet: KEYs in row 1, values from firstDataRow down.
+// table reads KEYs in row 1 and values from the selected layout's data row.
 // Every record holds every KEY of the sheet.
 func (r *reader) table(sheet string, keys []string, rows [][]string) []kosac.Record {
 	cols := r.columns(sheet, keys, rows)
 	var recs []kosac.Record
-	for i := firstDataRow - 1; i < len(rows); i++ {
+	for i := kosac.LayoutFor(r.version).FirstDataRow - 1; i < len(rows); i++ {
 		rec, blank := kosac.Record{}, true
 		for k, c := range cols {
 			v := cellAt(rows[i], c)
@@ -319,7 +328,7 @@ func (r *reader) meta(rows [][]string, allowed []string) kosac.TemplateMeta {
 			fmt.Sprintf("TEMPLATE_ID %q는 재단 코드북 양식의 ID가 아닙니다.", id))
 	}
 	if len(allowed) == 0 {
-		allowed = []string{"3.2"}
+		allowed = []string{"3.2", "4.0"}
 	}
 	if v := strings.TrimSpace(m.Version.Value); !slices.Contains(allowed, v) {
 		r.add(kosac.R, sheet, m.Version.Loc.Cell, v, strings.Join(allowed, ", "),

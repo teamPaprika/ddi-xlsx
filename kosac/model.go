@@ -1,4 +1,4 @@
-// Package kosac models a KOSAC-SURVEY-META v3.2 codebook: the template's
+// Package kosac models v3.2 and v4.0 codebooks: the template's
 // sheets as records keyed by template KEY, plus the values the engine and the
 // operator add. Every value is the string written, so checks can judge it as
 // written.
@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+
+	"github.com/teamPaprika/ddi-xlsx/ddi"
 )
 
 // Sheet names of the v3.2 template.
@@ -43,16 +45,19 @@ func (r Record) Set(key, value string) {
 
 type Codebook struct {
 	Template TemplateMeta
-	Study    Record // 01 sheet
-	Admin    StudyAdmin
-	Files    []*File // 02 rows in order
-	Vars     []*Var  // 03 rows in order; system vars are made at assembly
-	Codes    []*Code // 04 rows in order, joined to vars by (FILE_NO, VAR_NAME)
-	Package  *Package
+	// SourceSystemVars contains only system columns declared in an imported DDI.
+	// External Excel imports leave it empty; output never fabricates these columns.
+	SourceSystemVars []*ddi.Node
+	Study            Record // 01 sheet
+	Admin            StudyAdmin
+	Files            []*File  // 02 rows in order
+	Vars             []*Var   // 03 rows in order; imported system columns stay separate
+	Codes            []*Code  // 04 rows in order, joined to vars by (FILE_NO, VAR_NAME)
+	Recodes          []Record // 05 contractor transformations before submission
+	Package          *Package
 	// Native marks a codebook made from a walla export. Its var names say
 	// nothing about grids, so walla's own groups are the only ones. It is
-	// written as sourceSurvey@kind="native", with or without a Package, so it
-	// survives Parse whenever datajam fills the Package.
+	// model state, not an output protocol. Keep the model for later edits.
 	Native bool
 }
 
@@ -67,8 +72,8 @@ type StudyAdmin struct {
 
 type Round struct{ Year, WaveType, WaveNo string }
 
-// Package is the system-given kosac:package. A nil Package leaves docDscr out,
-// but for a native codebook's source kind.
+// Package is system-given delivery metadata. Standard output describes it
+// in docDscr; it does not define a machine-readable package manifest.
 type Package struct {
 	// No Cleansed: package@cleansed follows from the files' cleansing rules
 	// at assembly, so it has no second source here.
@@ -79,7 +84,7 @@ type Package struct {
 	Validation                                                         *Validation
 }
 
-// SourceSurvey is kosac:sourceSurvey; its @wallaId is StudyAdmin.WallaID.
+// SourceSurvey records the input source in the model.
 type SourceSurvey struct{ Kind, PublishedVersion, TemplateVersion string }
 
 type PackageFile struct{ Role, FileRef, Name, Bytes, SHA256, Pages string }

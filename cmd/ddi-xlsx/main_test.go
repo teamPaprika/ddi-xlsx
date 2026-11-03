@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/teamPaprika/ddi-xlsx/ddi"
 	"github.com/teamPaprika/ddi-xlsx/internal/xsdtest"
 	"github.com/teamPaprika/ddi-xlsx/kosac"
 	"github.com/teamPaprika/ddi-xlsx/kosac/check"
@@ -175,7 +176,7 @@ func TestUsage(t *testing.T) {
 		"       ddi-xlsx from-xlsx <in.xlsx> [--xml out.xml] [--json out.json]\n" +
 		"       ddi-xlsx template [-o template.xlsx]\n" +
 		"       ddi-xlsx kosac-check <양식.xlsx>\n" +
-		"       ddi-xlsx kosac-xml <양식.xlsx> [-o out.xml]\n" +
+		"       ddi-xlsx kosac-xml <양식.xlsx> [-o out.xml] [--json out.json]\n" +
 		"       ddi-xlsx kosac-template [-o kosac-template.xlsx]\n"
 	for _, args := range [][]string{
 		nil,
@@ -300,7 +301,7 @@ func TestKosacXML(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := kosac.Parse(b); err != nil {
+	if _, _, err := ddi.Parse(b); err != nil {
 		t.Errorf("Parse: %v", err)
 	}
 	if code, stderr := runCLI("kosac-xml", in); code != 1 || !strings.Contains(stderr, "already exists") {
@@ -383,5 +384,45 @@ func TestXmllintExit3WithoutProblems(t *testing.T) {
 	problems, err := xmllint(check.SchemaDDI, []byte("<x/>"))
 	if err != nil || len(problems) != 1 || problems[0] != "- fails to validate" {
 		t.Errorf("problems %q, err %v", problems, err)
+	}
+}
+
+func TestKosacJSONAndPathCollisions(t *testing.T) {
+	dir := t.TempDir()
+	x, j := filepath.Join(dir, "preview.xml"), filepath.Join(dir, "preview.json")
+	code, stdout, stderr := runOut("kosac-xml", kosacSample, "-o", x, "--json", j)
+	if code != 0 {
+		t.Fatalf("exit %d: %s %s", code, stdout, stderr)
+	}
+	xmlOut, err := os.ReadFile(x)
+	if err != nil {
+		t.Fatal(err)
+	}
+	jsonOut, err := os.ReadFile(j)
+	if err != nil {
+		t.Fatal(err)
+	}
+	root, _, err := ddi.Parse(jsonOut)
+	if err != nil || !bytes.Equal(xmlOut, ddi.WriteXML(root)) {
+		t.Fatalf("XML/JSON differ: %v", err)
+	}
+	for _, pair := range [][2]string{{x, x}, {x, kosacSample}} {
+		if code, stderr := runCLI("kosac-xml", kosacSample, "-o", pair[0], "--json", pair[1]); code != 1 || !strings.Contains(stderr, "paths must differ") {
+			t.Fatalf("collision accepted: %d %s", code, stderr)
+		}
+	}
+	// Both checks run before writing either file.
+	if after, _ := os.ReadFile(x); !bytes.Equal(after, xmlOut) {
+		t.Fatal("collision changed XML")
+	}
+	alias := filepath.Join(dir, "alias.json")
+	if err := os.Link(x, alias); err != nil {
+		t.Fatal(err)
+	}
+	if code, _ := runCLI("kosac-xml", kosacSample, "-o", x, "--json", alias); code != 1 {
+		t.Fatal("hard-link collision accepted")
+	}
+	if code, _ := runCLI("kosac-xml", x, "-o", alias); code != 1 {
+		t.Fatal("input hard link overwritten")
 	}
 }

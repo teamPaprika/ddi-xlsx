@@ -2,6 +2,8 @@ package template
 
 import (
 	"bytes"
+	"fmt"
+	"strings"
 
 	"github.com/teamPaprika/ddi-xlsx/kosac"
 	"github.com/xuri/excelize/v2"
@@ -12,23 +14,46 @@ import (
 // the template has no column for (analysis meta, FK, operator input) are not
 // written. Reading the result gives cb's record values back at new cells.
 func Write(cb *kosac.Codebook) ([]byte, error) {
-	f, err := excelize.OpenReader(bytes.NewReader(blank))
+	if cb == nil {
+		return nil, fmt.Errorf("코드북이 없습니다")
+	}
+	version := strings.TrimSpace(cb.Template.Version.Value)
+	if version == "" {
+		version = "4.0"
+	}
+	if version != "3.2" && version != "4.0" {
+		return nil, fmt.Errorf("지원하지 않는 양식 버전: %s", version)
+	}
+	if version == "3.2" && cb.HasV4Fields() {
+		return nil, fmt.Errorf("v4.0 항목을 v3.2 양식에 쓰면 유실됩니다")
+	}
+	layout := kosac.LayoutFor(version)
+	source := blankV4
+	if version == "3.2" {
+		source = blank
+	}
+	f, err := excelize.OpenReader(bytes.NewReader(source))
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
 	// The blank's own layout says where each KEY goes.
-	r := &reader{f: f, dateStyle: map[int]bool{}}
+	r := &reader{f: f, dateStyle: map[int]bool{}, version: version}
 
 	rows, _, err := r.rows(kosac.SheetStudy)
 	if err != nil {
 		return nil, err
 	}
+	if cb.Template.Created.Value != "" {
+		if err := f.SetCellStr(kosac.SheetMeta, "B3", cb.Template.Created.Value); err != nil {
+			return nil, err
+		}
+	}
 	// Cells are set in KEY order, never map order: each new string joins the
 	// shared string table in the order it is set, so map order would change
 	// the bytes from one write to the next.
 	cells := r.study(rows)
-	for _, k := range kosac.StudyKeys {
+	for _, k := range layout.Study {
 		at, ok := cells[k]
 		if !ok {
 			continue
@@ -60,7 +85,10 @@ func Write(cb *kosac.Codebook) ([]byte, error) {
 		sheet string
 		keys  []string
 		recs  []kosac.Record
-	}{{kosac.SheetFiles, kosac.FileKeys, files}, {kosac.SheetVars, kosac.VarKeys, vars}, {kosac.SheetCodes, kosac.CodeKeys, codes}} {
+	}{{kosac.SheetFiles, layout.Files, files}, {kosac.SheetVars, layout.Vars, vars}, {kosac.SheetCodes, layout.Codes, codes}, {kosac.SheetRecodes, kosac.RecodeKeys, cb.Recodes}} {
+		if t.sheet == kosac.SheetRecodes && version != "4.0" {
+			continue
+		}
 		rows, _, err := r.rows(t.sheet)
 		if err != nil {
 			return nil, err
@@ -73,7 +101,7 @@ func Write(cb *kosac.Codebook) ([]byte, error) {
 					continue
 				}
 				if v := rec.Get(k); v != "" {
-					if err := f.SetCellStr(t.sheet, cellName(c, firstDataRow-1+i), v); err != nil {
+					if err := f.SetCellStr(t.sheet, cellName(c, layout.FirstDataRow-1+i), v); err != nil {
 						return nil, err
 					}
 				}
