@@ -4,13 +4,52 @@
 
 연구자와 아카이브 담당자가 코드북을 스프레드시트에서 읽고 고칠 수 있게 하는 것이 목적입니다. 변수 라벨, 질문 문구, 값 라벨, 결측 표시, 노트, 그룹 구성, 연구 메타데이터는 셀만 고쳐서 바꿀 수 있습니다. 열에 들어가지 않는 내용은 같은 행의 `xml` 셀에 XML 원문으로 보관합니다. 그래서 DDI → xlsx → DDI 왕복에서 내용을 잃지 않습니다(예외는 "알려진 손실과 변경" 참고).
 
-같은 변환기를 세 가지 형태로 제공합니다.
+CLI, Go 라이브러리, Node·브라우저용 WASM SDK를 제공합니다. npm 레지스트리에는 아직 게시하지 않았습니다.
 
 - 명령줄 도구(CLI): macOS, Linux, Windows용 실행 파일입니다.
 - Go 라이브러리: `workbook.ToXLSX`, `workbook.FromXLSX`, `workbook.Template`입니다.
 - npm 패키지: Node와 웹 브라우저에서 쓰는 WebAssembly 모듈입니다.
 
+## 기능과 현재 지원 범위
+
+| 기능 | 입력과 출력 | 현재 범위 |
+|---|---|---|
+| 범용 변환기 | DDI 2.5 XML·JSON ↔ 편집용 Excel | `Variables`, `Categories`, `Groups`, `Document` 시트를 사용합니다. |
+| 재단 양식 엔진 | 재단 v3.2 Excel ↔ 재단 모델·XML | 양식 읽기·쓰기와 코드북 규칙 검사를 제공합니다. 현재 XML은 `kosac:` 확장을 포함합니다. |
+| Node·브라우저 SDK | DDI XML·JSON ↔ 편집용 Excel | 범용 변환과 빈 양식 생성 함수를 WASM으로 제공합니다. |
+
+**재단 엔진의 현재 XML은 공식 DDI 2.5 XSD를 단독으로 통과하지 않습니다.**
+현재 검사는 확장 부분을 분리한 두 문서를 각각 검사합니다.
+재단 v4.0과 브라우저 검사 API·REPL은 개발 중이며, 현재 공개 버전에는 포함하지 않습니다.
+재단 양식은 입력 가이드로 사용하고, 최종 XML을 DDI 2.5 표준 요소로 표현하는 작업은 아직 완료하지 않았습니다.
+
+이 도구는 코드북을 변환하고 검사합니다. 응답 데이터 정제, Parquet 생성, 승인, 데이터 플랫폼 적재는 호출하는 시스템에서 처리합니다.
+
+## 빠른 시작
+
+Go 1.25 이상과 Git이 필요합니다. 다음은 macOS·Linux에서 소스로 CLI를 빌드하는 예시입니다.
+
+```bash
+git clone https://github.com/teamPaprika/ddi-xlsx.git
+cd ddi-xlsx
+go build -o dist/ddi-xlsx ./cmd/ddi-xlsx
+./dist/ddi-xlsx template -o sample-codebook.xlsx
+./dist/ddi-xlsx from-xlsx sample-codebook.xlsx --xml sample-codebook.xml --json sample-codebook.json
+```
+
+위 명령은 일반 DDI 편집용 빈 양식과 XML·JSON을 만듭니다. 재단 빈 양식은 `kosac-template` 명령으로 만듭니다.
+`-o`, `--xml`, `--json`으로 지정한 기존 파일은 덮어씁니다.
+Windows 빌드는 [CLI 실행 파일](#cli-실행-파일)을 참고하세요.
+
+- [설치](#설치): CLI, Go 라이브러리, 로컬 npm 패키지
+- [CLI 사용법](#cli-사용법): 변환과 빈 양식 생성
+- [재단 코드북 엔진](#재단-코드북kosac-엔진): 양식 검사·변환과 XML 제한
+- [개발 중인 기능](#개발-중인-기능): 재단 v4.0, 브라우저 검사 API·REPL
+- [라이선스](#라이선스): 도구와 함께 포함한 스키마의 상태
+
 ## 받는 입력
+
+이 절의 조건은 범용 변환기에 적용합니다. 재단 Excel 입력은 [재단 코드북 엔진](#재단-코드북kosac-엔진)을 참고하세요.
 
 - DDI Codebook 2.5 문서만 받습니다. 루트 요소는 네임스페이스 `ddi:codebook:2_5`의 `codeBook`이어야 합니다.
 - 루트에 접두사를 붙였다면(`<ddi:codeBook>`), 기본 네임스페이스(`xmlns`)는 선언하지 않거나 `ddi:codebook:2_5`로 선언해야 합니다. 출력은 DDI 요소를 접두사 없이 쓰기 때문입니다.
@@ -69,7 +108,7 @@ scripts/build.sh
 | `ddi-xlsx-linux-arm64`, `ddi-xlsx-linux-amd64` | Linux |
 | `ddi-xlsx-windows-arm64.exe`, `ddi-xlsx-windows-amd64.exe` | Windows |
 
-파일 하나의 크기는 6.4–6.9 MB입니다. 따로 설치할 런타임은 없습니다. 운영체제에 맞는 파일을 `PATH`에 있는 디렉터리로 복사하고, 이름을 `ddi-xlsx`(Windows는 `ddi-xlsx.exe`)로 바꿔 주세요. 이 문서의 명령 예시는 그 이름을 씁니다.
+실행 파일 크기는 빌드 버전에 따라 달라집니다. 따로 설치할 런타임은 없습니다. 운영체제에 맞는 파일을 `PATH`에 있는 디렉터리로 복사하고, 이름을 `ddi-xlsx`(Windows는 `ddi-xlsx.exe`)로 바꿔 주세요. 이 문서의 명령 예시는 그 이름을 씁니다.
 
 ### Go
 
@@ -96,7 +135,7 @@ blank, err := workbook.Template()
 
 - `warnings`는 경고 문구 목록입니다. 경고가 있어도 변환은 성공한 것입니다.
 - 셀 내용 때문에 난 `FromXLSX` 오류는 셀 주소로 시작합니다. 예: `Categories!A12: …`
-- 모듈 경로 `github.com/teamPaprika/ddi-xlsx`는 임시 경로입니다. 공개할 때 바뀔 수 있습니다.
+- Go 모듈 경로는 `github.com/teamPaprika/ddi-xlsx`입니다. 저장소는 공개 상태이며 비공개 저장소 인증이 필요하지 않습니다.
 
 ### npm (Node와 브라우저)
 
@@ -138,7 +177,7 @@ await writeFile('codebook-npm-edited.json', out.json);
 
 - 패키지는 ES 모듈입니다. `index.js`는 `ddi-xlsx.wasm`을 자기와 같은 위치에서 찾습니다(`new URL('./ddi-xlsx.wasm', import.meta.url)`). 번들러를 쓴다면 이 파일이 함께 배포되는지 확인해 주세요.
 - 서버는 `.wasm` 파일을 `Content-Type: application/wasm`으로 보내야 합니다. 다른 타입으로 보내면 브라우저가 모듈을 로드하지 않습니다.
-- wasm 파일은 11.4 MB이고, gzip으로 압축하면 약 2.9 MB입니다.
+- WASM 파일 크기는 빌드 버전에 따라 달라집니다. gzip 압축을 사용하면 전송 크기를 줄일 수 있습니다.
 - 변환은 호출한 스레드에서 끝날 때까지 실행됩니다. 메인 스레드에서 호출하면 그동안 화면이 멈춥니다.
 
 #### 큰 코드북
@@ -443,7 +482,7 @@ level  element   text
 
 ## 왕복 보장
 
-이 도구는 아래 다섯 가지를 보장합니다.
+범용 변환기의 왕복 동작과 XSD 검사 범위는 다음과 같습니다. 재단 모델 변환에는 별도의 보존 규약이 적용됩니다.
 
 1. **고정점**: 이 도구가 만든 XML/JSON → xlsx → XML/JSON은 바이트 단위로 같다.
 2. **무손실**: `var`와 `varGrp`에 ID가 있는 DDI 2.5 입력이라면, DDI → xlsx → DDI 결과가 입력과 같은 정규 트리를 가진다.
@@ -451,7 +490,7 @@ level  element   text
    - 예외 1: 주석, PI, DOCTYPE은 경고와 함께 버린다.
    - 예외 2: 스키마 순서를 어긴 입력에서는 `var`, `catgry`, `varGrp`의 자식이 스키마 순서로 돌아온다.
 3. **XML과 JSON 일치**: 같은 xlsx에서 나온 XML과 JSON은 같은 트리를 담는다.
-4. **유효성**: XSD를 통과하는 입력에서 열의 값만 고쳤다면 출력도 XSD를 통과한다. 이것은 테스트로 확인한다. `Document`나 `xml` 셀에 넣은 요소에 대해서는 배치 경고만 낸다.
+4. **유효성 검사**: 변환 성공만으로 출력의 XSD 유효성을 보장하지 않는다. 열의 값이나 `Document`·`xml` 셀을 고친 뒤에는 출력 XML을 별도로 검사한다. 이 도구의 배치 경고는 전체 XSD 검사를 대신하지 않는다.
 5. **Walla 파일**: 설문 도구 Walla가 이 도구의 정규 레이아웃과 JSON 규약으로 쓴 파일은 1번에 따라 바이트 단위로 같다. 그보다 이전 형식의 Walla 내보내기 파일은 2번 수준으로 보장한다.
 
 2번의 "§5.3의 공백 규칙"은 다음과 같습니다. 텍스트 값은 앞뒤 공백과 둘째 줄부터의 줄 앞 공백을 지우고, CR을 LF로 바꿉니다. 자식 요소 사이에 있는 줄바꿈이 든 공백은 들여쓰기로 보고 버립니다.
@@ -487,7 +526,15 @@ level  element   text
 
 ## 재단 코드북(KOSAC) 엔진
 
-한국과학창의재단의 코드북 양식 KOSAC-SURVEY-META v3.2(xlsx)와, kosac 확장 네임스페이스 `urn:kosac:survey-meta:3.3`을 쓰는 DDI 2.5 코드북 XML을 다룹니다. 앞에서 설명한 범용 워크북(`Variables` 등 시트 네 개)과는 다른 양식입니다.
+현재 공개 버전은 재단 코드북 양식 KOSAC-SURVEY-META v3.2(xlsx)를 다룹니다.
+재단 양식은 앞에서 설명한 범용 워크북과 다른 형식입니다.
+
+**현재 구현:** 출력 XML은 확장 네임스페이스 `urn:kosac:survey-meta:3.3`을 포함합니다.
+양식 버전 3.2와 XML 확장 버전 3.3은 다른 번호입니다.
+현재 출력은 재단의 최종 제출 XML로 확정되지 않았습니다.
+
+**후속 작업:** 재단 양식의 항목을 DDI 2.5 표준 요소에 매핑하고, 최종 XML을 공식 XSD로 직접 검사해야 합니다.
+`kosac:` 확장은 이 작업의 완료 기준이 아닙니다.
 
 엔진이 하는 일은 아래와 같습니다.
 
@@ -659,7 +706,7 @@ func applies(row universe.Row) (bool, error) {
 
 - **임시 내장본**: `kosac-template`, `template.Blank`, `template.Write`가 쓰는 빈 양식은 재단의 작성 예시에서 값을 지워 만든 임시본입니다. `_meta` 시트에 `NOTE | 임시 내장본, 원본 교체 예정`이 있습니다. 재단이 공식 빈 양식을 주면 `kosac/template/blank_v3.2.xlsx`만 바꿉니다.
 - **목록이 걸린 행**: 목록(데이터 유효성)은 원본 양식의 범위까지만 걸려 있습니다. `02_데이터파일`은 23행, `03_변수정의`는 3003행까지입니다. `04_코드값`에는 목록이 없습니다. 이보다 아래 행에서는 Excel이 목록 밖의 값을 막지 않으므로, `kosac-check`로 확인해 주세요.
-- **비공개 fixture**: `testdata/kosac/v32_sample_2024.xlsx`는 재단이 준 작성 예시이고, 고객 문서입니다. 이 저장소가 비공개라는 전제에서만 둡니다. 저장소를 공개하기 전에 지우거나 바꿀 파일은 `testdata/kosac/README.md`에 적어 두었습니다.
+- **검증용 예시**: 재단 작성 예시와 XML·JSON 변환 결과, 검사 결과를 포함합니다. 응답자별 응답 원자료는 포함하지 않습니다. 출처와 용도는 [예시 자료 안내](testdata/kosac/README.md)에 있습니다.
 
 ## 개발
 
@@ -733,4 +780,15 @@ GNU Lesser General Public License의 전문은 아직 저장소에 넣지 않았
 
 ### 이 도구
 
-이 도구 자체의 라이선스는 아직 정하지 않았습니다.
+소스코드 저장소는 공개 상태입니다. 이 도구 자체의 라이선스는 아직 정하지 않았습니다.
+함께 포함한 XSD의 라이선스와 도구 자체의 라이선스는 구분합니다.
+
+## 개발 중인 기능
+
+다음 기능은 로컬 개발 작업에 있으며 현재 공개 버전에는 포함하지 않습니다.
+
+- 재단 v4.0 양식 읽기·쓰기와 추가 규칙 검사
+- `checkCodebook`, `kosacTemplateXlsx` WASM API
+- 단일 HTML로 실행하는 브라우저 검사실과 JavaScript REPL
+
+관련 구현과 테스트를 함께 반영한 뒤 사용 방법을 추가합니다.
