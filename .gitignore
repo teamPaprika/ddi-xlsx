@@ -3,3 +3,6 @@ npm/ddi-xlsx.wasm
 npm/wasm_exec.js
 node_modules/
 **/survey.csv
+site/public/
+site/resources/
+site/.hugo_build.lock
