@@ -1,0 +1,49 @@
+baseURL: https://teampaprika.github.io/ddi-xlsx/
+languageCode: ko-KR
+defaultContentLanguage: ko
+title: ddi-xlsx
+enableRobotsTXT: true
+enableGitInfo: true
+
+module:
+  imports:
+    - path: github.com/imfing/hextra
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+
+menu:
+  main:
+    - name: 문서
+      pageRef: /docs
+      weight: 1
+    - name: 기여하기
+      pageRef: /docs/contributing
+      weight: 2
+    - name: Search
+      weight: 3
+      params:
+        type: search
+    - name: GitHub
+      weight: 4
+      url: https://github.com/teamPaprika/ddi-xlsx
+      params:
+        icon: github
+
+params:
+  description: DDI Codebook 2.5 문서와 편집용 xlsx 워크북을 서로 변환하는 도구의 개발자 문서입니다.
+  navbar:
+    displayTitle: true
+    displayLogo: false
+  footer:
+    displayCopyright: false
+    displayPoweredBy: true
+  displayUpdatedDate: true
+  dateFormat: "2006-01-02"
+  editURL:
+    enable: true
+    base: https://github.com/teamPaprika/ddi-xlsx/edit/main/site/content
