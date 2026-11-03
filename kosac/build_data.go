@@ -139,13 +139,22 @@ func (b *builder) varNode(id, name, fileNo, measLevel string, k map[string]strin
 
 func (b *builder) surveyVar(v *Var, seq int) *ddi.Node {
 	g, no := v.Rec.Get, v.Rec.Get("FILE_NO")
-	level := MeasLevels[typed(g("MEAS_LEVEL"))]
+	level := MeasurementLevel(v)
 	n := b.varNode(v.ID, g("VAR_NAME"), no, level, map[string]string{
 		"seq": strconv.Itoa(seq), "role": v.Role, "measLevel": level, "pii": cell(g("PII")),
 		"sensitive": cell(g("SENSITIVE")), "reverse": cell(g("REVERSE")), "mrType": cell(g("MR_TYPE")),
 		"mrGroup": v.MRGroup, "rowLabel": v.RowLabel, "rankNo": v.RankNo, "cleansed": yes(b.cleansed[v.ID]),
 		"textFormat": v.TextFormat, "parentVar": b.fileVar(no, varLoc(v)+" ParentVar", v.ParentVar),
 	})
+	if b.cb.Template.Version.Value == "4.0" {
+		if x := g("DDI_INTERVAL"); x == "contin" || x == "discrete" {
+			for i, a := range n.Attrs {
+				if a.Name == "intrvl" {
+					n.Attrs[i].Value = x
+				}
+			}
+		}
+	}
 	codes := b.codes[varKey(v)]
 	add(n, el("location", "fileid", "F"+no), text("labl", g("VAR_LABEL")),
 		add(el("qstn", "seqNo", g("Q_NO")), text("qstnLit", g("Q_TEXT"))),
@@ -161,6 +170,14 @@ func (b *builder) surveyVar(v *Var, seq int) *ddi.Node {
 		format = el("varFormat", "type", "character")
 	case "date":
 		format = el("varFormat", "type", "character", "category", "date")
+	}
+	if b.cb.Template.Version.Value == "4.0" {
+		if g("DATA_TYPE") == "확인 불가" {
+			format = nil
+		}
+		if typ, category := v4Format(g("DATA_TYPE")); typ != "" {
+			format = el("varFormat", "type", typ, "category", category)
+		}
 	}
 	add(n, text("concept", typed(g("STD_ID")), "vocab", "KOSAC-STD"),
 		add(el("derivation"), text("drvdesc", g("DERIVATION"))),
@@ -186,7 +203,12 @@ func (b *builder) surveyVar(v *Var, seq int) *ddi.Node {
 
 // isMissing reads an empty Type as VALID: a model not yet through
 // DeriveDefaults has no types.
-func isMissing(c *Code) bool { return c.Type != "" && c.Type != "VALID" }
+func isMissing(c *Code) bool {
+	if x := c.Rec.Get("IS_MISSING"); x != "" {
+		return DeclaredMissing(x)
+	}
+	return c.Type != "" && c.Type != "VALID"
+}
 
 // missingCodes lists the var's missing codes: the declared ones first, in the
 // foundation's order, then the others (such as walla's -6) in catgry order,

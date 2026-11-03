@@ -150,9 +150,10 @@ func fullModel() *Codebook {
 	return cb
 }
 
+// tree inspects the internal legacy profile; public output has separate standard-only tests.
 func tree(t *testing.T, cb *Codebook) *ddi.Node {
 	t.Helper()
-	n, err := cb.Tree()
+	n, err := cb.profileTree()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -267,7 +268,7 @@ func checkPlacement(t *testing.T, n *ddi.Node) {
 	}
 }
 
-func TestTreeSmall(t *testing.T) {
+func TestLegacyProfileTreeSmall(t *testing.T) {
 	cb := smallModel()
 	root := tree(t, cb)
 
@@ -421,13 +422,13 @@ func TestTreeSmall(t *testing.T) {
 	})
 
 	t.Run("XML and JSON", func(t *testing.T) {
-		x, err := cb.XML()
-		if err != nil || string(x) != string(ddi.WriteXML(root)) {
-			t.Errorf("XML: %v", err)
+		x := mustXML(t, cb)
+		if string(x) != string(ddi.WriteXML(root)) {
+			t.Error("legacy XML differs")
 		}
-		j, err := cb.JSON()
-		if err != nil || string(j) != string(ddi.WriteJSON(root)) {
-			t.Errorf("JSON: %v", err)
+		j := mustJSON(t, cb)
+		if string(j) != string(ddi.WriteJSON(root)) {
+			t.Error("legacy JSON differs")
 		}
 	})
 }
@@ -466,7 +467,7 @@ func TestTreeUnverified(t *testing.T) {
 // TestRebuildFromNormalized stands in for the fixed point until Parse exists:
 // Parse can only return what the XML holds, the normalized text, so a value
 // derived from a cell must come out the same from the normalized cell.
-func TestRebuildFromNormalized(t *testing.T) {
+func TestLegacyProfileRebuildFromNormalized(t *testing.T) {
 	cb := smallModel()
 	cb.Package.Files = cb.Package.Files[:2] // URIs come from the cells
 	cb.Vars[8].Rec.Set("VAR_LABEL", "경쟁력 있는 과학기술 분야\n (1순위)")
@@ -481,10 +482,7 @@ func TestRebuildFromNormalized(t *testing.T) {
 	cb.Study.Set("EXTRA_FILES", " 부록\n  1.xlsx ;부록2.hwp")
 	cb.Study.Set("KEYWORDS", "과학\n  기술; 자본")
 	cb.Codes[4].Rec.Set("CODE", " -8\n ")
-	first, err := cb.XML()
-	if err != nil {
-		t.Fatal(err)
-	}
+	first := mustXML(t, cb)
 
 	norm := func(r Record, keys ...string) {
 		for _, k := range keys {
@@ -509,10 +507,7 @@ func TestRebuildFromNormalized(t *testing.T) {
 	norm(cb.Study, "REPORT_FILE", "QUESTIONNAIRE")
 	joined(cb.Study, "EXTRA_FILES")
 	joined(cb.Study, "KEYWORDS")
-	second, err := cb.XML()
-	if err != nil {
-		t.Fatal(err)
-	}
+	second := mustXML(t, cb)
 	if string(first) != string(second) {
 		a, b := strings.Split(string(first), "\n"), strings.Split(string(second), "\n")
 		for i := range min(len(a), len(b)) {

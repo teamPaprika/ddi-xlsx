@@ -375,13 +375,13 @@ func autoFilters(t *testing.T, x []byte) []string {
 	return refs
 }
 
-func TestBlank(t *testing.T) {
-	b := Blank()
+func TestLegacyBlank(t *testing.T) {
+	b := bytes.Clone(blank)
 	b[0] ^= 0xff
-	if Blank()[0] == b[0] {
+	if bytes.Clone(blank)[0] == b[0] {
 		t.Fatal("Blank shares its bytes with callers")
 	}
-	b = Blank()
+	b = bytes.Clone(blank)
 
 	cb, issues := read(t, b, ReadOptions{})
 	if cb == nil || len(issues) > 0 {

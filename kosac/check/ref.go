@@ -22,6 +22,7 @@ var ncNameRe = regexp.MustCompile(`^[A-Z_a-z\x{C0}-\x{D6}\x{D8}-\x{F6}\x{F8}-\x{
 var (
 	varRefs = map[string][]string{
 		"varGrp": {"var"}, "var": {"wgt-var", "kosac:parentVar"},
+		"derivation": {"var"}, "qstn": {"var"}, "recGrp": {"keyvar"},
 		"kosac:idVar": {"ref"}, "kosac:systemIdVar": {"ref"}, "kosac:link": {"var"},
 		"kosac:sampling": {"strataVars", "clusterVar"}, "kosac:splitBallot": {"var"}, "kosac:weight": {"var"},
 		"kosac:rule": {"var"}, "kosac:unverified": {"var"},
@@ -33,8 +34,7 @@ var (
 
 // ref checks that every ID, the root's included, is an NCName used once, and
 // that every reference names a var or fileDscr in the document: libxml2 does
-// not resolve IDREF, and the kosac projection holds references as plain
-// names. It reads the tree as written, so it also judges hand-edited XML,
+// not resolve IDREF. It reads the tree as written, so it also judges hand-edited XML,
 // where a dangling reference is most likely.
 func ref(root *ddi.Node) []kosac.Issue {
 	var out []kosac.Issue
@@ -60,6 +60,15 @@ func ref(root *ddi.Node) []kosac.Issue {
 		return true
 	})
 	kosac.Walk(root, func(n, _ *ddi.Node, path string) bool {
+		attrs := map[string][]string{"codingInstructions": {"relatedProcesses"}, "Link": {"refs"}, "var": {"weight", "qstn"}, "recGrp": {"recGrp"}}[n.Name]
+		for _, name := range attrs {
+			value, _ := n.Attr(name)
+			for _, id := range strings.Fields(value) {
+				if !seen[id] {
+					out = append(out, refIssue(path+"/@"+name, id, "문서에 정의된 ID", "참조한 ID가 문서에 없습니다."))
+				}
+			}
+		}
 		for _, c := range []struct {
 			attrs   []string
 			ids     map[string]bool

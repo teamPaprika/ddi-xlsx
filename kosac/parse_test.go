@@ -35,20 +35,20 @@ func unverifiedModel() *Codebook {
 
 func mustXML(t *testing.T, cb *Codebook) []byte {
 	t.Helper()
-	b, err := cb.XML()
+	root, err := cb.profileTree()
 	if err != nil {
 		t.Fatal(err)
 	}
-	return b
+	return ddi.WriteXML(root)
 }
 
 func mustJSON(t *testing.T, cb *Codebook) []byte {
 	t.Helper()
-	b, err := cb.JSON()
+	root, err := cb.profileTree()
 	if err != nil {
 		t.Fatal(err)
 	}
-	return b
+	return ddi.WriteJSON(root)
 }
 
 func mustParse(t *testing.T, doc []byte) *Codebook {
@@ -76,7 +76,7 @@ func sameBytes(t *testing.T, what string, want, got []byte) {
 	t.Errorf("%s: %d lines, want %d", what, len(b), len(a))
 }
 
-func TestFixedPoint(t *testing.T) {
+func TestLegacyProfileFixedPoint(t *testing.T) {
 	noPkg, noVersion, nativeNoPkg, nativePkg := smallModel(), smallModel(), smallModel(), smallModel()
 	noPkg.Package = nil
 	noVersion.Package.CodebookVersion = ""

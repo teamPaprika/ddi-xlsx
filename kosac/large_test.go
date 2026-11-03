@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/teamPaprika/ddi-xlsx/ddi"
 	"github.com/teamPaprika/ddi-xlsx/internal/xsdtest"
 	"github.com/teamPaprika/ddi-xlsx/kosac"
 	"github.com/teamPaprika/ddi-xlsx/kosac/check"
@@ -246,20 +247,15 @@ func TestSampleGolden(t *testing.T) {
 	golden(t, "v32_sample_2024.json", j)
 
 	for _, doc := range []struct {
-		name  string
-		b     []byte
-		build func(*kosac.Codebook) ([]byte, error)
-	}{{"XML", x, (*kosac.Codebook).XML}, {"JSON", j, (*kosac.Codebook).JSON}} {
-		p, err := kosac.Parse(doc.b)
+		name string
+		b    []byte
+	}{{"XML", x}, {"JSON", j}} {
+		parsed, _, err := ddi.Parse(doc.b)
 		if err != nil {
 			t.Fatalf("Parse %s: %v", doc.name, err)
 		}
-		again, err := doc.build(p)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if !bytes.Equal(again, doc.b) {
-			t.Errorf("%s: Parse then build is not a fixed point", doc.name)
+		if !bytes.Equal(ddi.WriteXML(parsed), x) || !bytes.Equal(ddi.WriteJSON(parsed), j) {
+			t.Errorf("%s standard tree roundtrip differs", doc.name)
 		}
 	}
 	if is := check.ValidateXML(x, xmllint(t)); len(is) != 0 {
@@ -368,7 +364,7 @@ func largeModel() *kosac.Codebook {
 		}
 		return r
 	}
-	cb := &kosac.Codebook{Study: rec("TITLE", "대용량 코드북", "DATA_NO", "문화-02-01", "FIELD_START", "2025-05-01")}
+	cb := &kosac.Codebook{Template: kosac.TemplateMeta{Version: kosac.Field{Value: "3.2"}}, Study: rec("TITLE", "대용량 코드북", "DATA_NO", "문화-02-01", "FIELD_START", "2025-05-01")}
 	for _, no := range []string{"1", "2"} {
 		cb.Files = append(cb.Files, &kosac.File{Rec: rec("FILE_NO", no, "FILE_NAME", "data"+no+".csv", "FILE_FORMAT", "CSV", "ID_VAR", "ID")})
 		cb.Vars = append(cb.Vars, &kosac.Var{Rec: rec("FILE_NO", no, "VAR_NAME", "ID", "VAR_LABEL", "응답자 ID", "MEAS_LEVEL", "연속")})
@@ -430,13 +426,20 @@ func TestLargeCodebook(t *testing.T) {
 		t.Fatal(err)
 	}
 	step("XML")
-	p, err := kosac.Parse(b)
+	p, _, err := ddi.Parse(b)
 	if err != nil {
 		t.Fatal(err)
 	}
 	step("Parse")
-	if len(p.Vars) != 3500 {
-		t.Errorf("Parse gave %d vars", len(p.Vars))
+	count := 0
+	kosac.Walk(p, func(n, _ *ddi.Node, _ string) bool {
+		if n.Name == "var" {
+			count++
+		}
+		return true
+	})
+	if count != 3500 {
+		t.Errorf("Parse gave %d vars", count)
 	}
 	if d := time.Since(start); d > 10*time.Second {
 		t.Errorf("took %v, want under 10s", d)

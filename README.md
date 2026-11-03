@@ -15,10 +15,10 @@
 | 기능 | 입력과 출력 | 현재 범위 |
 |---|---|---|
 | 범용 변환기 | DDI 2.5 XML·JSON ↔ 편집용 Excel | `Variables`, `Categories`, `Groups`, `Document` 시트를 사용합니다. |
-| 재단 양식 엔진 | 재단 v3.2 Excel ↔ 재단 모델·XML | 양식 읽기·쓰기와 코드북 규칙 검사를 제공합니다. 현재 XML은 `kosac:` 확장을 포함합니다. |
+| 재단 양식 엔진 | 재단 v3.2·v4.0 Excel ↔ 재단 모델 → DDI 2.5 XML·JSON | 양식 검사와 표준 요소 매핑을 제공합니다. 관리 정보는 해당 범위의 설명에 기록합니다. |
 | Node·브라우저 SDK | DDI XML·JSON ↔ 편집용 Excel | 범용 변환과 빈 양식 생성 함수를 WASM으로 제공합니다. |
 
-**재단 엔진의 현재 XML은 공식 DDI 2.5 XSD를 단독으로 통과하지 않습니다.** 자세한 내용은 [재단 코드북 엔진](https://teampaprika.github.io/ddi-xlsx/docs/kosac/)에 있습니다.
+재단 출력은 `kosac:` 확장 없이 생성합니다. `ValidateXML`은 전체 XML을 공식 DDI 2.5 XSD로 검사합니다. 검증기는 호출자가 제공합니다. [재단 코드북 엔진](https://teampaprika.github.io/ddi-xlsx/docs/kosac/)과 [108개 항목 매핑표](docs/kosac-ddi25-mapping.md)에 출력 계약과 이전 형식의 호환성이 있습니다.
 
 이 도구는 코드북을 변환하고 검사합니다. 응답 데이터 정제, Parquet 생성, 승인, 데이터 플랫폼 적재는 호출하는 시스템에서 처리합니다.
 
@@ -69,7 +69,7 @@ go build -o dist/ddi-xlsx ./cmd/ddi-xlsx
 | W3C XML 네임스페이스 스키마 | `xsd/ddi-codebook-2.5/xml.xsd` | 표시 없음, `W3C-20150513`로 취급 | git, CLI 내장 |
 | Dublin Core 스키마 | `xsd/ddi-codebook-2.5/dc.xsd`, `dcterms.xsd`, `dcmitype.xsd` | `CC-BY-4.0`, Copyright © 2011 DCMI. `dc.xsd`와 `dcterms.xsd`는 `xml.xsd` 경로 한 줄을 바꾸었습니다. | git, CLI 내장 |
 | 생성한 규칙 표 | `internal/schema/table.go` | `codebook.xsd`의 2차적 저작물인지 정하지 않음 | git, CLI, wasm |
-| 재단 양식 자산 | `kosac/xsd/kosac-3.3.xsd`, `kosac/xsd/CHANGES.md`, `kosac/template/blank_v3.2.xlsx` | 표시 없음 | git, CLI 내장(`.xsd`, `.xlsx`) |
+| 재단 양식 자산 | `kosac/xsd/kosac-3.3.xsd`, `kosac/xsd/CHANGES.md`, `kosac/template/blank_v3.2.xlsx`, `kosac/template/blank_v4.0.xlsx` | 표시 없음 | git, CLI 내장(`.xsd`, `.xlsx`) |
 | excelize | `github.com/xuri/excelize/v2` v2.11.0 | `BSD-3-Clause` | CLI, wasm |
 | efp, nfp | `github.com/xuri/efp` v0.0.1, `github.com/xuri/nfp` | `BSD-3-Clause` | CLI, wasm |
 | mscfb, msoleps | `github.com/richardlehane/mscfb` v1.0.7, `msoleps` v1.0.6 | `Apache-2.0` | CLI, wasm |

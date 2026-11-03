@@ -10,7 +10,7 @@ ddi-xlsx to-xlsx   <in.xml|in.json> [-o out.xlsx]
 ddi-xlsx from-xlsx <in.xlsx> [--xml out.xml] [--json out.json]
 ddi-xlsx template  [-o template.xlsx]
 ddi-xlsx kosac-check    <양식.xlsx>
-ddi-xlsx kosac-xml      <양식.xlsx> [-o out.xml]
+ddi-xlsx kosac-xml      <양식.xlsx> [-o out.xml] [--json out.json]
 ddi-xlsx kosac-template [-o kosac-template.xlsx]
 ```
 

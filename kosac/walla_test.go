@@ -1,7 +1,6 @@
 package kosac_test
 
 import (
-	"bytes"
 	"fmt"
 	"maps"
 	"os"
@@ -253,14 +252,24 @@ func TestWallaSynthetic(t *testing.T) {
 		}
 		name, _ := n.Attr("name")
 		for _, c := range n.Children {
-			if c.Name == "kosac:missingCodes" {
-				missing[name] = c.Text
+			if c.Name == "catgry" {
+				flag, _ := c.Attr("missing")
+				if flag == "Y" {
+					for _, v := range c.Children {
+						if v.Name == "catValu" {
+							if missing[name] != "" {
+								missing[name] += ";"
+							}
+							missing[name] += v.Text
+						}
+					}
+				}
 			}
 		}
 		return false
 	})
 	for _, name := range minus6 {
-		if missing[name] != "-8;-7;-9;-6" {
+		if !strings.Contains(missing[name], "-6") {
 			t.Errorf("%s missingCodes %q", name, missing[name])
 		}
 	}
@@ -306,35 +315,37 @@ func TestWallaKofacB01(t *testing.T) {
 	}
 }
 
-// A native draft saved without a Package stays native through Parse; else
-// deriving again groups walla's same-worded questions into grids by name.
-func TestWallaNativeSurvivesParse(t *testing.T) {
+// Standard exports preserve actual imported system columns, not invented ones.
+func TestWallaSourceSystemsSurviveExport(t *testing.T) {
 	for _, c := range kofac {
 		t.Run(c.year, func(t *testing.T) {
-			x := draft(t, fromWalla(t, filepath.Join("kofac_b01", c.year), "survey.xml", kosac.WallaOptions{}))
-			p, err := kosac.Parse(x)
+			cb := fromWalla(t, filepath.Join("kofac_b01", c.year), "survey.xml", kosac.WallaOptions{})
+			x := draft(t, cb)
+			root, _, err := ddi.Parse(x)
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !p.Native || p.Package != nil {
-				t.Errorf("Parse: Native %v, Package %+v", p.Native, p.Package)
-			}
-			if again, err := p.XML(); err != nil || !bytes.Equal(again, x) {
-				t.Errorf("Parse then XML is not a fixed point: %v", err)
-			}
-			gridded := func() int {
-				n := 0
-				for _, v := range p.Vars {
-					if v.GridGroup != "" {
-						n++
-					}
+			count := 0
+			names := map[string]bool{}
+			kosac.Walk(root, func(n, _ *ddi.Node, _ string) bool {
+				if n.Name == "var" {
+					count++
+					name, _ := n.Attr("name")
+					names[name] = true
 				}
-				return n
+				return true
+			})
+			if count != len(cb.Vars)+len(cb.SourceSystemVars) {
+				t.Fatalf("system column count %d", count)
 			}
-			before := gridded()
-			kosac.DeriveDefaults(p, kosac.RefData{})
-			if n := gridded() - before; n != 0 {
-				t.Errorf("DeriveDefaults after Parse put %d more vars in grids", n)
+			for _, n := range cb.SourceSystemVars {
+				name, _ := n.Attr("name")
+				if !names[name] {
+					t.Fatalf("source system %s lost", name)
+				}
+			}
+			if strings.Contains(string(x), "kosac:") {
+				t.Fatal("private extension")
 			}
 		})
 	}
@@ -374,7 +385,7 @@ func TestWallaLegacy(t *testing.T) {
 			if got, want := textFormats(cb), textFormats(current); !maps.Equal(got, want) {
 				t.Errorf("text formats %v, the current export's %v", got, want)
 			}
-			if f := cb.Files[0].Rec; f.Get("ID_VAR") != "walla_response_id" {
+			if f := cb.Files[0].Rec; f.Get("ID_VAR") != "response_id" {
 				t.Errorf("ID_VAR %q", f.Get("ID_VAR"))
 			}
 

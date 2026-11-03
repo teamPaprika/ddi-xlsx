@@ -188,14 +188,19 @@ func TestRules(t *testing.T) {
 			cb.Vars = append(cb.Vars, v("SQ1"))
 		}, want: []string{"R CLUSTER_VAR ID SQ1"}},
 
-		{rule: "C05", name: "system ID_VAR", mod: func(cb *kosac.Codebook) { cb.Files[0].Rec.Set("ID_VAR", "walla_response_id") }, want: []string{}},
+		{rule: "C05", name: "undeclared system ID_VAR", mod: func(cb *kosac.Codebook) { cb.Files[0].Rec.Set("ID_VAR", "walla_response_id") }, want: []string{"R ID_VAR walla_response_id"}},
+		{rule: "C05", name: "declared system ID_VAR", mod: func(cb *kosac.Codebook) {
+			cb.Files[0].Rec.Set("ID_VAR", "walla_response_id")
+			cb.Vars = append(cb.Vars, v("walla_response_id"))
+		}, want: []string{}},
 		{rule: "C05", name: "ID_VAR missing", mod: func(cb *kosac.Codebook) { cb.Files[0].Rec.Set("ID_VAR", "NOPE") }, want: []string{"R ID_VAR NOPE"}},
 		{rule: "C05", name: "FILE_NO gap and format", mod: func(cb *kosac.Codebook) {
-			cb.Files = append(cb.Files, file("3", "FILE_FORMAT", "SAV", "ID_VAR", "walla_response_id"))
+			cb.Files = append(cb.Files, file("3", "FILE_FORMAT", "SAV", "ID_VAR", "ID"))
+			cb.Vars = append(cb.Vars, v("ID", "FILE_NO", "3"))
 		}, want: []string{"R FILE_NO 3", "R FILE_FORMAT SAV"}},
 		{rule: "C05", name: "link", mod: func(cb *kosac.Codebook) {
 			cb.Files = append(cb.Files, file("2", "ID_VAR", "walla_response_id", "LINK_VAR", "PID", "LINK_FILE_NO", "1"))
-			cb.Vars = append(cb.Vars, v("PID", "FILE_NO", "2"))
+			cb.Vars = append(cb.Vars, v("PID", "FILE_NO", "2"), v("walla_response_id", "FILE_NO", "2"))
 		}, want: []string{"R LINK_VAR PID"}},
 		{rule: "C05", name: "link to an unknown file", mod: func(cb *kosac.Codebook) {
 			cb.Files[0].Rec.Set("LINK_VAR", "ID")
@@ -207,9 +212,13 @@ func TestRules(t *testing.T) {
 		{rule: "C05", name: "FILE_NO spelling", mod: func(cb *kosac.Codebook) {
 			cb.Files = append(cb.Files, file("02", "ID_VAR", "walla_response_id"), file("+3", "ID_VAR", "walla_response_id"),
 				file("확인 불가: x", "ID_VAR", "walla_response_id"))
+			for _, no := range []string{"02", "+3", "확인 불가: x"} {
+				cb.Vars = append(cb.Vars, v("walla_response_id", "FILE_NO", no))
+			}
 		}, want: []string{"R FILE_NO 02", "R FILE_NO +3", "R FILE_NO 확인 불가: x", "W FILE_NO 확인 불가: x"}},
 		{rule: "C05", name: "uploaded files", mod: func(cb *kosac.Codebook) {
-			cb.Files = append(cb.Files, file("2", "FILE_NAME", "data1.csv", "ID_VAR", "walla_response_id"))
+			cb.Files = append(cb.Files, file("2", "FILE_NAME", "data1.csv", "ID_VAR", "ID"))
+			cb.Vars = append(cb.Vars, v("ID", "FILE_NO", "2"))
 		}, ref: kosac.RefData{UploadedFiles: []string{"data1.csv"}}, want: []string{"R FILE_NAME data1.csv"}},
 		{rule: "C05", name: "file not uploaded", ref: kosac.RefData{UploadedFiles: []string{"other.csv"}}, want: []string{"R FILE_NAME data1.csv"}},
 
@@ -223,11 +232,13 @@ func TestRules(t *testing.T) {
 
 		{rule: "C05", name: "VALID_N is an integer", mod: func(cb *kosac.Codebook) {
 			cb.Files[0].Rec.Set("VALID_N", "1,000")
-			cb.Files = append(cb.Files, file("2", "ID_VAR", "walla_response_id", "VALID_N", "약 500"), file("3", "ID_VAR", "walla_response_id", "VALID_N", "1.5"))
+			cb.Files = append(cb.Files, file("2", "ID_VAR", "ID", "VALID_N", "약 500"), file("3", "ID_VAR", "ID", "VALID_N", "1.5"))
+			cb.Vars = append(cb.Vars, v("ID", "FILE_NO", "2"), v("ID", "FILE_NO", "3"))
 		}, want: []string{"R VALID_N 약 500", "R VALID_N 1.5"}},
 		{rule: "C05", name: "UNIT list", mod: func(cb *kosac.Codebook) {
 			cb.Files[0].Rec.Set("UNIT", "학교")
-			cb.Files = append(cb.Files, file("2", "ID_VAR", "walla_response_id", "UNIT", "개인 "), file("3", "ID_VAR", "walla_response_id", "UNIT", "가구"))
+			cb.Files = append(cb.Files, file("2", "ID_VAR", "ID", "UNIT", "개인 "), file("3", "ID_VAR", "ID", "UNIT", "가구"))
+			cb.Vars = append(cb.Vars, v("ID", "FILE_NO", "2"), v("ID", "FILE_NO", "3"))
 		}, want: []string{"R UNIT 개인", "R UNIT 가구"}},
 
 		{rule: "C07", name: "valid codes only", mod: func(cb *kosac.Codebook) {
@@ -257,7 +268,7 @@ func TestRules(t *testing.T) {
 		{rule: "C10", name: "var of another file", mod: func(cb *kosac.Codebook) {
 			cb.Files = append(cb.Files, file("2", "ID_VAR", "walla_response_id"))
 			cb.Vars = append(cb.Vars, v("Z1", "FILE_NO", "2"), v("Q6", "RESP_UNIVERSE", "Z1=1 OR walla_row_no=1"))
-		}, want: []string{"R RESP_UNIVERSE Q6 Z1"}},
+		}, want: []string{"R RESP_UNIVERSE Q6 Z1", "R RESP_UNIVERSE Q6 walla_row_no"}},
 		{rule: "C10", name: "grammar", mod: addVars(v("Q6", "RESP_UNIVERSE", "ID=")), want: []string{"R RESP_UNIVERSE Q6 " + parseErr("ID=")}},
 
 		{rule: "C11", name: "text var outside the group", mod: func(cb *kosac.Codebook) {

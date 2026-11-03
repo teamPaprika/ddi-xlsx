@@ -8,12 +8,13 @@ import (
 	"github.com/teamPaprika/ddi-xlsx/ddi"
 )
 
-// Parse reads codebook XML or JSON that this engine wrote back into the model,
-// the inverse of Tree: writing the result gives the same bytes again. It takes
+// Parse reads historical kosac 3.3 extended XML/JSON into the source model.
+// New standard-only exports are read with ddi.Parse, not decoded from prose.
+// Keep template/workflow fields in the original workbook/model. It takes
 // only the engine's shape. An element or attribute the inverse does not read,
 // mixed content, an ID that names no var, or the kosac namespace under another
 // prefix is an error naming its path, since keeping unknown nodes would need a
-// store nothing uses. System vars are not returned: assembly makes them.
+// store nothing uses. Native source system variables remain separate from 03 rows.
 func Parse(b []byte) (*Codebook, error) {
 	root, _, err := ddi.Parse(b)
 	if err == nil {
@@ -26,6 +27,7 @@ func Parse(b []byte) (*Codebook, error) {
 		names: map[string]string{}, vars: map[string]*Var{}, files: map[string]*File{}}
 	paths(root, r.path)
 	cb := r.codebook(root)
+	r.readV4(cb, root)
 	r.unread(root)
 	if len(r.problems) > 0 {
 		return nil, fmt.Errorf("코드북을 읽을 수 없습니다: %s", strings.Join(r.problems, "; "))
@@ -42,7 +44,7 @@ func kosacPrefix(root *ddi.Node) error {
 			return fmt.Errorf("codeBook/@%s: kosac 네임스페이스의 접두가 kosac이 아니라 %s임", a.Name, p)
 		}
 	}
-	return fmt.Errorf("codeBook: kosac 네임스페이스(%s)를 kosac 접두로 선언하지 않음", Namespace)
+	return fmt.Errorf("codeBook: kosac.Parse는 과거 확장 형식 전용입니다. 표준 DDI는 ddi.Parse로 읽으세요. kosac 네임스페이스(%s)를 kosac 접두로 선언하지 않음", Namespace)
 }
 
 // paths maps every element to its Issue.Path.
@@ -221,6 +223,7 @@ func (r *reader) codebook(root *ddi.Node) *Codebook {
 	cb := &Codebook{Study: record(StudyKeys)}
 	dd := r.child(root, "dataDscr")
 	// Every reference is by ID, so the names come first.
+	var sourceSystems []*ddi.Node
 	ids := map[string]bool{}
 	for _, n := range r.kids(dd, "var") {
 		r.names[r.once(ids, n, "ID", r.attr(n, "ID"))] = r.attr(n, "name")
@@ -234,7 +237,8 @@ func (r *reader) codebook(root *ddi.Node) *Codebook {
 		no, name := v.Rec.Get("FILE_NO"), v.Rec.Get("VAR_NAME")
 		i := slices.IndexFunc(cb.Files, func(f *File) bool { return f.Rec.Get("FILE_NO") == no })
 		if i >= 0 && IsSystemVar(name) && v.ID == sysID(i, name) {
-			continue // assembly makes it again from the file
+			sourceSystems = append(sourceSystems, copyNode(n))
+			continue // legacy profile system columns
 		}
 		r.vars[v.ID] = v
 		cb.Vars = append(cb.Vars, v)
@@ -243,6 +247,9 @@ func (r *reader) codebook(root *ddi.Node) *Codebook {
 	r.groups(r.kids(dd, "varGrp"))
 	unverified := r.study(cb, r.child(root, "stdyDscr"))
 	cb.Package = r.pkg(cb, r.child(root, "docDscr"))
+	if cb.Native {
+		cb.SourceSystemVars = sourceSystems
+	}
 	r.materials(cb, r.kids(root, "otherMat"))
 	r.restore(cb, unverified)
 	return cb
@@ -273,6 +280,12 @@ func (r *reader) study(cb *Codebook, s *ddi.Node) []*ddi.Node {
 			g("PI_ORG", r.str(a))
 		}
 	}
+	if series := r.child(r.child(cit, "serStmt"), "serName"); series != nil {
+		g("SERIES_NAME", r.str(series))
+	}
+	if restriction := r.child(r.child(r.child(s, "dataAccs"), "useStmt"), "restrctn"); restriction != nil {
+		g("ACCESS_RESTRICTIONS", r.str(restriction))
+	}
 	ps := r.child(cit, "prodStmt")
 	g("FIELD_ORG", r.text(ps, "producer"))
 	g("FUNDER", r.text(ps, "fundAg"))
@@ -295,6 +308,9 @@ func (r *reader) study(cb *Codebook, s *ddi.Node) []*ddi.Node {
 	sum := r.child(info, "sumDscr")
 	event := map[string]bool{}
 	for _, d := range r.kids(sum, "collDate") {
+		if _, ok := d.Attr("cycle"); ok {
+			g("STUDY_ROUND", r.attr(d, "cycle"))
+		}
 		switch r.once(event, d, "event", r.pick(d, "event", "start", "end")) {
 		case "start":
 			g("FIELD_START", r.attr(d, "date"))

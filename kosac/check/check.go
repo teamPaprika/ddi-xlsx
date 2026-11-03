@@ -23,7 +23,7 @@ func Check(cb *kosac.Codebook, ref kosac.RefData) []kosac.Issue {
 	for _, rule := range []func(){
 		c.c01, c.c02, c.c03, c.c04, c.c05, c.c06, c.c07, c.c08, c.c09,
 		c.c10, c.c11, c.c12, c.c13, c.c14, c.c15, c.c16, c.c17, c.c18,
-		c.unverifiedRows,
+		c.unverifiedRows, c.v4,
 	} {
 		rule()
 	}
@@ -34,20 +34,24 @@ func Check(cb *kosac.Codebook, ref kosac.RefData) []kosac.Issue {
 type key struct{ file, name string }
 
 type checker struct {
-	cb     *kosac.Codebook
-	ref    kosac.RefData
-	vars   map[key]*kosac.Var    // first row of each (FILE_NO, VAR_NAME)
-	byName map[string]*kosac.Var // first row of each VAR_NAME in any file
-	codes  map[key][]*kosac.Code
-	issues []kosac.Issue
+	cb         *kosac.Codebook
+	ref        kosac.RefData
+	vars       map[key]*kosac.Var    // first row of each (FILE_NO, VAR_NAME)
+	byName     map[string]*kosac.Var // first row of each VAR_NAME in any file
+	codes      map[key][]*kosac.Code
+	issues     []kosac.Issue
+	statusVars map[key]bool
 }
 
 // newChecker indexes the rows once; the model's lookups scan, which is too
 // slow across thousands of vars and codes.
 func newChecker(cb *kosac.Codebook, ref kosac.RefData) *checker {
-	c := &checker{cb: cb, ref: ref, vars: map[key]*kosac.Var{}, byName: map[string]*kosac.Var{}, codes: map[key][]*kosac.Code{}}
+	c := &checker{cb: cb, ref: ref, vars: map[key]*kosac.Var{}, byName: map[string]*kosac.Var{}, codes: map[key][]*kosac.Code{}, statusVars: map[key]bool{}}
 	for _, v := range cb.Vars {
 		k := varKey(v.Rec)
+		if name := v.Rec.Get("MISSING_STATUS_VAR"); name != "" {
+			c.statusVars[key{v.Rec.Get("FILE_NO"), name}] = true
+		}
 		if _, ok := c.vars[k]; !ok {
 			c.vars[k] = v
 		}
@@ -75,35 +79,51 @@ func (c *checker) add(rule string, lv kosac.Level, r kosac.Record, k, actual, ex
 	})
 }
 
-// level returns the kosac:measLevel of the var name in file fileNo, and
-// whether it exists.
+// level resolves only variables declared in the model or imported source DDI.
 func (c *checker) level(fileNo, name string) (string, bool) {
-	return levelOf(name, c.vars[key{fileNo, name}])
+	if v := c.vars[key{fileNo, name}]; v != nil {
+		return kosac.MeasurementLevel(v), true
+	}
+	return c.sourceLevel(fileNo, name)
 }
-
-// studyLevel is level in any file, for the 01 sheet, which names no file.
 func (c *checker) studyLevel(name string) (string, bool) {
-	return levelOf(name, c.byName[name])
+	if v := c.byName[name]; v != nil {
+		return kosac.MeasurementLevel(v), true
+	}
+	return c.sourceLevel("", name)
 }
-
-// levelOf takes a system var as present in every file.
-func levelOf(name string, v *kosac.Var) (string, bool) {
-	for _, s := range kosac.SystemVars {
-		if s.Name == name {
-			return s.MeasLevel, true
+func (c *checker) sourceLevel(fileNo, name string) (string, bool) {
+	for _, n := range c.cb.SourceSystemVars {
+		value, _ := n.Attr("name")
+		if value != name {
+			continue
 		}
+		files, _ := n.Attr("files")
+		if fileNo != "" && !slices.Contains(strings.Fields(files), "F"+fileNo) {
+			continue
+		}
+		for _, f := range n.Children {
+			if f.Name == "varFormat" {
+				typ, _ := f.Attr("type")
+				category, _ := f.Attr("category")
+				if category == "date" {
+					return "date", true
+				}
+				if typ == "character" {
+					return "text", true
+				}
+			}
+		}
+		return "scale", true
 	}
-	if v == nil || blank(name) {
-		return "", false
-	}
-	return kosac.MeasLevels[v.Rec.Get("MEAS_LEVEL")], true
+	return "", false
 }
 
 // codesOf returns v's 04 rows, and those that are not missing codes.
 func (c *checker) codesOf(v *kosac.Var) (all, valid []*kosac.Code) {
 	all = c.codes[varKey(v.Rec)]
 	for _, cd := range all {
-		if !isMissingCode(cd.Rec.Get("CODE")) {
+		if !isMissingCode(cd.Rec.Get("CODE")) && !(c.cb.Template.Version.Value == "4.0" && kosac.DeclaredMissing(cd.Rec.Get("IS_MISSING"))) {
 			valid = append(valid, cd)
 		}
 	}
@@ -127,7 +147,7 @@ func unverified(s string) bool {
 // cell (its owning rule warns).
 func checkable(s string) bool { return !blank(s) && !unverified(s) }
 
-var sheetOrder = []string{kosac.SheetStudy, kosac.SheetFiles, kosac.SheetVars, kosac.SheetCodes}
+var sheetOrder = []string{kosac.SheetStudy, kosac.SheetFiles, kosac.SheetVars, kosac.SheetCodes, kosac.SheetRecodes}
 
 // sortIssues orders by rule, sheet, row and column. The sort is stable, so
 // issues without a cell keep the order the rules gave them.

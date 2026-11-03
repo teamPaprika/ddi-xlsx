@@ -1,6 +1,7 @@
 package check
 
 import (
+	"bytes"
 	"encoding/xml"
 	"errors"
 	"os"
@@ -100,55 +101,53 @@ func issueSums(is []kosac.Issue) string {
 }
 
 func TestValidateXML(t *testing.T) {
-	for _, c := range []struct {
-		name, rule, path string // rule "" wants no issue
-		edit             func(root *ddi.Node)
-	}{
-		{"engine output", "", "", func(*ddi.Node) {}},
-		{"DDI break", "XSD-DDI", "", func(r *ddi.Node) {
-			o := at(r, "otherMat")
-			o.Attrs = slices.DeleteFunc(o.Attrs, func(a ddi.Attr) bool { return a.Name == "level" })
-		}},
-		{"kosac break", "XSD-KOSAC", "stdyDscr/method/dataColl", func(r *ddi.Node) {
-			at(r, "stdyDscr/method/dataColl/kosac:excludeN").Text = "많음"
-		}},
-		{"package under stdyDscr", "PLACE", "stdyDscr/kosac:package", func(r *ddi.Node) {
-			d, s := at(r, "docDscr"), at(r, "stdyDscr")
-			pkg := at(d, "kosac:package")
-			d.Children = slices.DeleteFunc(d.Children, func(c *ddi.Node) bool { return c == pkg })
-			s.Children = append(s.Children, pkg)
-		}},
-		{"seq on catgry", "PLACE", "dataDscr/var[@ID='V2']/catgry/@kosac:seq", func(r *ddi.Node) {
-			setAttr(at(varOf(r, "V2"), "catgry"), "kosac:seq", "1")
-		}},
-	} {
-		t.Run(c.name, func(t *testing.T) {
-			root := engineTree(t)
-			c.edit(root)
-			got := ValidateXML(ddi.WriteXML(root), xmllint(t))
-			if c.rule == "" {
-				if len(got) > 0 {
-					t.Errorf("issues:\n%s", issueSums(got))
-				}
-				return
-			}
-			if len(got) != 1 || got[0].Rule != c.rule || got[0].Level != kosac.R || got[0].Path != c.path || got[0].Message == "" {
-				t.Errorf("want one R %s at %q, got:\n%s", c.rule, c.path, issueSums(got))
-			}
-		})
+	source, err := engineModel().XML()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := ValidateXML(source, xmllint(t)); len(got) > 0 {
+		t.Fatal(issueSums(got))
+	}
+	calls := 0
+	got := ValidateXML(source, func(schema Schema, doc []byte) ([]string, error) {
+		calls++
+		if schema != SchemaDDI || !bytes.Equal(doc, source) {
+			t.Fatal("validated a projection instead of the complete document")
+		}
+		return nil, nil
+	})
+	if len(got) > 0 || calls != 1 {
+		t.Fatalf("%d calls, %+v", calls, got)
+	}
+	root := engineTree(t)
+	o := at(root, "otherMat")
+	o.Attrs = slices.DeleteFunc(o.Attrs, func(a ddi.Attr) bool { return a.Name == "level" })
+	if got := ValidateXML(ddi.WriteXML(root), xmllint(t)); len(got) != 1 || got[0].Rule != "XSD-DDI" {
+		t.Fatal(issueSums(got))
 	}
 }
-
-// A nil Validator skips the XSD steps; PLACE and REF still run.
-func TestValidateXMLNilValidator(t *testing.T) {
+func TestValidateXMLRejectsLegacyExtensions(t *testing.T) {
 	root := engineTree(t)
-	if got := ValidateXML(ddi.WriteXML(root), nil); len(got) > 0 {
-		t.Errorf("engine output:\n%s", issueSums(got))
+	setAttr(root, "xmlns:kosac", kosac.Namespace)
+	coll := at(root, "stdyDscr/method/dataColl")
+	coll.Children = append(coll.Children, &ddi.Node{Name: "kosac:sampling"})
+	source := ddi.WriteXML(root)
+	if got := ValidateXML(source, nil); len(got) != 1 || got[0].Rule != "DDI-EXTENSION" {
+		t.Fatal(issueSums(got))
 	}
-	setAttr(at(varOf(root, "V2"), "catgry"), "kosac:seq", "1")
-	got := ValidateXML(ddi.WriteXML(root), nil)
-	if len(got) != 1 || got[0].Rule != "PLACE" || got[0].Level != kosac.R {
-		t.Errorf("seq on catgry:\n%s", issueSums(got))
+	got := ValidateXML(source, xmllint(t))
+	extension, xsd := false, false
+	for _, issue := range got {
+		extension = extension || issue.Rule == "DDI-EXTENSION"
+		xsd = xsd || issue.Rule == "XSD-DDI"
+	}
+	if !extension || !xsd {
+		t.Fatal(issueSums(got))
+	}
+}
+func TestValidateXMLNilValidator(t *testing.T) {
+	if got := ValidateXML(ddi.WriteXML(engineTree(t)), nil); len(got) > 0 {
+		t.Fatal(issueSums(got))
 	}
 }
 
@@ -237,7 +236,7 @@ func xsdNames(t *testing.T, b []byte) (names, types []string) {
 	return out, types
 }
 
-func TestChangesDocCoversTable(t *testing.T) {
+func TestLegacyChangesDocCoversTable(t *testing.T) {
 	dir := filepath.Join(xsdtest.Root(), "kosac", "xsd")
 	doc, err := os.ReadFile(filepath.Join(dir, "CHANGES.md"))
 	if err != nil {

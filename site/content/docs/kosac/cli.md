@@ -3,68 +3,27 @@ title: KOSAC CLI
 weight: 1
 ---
 
-```text
-ddi-xlsx kosac-check    <양식.xlsx>
-ddi-xlsx kosac-xml      <양식.xlsx> [-o out.xml]
-ddi-xlsx kosac-template [-o kosac-template.xlsx]
-```
-
-## `kosac-check`
-
-`kosac-check`는 양식에 S05와 C01~C18 검사를 실행합니다. 용역사는 제출 전에 이 명령으로 양식을 확인합니다.
-
 ```bash
-ddi-xlsx kosac-check 양식.xlsx
+ddi-xlsx kosac-check survey.xlsx
+ddi-xlsx kosac-xml survey.xlsx -o codebook.xml --json codebook.json
+ddi-xlsx kosac-template -o blank-v4.xlsx
 ```
 
-```text
-W C01 01_조사정보!E19 POP_SOURCE의 값이 확인 불가로 적혀 있습니다.
-R C07 03_변수정의!B5 명목·서열 변수에는 결측 코드가 아닌 코드가 두 개 이상 있어야 합니다.
-R XSD-DDI DDI 투영이 DDI 2.5 XSD를 통과하지 못했습니다.: -:46: element bogus: Schemas validity error : …
-```
+`kosac-check`는 S05 구조 검사 후 내용 규칙을 실행합니다.
+v3.2는 C01~C18, v4.0은 버전별 추가 규칙을 적용합니다.
+규칙은 재단 프로파일의 요구사항이며 DDI 자체의 필수 조건과 구분합니다.
 
-### 출력 형식
+- 결과 형식은 `<수준> <규칙> <시트>!<셀> <메시지>`입니다.
+- `R`은 반려, `W`는 경고입니다. `R`이 있으면 종료 코드 1, 없으면 0입니다.
+- S05가 구조를 반려하면 내용 규칙을 실행하지 않습니다.
+- CLI는 외부 코드표, 응답 원자료, 업로드 파일 목록, PDF 쪽수를 받지 않습니다. 해당 자료가 필요한 검사는 실행하지 않습니다.
 
-- 결과를 stdout에 한 줄에 하나씩 씁니다. 형식은 `<수준> <규칙> <시트>!<셀> <메시지>`입니다.
-- 수준은 `R`(반려)이나 `W`(경고)입니다.
-- 셀이 없는 결과는 `<시트>!<셀>` 자리에 XML 경로를 씁니다. 셀과 경로가 모두 없으면 그 자리를 뺍니다.
-- XSD-DDI와 XSD-KOSAC 결과는 메시지 뒤에 `: <검사기 메시지>`를 붙입니다. 이 두 규칙의 메시지는 항상 같습니다. 그래서 무엇이 틀렸는지는 검사기(xmllint)의 원문만 알려 줍니다. 검사를 실행하지 못했으면, 그 원인이 붙습니다.
+`kosac-xml`은 구조를 읽고, `DeriveDefaults`와 `AssignIDs`를 거쳐 표준 XML을 씁니다.
+`--json`을 주면 같은 트리의 JSON도 씁니다. JSON은 이 라이브러리의 트리 표현이며 별도의 공식 DDI JSON 스키마가 아닙니다.
 
-### 종료 코드와 건너뛰는 검사
-
-- `R`이 하나라도 있으면 종료 코드는 1이고, 없으면 0입니다.
-- S05에서 `R`이 나오면, C01~C18을 실행하지 않습니다. 양식 구조가 틀리면 다른 칸을 잘못 읽기 때문입니다.
-- CLI는 재단 기준 자료를 받지 않습니다. 기준 자료는 표준 항목 사전, 코드셋, 업로드 파일 목록, PDF 쪽수입니다. 그래서 이 자료가 필요한 검사는 건너뜁니다.
-
-## `kosac-xml`
-
-`kosac-xml`은 양식을 읽고, 초안을 채우고(`DeriveDefaults`), ID를 붙여(`AssignIDs`) 코드북 XML을 씁니다. 이 명령은 미리보기와 디버깅용입니다.
-
-```bash
-ddi-xlsx kosac-xml 양식.xlsx -o preview.xml
-```
-
-- FK, 클린징, 패키지 정보(`kosac:package`)는 넣지 않습니다. 그래서 출력에 `docDscr`가 없습니다.
-- 담당자 입력 항목에는 `DeriveDefaults`가 채운 자동 기본값만 들어갑니다. 예: 조사 분류 코드, 조사 연도, 차수 유형 `main`, 파일 민감도 `3`
-- C01~C18은 실행하지 않습니다. 내용 검사는 `kosac-check`로 하세요.
-- S05에서 `R`이 나오면, XML을 쓰지 않습니다. 그 결과만 출력하고 종료 코드 1로 끝납니다.
-- XML을 쓴 다음, S05 경고와 XML 검사 결과를 `kosac-check`와 같은 형식으로 출력합니다. `R`이 있으면 종료 코드는 1입니다. 쓴 파일은 남습니다.
-- `PATH`에 `xmllint`가 있으면, 두 투영의 XSD 검사까지 합니다. 없으면 stderr에 `XSD 검증 건너뜀: xmllint 없음`을 쓰고, PLACE와 REF만 검사합니다.
-- `-o`가 없으면, 입력 파일의 확장자를 `.xml`로 바꾼 경로에 씁니다.
-
-## `kosac-template`
-
-`kosac-template`은 내장 빈 양식을 씁니다. `-o`가 없으면, 현재 디렉터리의 `kosac-template.xlsx`에 씁니다.
-
-```bash
-ddi-xlsx kosac-template -o my-kosac.xlsx
-```
-
-내장 빈 양식은 임시본입니다. [XML 검사와 양식 파일](validation.md#양식-파일)을 읽으세요.
-
-## 출력 경로 규칙
-
-`kosac-xml`과 `kosac-template`의 출력 경로 규칙은 다른 명령과 같습니다.
-
-- 기본 경로에 파일이 이미 있으면, 덮어쓰지 않고 오류로 끝납니다.
-- `-o`로 지정한 경로는 덮어씁니다.
+- 내용 규칙은 별도 `kosac-check`로 실행합니다. XML 생성 성공은 제출 승인과 다릅니다.
+- 결측 여부가 미확정인 v4.0 코드는 오류로 거부합니다. DDI의 기본값 `missing="N"`으로 추정하지 않습니다.
+- 출력 후 REF와 전체 XSD를 검사합니다. 검증 반려 시에도 검토용 출력은 남습니다.
+- `xmllint`가 없으면 XSD를 건너뛰었다고 stderr에 표시합니다. 참조 검사는 계속합니다.
+- `-o`를 생략하면 입력과 같은 이름의 `.xml`을 씁니다. 그 파일이 있으면 오류로 멈춥니다.
+- 명시한 출력 경로는 덮어씁니다. 입력·XML·JSON이 같은 파일을 가리키면 거부합니다.

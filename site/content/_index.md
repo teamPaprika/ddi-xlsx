@@ -43,12 +43,12 @@ layout: hextra-home
   >}}
   {{< hextra/feature-card
     title="재단 코드북 엔진"
-    subtitle="재단 v3.2 양식을 읽고 검사합니다. 코드북 XML을 조립합니다."
+    subtitle="재단 v3.2·v4.0 양식을 읽고 검사합니다. 표준 DDI XML·JSON을 만듭니다."
     link="docs/kosac"
   >}}
   {{< hextra/feature-card
     title="왕복 보장"
-    subtitle="도구가 만든 파일은 왕복 후 바이트 단위로 같습니다."
+    subtitle="DDI 편집 워크북의 왕복 보장과 알려진 손실을 설명합니다."
     link="docs/roundtrip"
   >}}
   {{< hextra/feature-card

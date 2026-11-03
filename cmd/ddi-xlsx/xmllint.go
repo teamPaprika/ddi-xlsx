@@ -10,15 +10,16 @@ import (
 	"strings"
 
 	"github.com/teamPaprika/ddi-xlsx/kosac/check"
-	kosacxsd "github.com/teamPaprika/ddi-xlsx/kosac/xsd"
 	ddixsd "github.com/teamPaprika/ddi-xlsx/xsd"
 )
 
 // xmllint is a check.Validator. codebook.xsd imports its siblings by relative
-// path, so both embedded trees are written out whole to one directory.
-// ponytail: the trees are rewritten on every call; keep one directory per run
-// if validating many documents makes that show.
+// path, so the embedded schema tree is written out whole to one directory.
+// shortcut: extract the schema per call; reuse a directory for batch validation.
 func xmllint(s check.Schema, doc []byte) ([]string, error) {
+	if s != check.SchemaDDI {
+		return nil, errors.New("only the official DDI 2.5 schema is supported")
+	}
 	dir, err := os.MkdirTemp("", "ddi-xlsx-xsd-")
 	if err != nil {
 		return nil, err
@@ -27,13 +28,7 @@ func xmllint(s check.Schema, doc []byte) ([]string, error) {
 	if err := os.CopyFS(dir, ddixsd.FS); err != nil {
 		return nil, err
 	}
-	if err := os.CopyFS(dir, kosacxsd.FS); err != nil {
-		return nil, err
-	}
 	schema := filepath.Join(dir, "ddi-codebook-2.5", "codebook.xsd")
-	if s == check.SchemaKosac {
-		schema = filepath.Join(dir, "kosac-3.3.xsd")
-	}
 
 	cmd := exec.Command("xmllint", "--nonet", "--noout", "--schema", schema, "-")
 	cmd.Stdin = bytes.NewReader(doc)

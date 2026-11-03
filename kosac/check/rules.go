@@ -116,7 +116,7 @@ func (c *checker) c02() {
 	st := c.cb.Study
 	for _, k := range kosac.StudyKeys {
 		v := st.Get(k)
-		if !checkable(v) {
+		if !checkable(v) || c.cb.Template.Version.Value == "4.0" && kosac.V4Absent(v) {
 			continue
 		}
 		switch k {
@@ -125,6 +125,9 @@ func (c *checker) c02() {
 				c.add("C02", kosac.R, st, k, v, "YYYY-MM-DD", k+"의 값이 실제 날짜(YYYY-MM-DD)가 아닙니다.")
 			}
 		case "TARGET_N", "VALID_N", "CONTACT_N", "EXCLUDE_N":
+			if k == "VALID_N" {
+				v = c.cb.StudyValidN()
+			}
 			if _, ok := integer(v); !ok {
 				c.add("C02", kosac.R, st, k, v, "정수", k+"의 값은 정수여야 합니다.")
 			}
@@ -157,6 +160,9 @@ func (c *checker) c02() {
 func (c *checker) c03() {
 	st := c.cb.Study
 	wv := st.Get("WEIGHT_VAR")
+	if c.cb.Template.Version.Value == "4.0" && kosac.V4Absent(wv) {
+		wv = ""
+	}
 	switch st.Get("WEIGHT_YN") {
 	case "Y":
 		if blank(wv) {
@@ -189,6 +195,9 @@ func (c *checker) c03() {
 func (c *checker) c04() {
 	st := c.cb.Study
 	split, sv := st.Get("SPLIT_BALLOT") == "Y", st.Get("SPLIT_VAR")
+	if c.cb.Template.Version.Value == "4.0" && kosac.V4Absent(sv) {
+		sv = ""
+	}
 	switch lv, ok := c.studyLevel(sv); {
 	case split && blank(sv):
 		c.add("C04", kosac.R, st, "SPLIT_VAR", sv, "분할 변수", "분할 설문이면 SPLIT_VAR의 값이 있어야 합니다.")
@@ -200,7 +209,7 @@ func (c *checker) c04() {
 	}
 	for _, k := range []string{"STRATA_VARS", "CLUSTER_VAR"} {
 		v := st.Get(k)
-		if !checkable(v) {
+		if !checkable(v) || c.cb.Template.Version.Value == "4.0" && kosac.V4Absent(v) {
 			continue
 		}
 		// kosac:sampling@clusterVar holds one var, so CLUSTER_VAR is one name.
@@ -255,6 +264,14 @@ func (c *checker) c05() {
 			}
 		}
 		lv, lf := r.Get("LINK_VAR"), r.Get("LINK_FILE_NO")
+		if c.cb.Template.Version.Value == "4.0" {
+			if kosac.V4Absent(lv) {
+				lv = ""
+			}
+			if kosac.V4Absent(lf) {
+				lf = ""
+			}
+		}
 		link := checkable(lv)
 		if _, ok := c.level(no, lv); link && !ok {
 			c.add("C05", kosac.R, r, "LINK_VAR", lv, "이 파일의 변수", "LINK_VAR의 변수가 이 파일의 03_변수정의 행에 없습니다.")
@@ -265,8 +282,16 @@ func (c *checker) c05() {
 		case c.cb.File(lf) == nil:
 			c.add("C05", kosac.R, r, "LINK_FILE_NO", lf, "02_데이터파일의 FILE_NO", "LINK_FILE_NO의 파일이 02_데이터파일 시트에 없습니다.")
 		case link:
-			if _, ok := c.level(lf, lv); !ok {
-				c.add("C05", kosac.R, r, "LINK_VAR", lv, "연결 파일의 변수", "LINK_VAR와 같은 이름의 변수가 연결 파일에 없습니다.")
+			targetVar := lv
+			if c.cb.Template.Version.Value == "4.0" {
+				targetVar = c.cb.File(lf).Rec.Get("LINK_VAR")
+			}
+			if _, ok := c.level(lf, targetVar); !ok {
+				message := "LINK_VAR와 같은 이름의 변수가 연결 파일에 없습니다."
+				if c.cb.Template.Version.Value == "4.0" {
+					message = "연결 파일의 LINK_VAR가 그 파일의 변수정의에 없습니다."
+				}
+				c.add("C05", kosac.R, r, "LINK_VAR", lv, "연결 파일의 변수", message)
 			}
 		}
 	}
@@ -308,12 +333,20 @@ func (c *checker) c07() {
 		if !checkable(ml) {
 			continue
 		}
-		if _, ok := kosac.MeasLevels[ml]; !ok {
+		if _, ok := kosac.MeasLevels[ml]; !ok && !(c.cb.Template.Version.Value == "4.0" && (ml == "등간" || ml == "비율" || ml == "해당 없음")) {
 			c.add("C07", kosac.R, v.Rec, "MEAS_LEVEL", ml, "명목, 서열, 연속, 문자, 날짜", "MEAS_LEVEL의 값이 양식 목록에 없습니다.")
 			continue
 		}
-		if _, valid := c.codesOf(v); (ml == "명목" || ml == "서열") && len(valid) < 2 {
-			c.add("C07", kosac.R, v.Rec, "VAR_NAME", strconv.Itoa(len(valid)), "2 이상", "명목·서열 변수에는 결측 코드가 아닌 코드가 두 개 이상 있어야 합니다.")
+		minimum := 2
+		if c.cb.Template.Version.Value == "4.0" && c.statusVars[varKey(v.Rec)] {
+			minimum = 1
+		}
+		if _, valid := c.codesOf(v); (ml == "명목" || ml == "서열") && len(valid) < minimum {
+			message := "명목·서열 변수에는 결측 코드가 아닌 코드가 두 개 이상 있어야 합니다."
+			if minimum == 1 {
+				message = "결측 상태 변수에는 유효 상태 코드가 한 개 이상 있어야 합니다."
+			}
+			c.add("C07", kosac.R, v.Rec, "VAR_NAME", strconv.Itoa(len(valid)), fmt.Sprintf("%d 이상", minimum), message)
 		}
 	}
 }
@@ -349,6 +382,19 @@ func (c *checker) c09() {
 			continue
 		}
 		seen[g] = true
+		if c.cb.Template.Version.Value == "4.0" {
+			domain := strings.TrimSpace(g)
+			if colon := strings.LastIndex(domain, ":"); colon >= 0 {
+				domain = strings.TrimSpace(domain[:colon])
+			}
+			if groupNoRe.FindString(strings.TrimSpace(g)) == strings.TrimSpace(g) {
+				c.add("C09", kosac.W, r, "VAR_GROUP", g, "영역명: 문항번호", "VAR_GROUP에 문항번호만 있어 영역명을 확인해야 합니다.")
+			}
+			if n := utf8.RuneCountInString(domain); n > 20 {
+				c.add("C09", kosac.W, r, "VAR_GROUP", strconv.Itoa(n), "영역명 20자 이하", "VAR_GROUP의 영역명이 20자를 넘습니다.")
+			}
+			continue
+		}
 		if groupNoRe.MatchString(g) {
 			c.add("C09", kosac.R, r, "VAR_GROUP", g, "영역 이름", "VAR_GROUP은 '문항 n'이나 'Q n' 같은 번호가 아니라 영역 이름이어야 합니다.")
 		}
@@ -383,7 +429,7 @@ func (c *checker) c10() {
 		for _, name := range e.Vars() {
 			target := c.vars[key{r.Get("FILE_NO"), name}]
 			if target == nil {
-				if !kosac.IsSystemVar(name) {
+				if _, exists := c.level(r.Get("FILE_NO"), name); !exists {
 					c.add("C10", kosac.R, r, "RESP_UNIVERSE", name, "같은 파일의 변수", "응답대상이 참조한 변수가 같은 파일에 없습니다.")
 				}
 				continue
@@ -464,7 +510,18 @@ func (c *checker) c12() {
 			continue
 		}
 		if ml := r.Get("MEAS_LEVEL"); checkable(ml) && ml != "서열" {
-			c.add("C12", kosac.W, r, "MEAS_LEVEL", ml, "서열", "역코딩 변수(REVERSE=Y)의 측정수준이 서열이 아닙니다.")
+			level := kosac.W
+			if c.cb.Template.Version.Value == "4.0" {
+				level = kosac.R
+			}
+			c.add("C12", level, r, "MEAS_LEVEL", ml, "서열", "역코딩 변수(REVERSE=Y)의 측정수준이 서열이 아닙니다.")
+		}
+		if c.cb.Template.Version.Value == "4.0" {
+			note, derivation := r.Get("NOTE"), r.Get("DERIVATION")
+			if (!checkable(note) || kosac.V4Absent(note)) && (!checkable(derivation) || kosac.V4Absent(derivation)) {
+				c.add("C12", kosac.W, r, "NOTE", note, "NOTE 또는 DERIVATION의 방향 설명", "역문항의 방향 설명을 NOTE 또는 DERIVATION에 기록해야 합니다.")
+			}
+			continue
 		}
 		if g, ok := groupOf(r); ok && !plain[g] {
 			c.add("C12", kosac.W, r, "REVERSE", "Y", "같은 묶음에 역코딩하지 않은 서열 변수", "같은 묶음에 역코딩하지 않은 서열 변수가 없어 역코딩 표시를 확인해야 합니다.")
@@ -523,8 +580,12 @@ func (c *checker) c14() {
 			k := [3]string{r.Get("FILE_NO"), r.Get("VAR_NAME"), code}
 			if seen[k] {
 				c.add("C14", kosac.R, r, "CODE", code, "변수 안에서 유일한 코드", "같은 변수에 같은 CODE가 두 번 이상 있습니다.")
-			} else if !codeRe.MatchString(code) {
-				c.add("C14", kosac.R, r, "CODE", code, "정수", "CODE의 값은 정수여야 합니다.")
+			} else if blank(code) || strings.TrimSpace(code) != code || c.cb.Template.Version.Value != "4.0" && !codeRe.MatchString(code) {
+				expected, message := "정수", "CODE의 값은 정수여야 합니다."
+				if c.cb.Template.Version.Value == "4.0" {
+					expected, message = "공백 없는 코드", "CODE는 비어 있거나 앞뒤 공백을 포함할 수 없습니다."
+				}
+				c.add("C14", kosac.R, r, "CODE", code, expected, message)
 			}
 			seen[k] = true
 		}
@@ -544,7 +605,7 @@ func (c *checker) c14() {
 func (c *checker) c15() {
 	labels := c.ref.MissingLabels
 	if labels == nil {
-		labels = kosac.DefaultMissingLabels
+		labels = kosac.MissingLabelsFor(c.cb.Template.Version.Value)
 	}
 	for _, cd := range c.cb.Codes {
 		r := cd.Rec
@@ -569,7 +630,7 @@ func (c *checker) c16() {
 		item, ok := c.ref.StdItems[id]
 		if !ok {
 			c.add("C16", kosac.R, r, "STD_ID", id, "표준문항 사전의 STD_ID", "STD_ID가 표준문항 사전에 없습니다.")
-		} else if ml := r.Get("MEAS_LEVEL"); checkable(ml) && kosac.MeasLevels[ml] != item.MeasLevel {
+		} else if ml := r.Get("MEAS_LEVEL"); checkable(ml) && kosac.MeasurementLevel(v) != item.MeasLevel {
 			c.add("C16", kosac.R, r, "MEAS_LEVEL", ml, item.MeasLevel, "MEAS_LEVEL이 표준문항 사전의 측정수준과 다릅니다.")
 		}
 	}
@@ -584,6 +645,14 @@ func (c *checker) c17() {
 			c.add("C17", kosac.W, r, "PII", "Y", "문자 또는 연속", "개인식별정보(PII=Y) 변수의 측정수준이 명목이나 서열입니다.")
 		}
 		if r.Get("STD_ID") != "SCHOOL.ID" && !instRe.MatchString(r.Get("VAR_LABEL")) {
+			continue
+		}
+		if c.cb.Template.Version.Value == "4.0" {
+			if !c.statusVars[varKey(r)] {
+				if value := r.Get("CODE_SYSTEM"); !checkable(value) || kosac.V4Absent(value) {
+					c.add("C17", kosac.W, r, "CODE_SYSTEM", value, "코드 체계·기준연도", "기관 식별자 변수의 CODE_SYSTEM을 확인해야 합니다.")
+				}
+			}
 			continue
 		}
 		if n := r.Get("NOTE"); !unverified(n) && !noteYearRe.MatchString(n) {
@@ -607,7 +676,7 @@ func (c *checker) c18() {
 	report := strings.TrimSpace(st.Get("REPORT_FILE"))
 	for _, k := range []string{"QUESTIONNAIRE", "REPORT_FILE", "EXTRA_FILES"} {
 		v := st.Get(k)
-		if !checkable(v) {
+		if !checkable(v) || c.cb.Template.Version.Value == "4.0" && kosac.V4Absent(v) {
 			continue
 		}
 		items := []string{v}
@@ -629,6 +698,8 @@ func (c *checker) c18() {
 			case pages != "":
 				if n, ok := c.ref.PDFPages[report]; ok && pagesBeyond(pages, n) {
 					c.add("C18", kosac.R, st, k, it, fmt.Sprintf("1-%d", n), "쪽 범위가 보고서 PDF의 쪽 수를 넘습니다.")
+				} else if c.cb.Template.Version.Value == "4.0" && !strings.HasPrefix(it, "REPORT:p") {
+					c.add("C18", kosac.W, st, k, it, "REPORT:p"+pages, "자유 서술의 보고서 쪽 범위를 정규화했습니다. 위치를 확인하세요.")
 				}
 			default:
 				c.add("C18", kosac.R, st, k, it, "파일명 또는 REPORT:p{쪽}", k+"의 값이 파일명도 보고서 쪽 범위도 아닙니다.")

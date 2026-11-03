@@ -3,110 +3,40 @@ title: 재단 Go API
 weight: 2
 ---
 
-모든 함수는 바이트와 모델만 주고받습니다. 아래 코드는 호출 순서를 보여 줍니다.
-
 ```go
-import (
-	"github.com/teamPaprika/ddi-xlsx/kosac"
-	"github.com/teamPaprika/ddi-xlsx/kosac/check"
-	"github.com/teamPaprika/ddi-xlsx/kosac/template"
-	"github.com/teamPaprika/ddi-xlsx/kosac/universe"
-)
-
-// 업로드형: 용역사가 채운 양식에서 코드북 XML을 만듭니다.
-// prev는 이전 XML을 kosac.Parse로 읽은 모델이거나 nil입니다.
-func upload(xlsx []byte, ref kosac.RefData, prev *kosac.Codebook, validator check.Validator) ([]byte, []kosac.Issue, error) {
-	cb, issues, err := template.Read(xlsx, template.ReadOptions{}) // S05
-	if err != nil {
-		return nil, nil, err // xlsx가 아니거나 압축 해제 한도를 넘었습니다.
-	}
-	if cb == nil {
-		return nil, issues, nil // S05에서 R이 나왔습니다. 양식 구조가 틀렸으므로 C01~C18을 돌리지 않습니다.
-	}
-	issues = append(issues, check.Check(cb, ref)...) // C01~C18
-	kosac.DeriveDefaults(cb, ref)                    // 빈 칸을 채웁니다. 돌려주는 STD_ID·FK 후보는 담당자에게 보여 줍니다.
-
-	// 담당자 확인: cb.Admin, cb.File("1").SensLevel 등을 고칩니다.
-	// cb.Var와 cb.File은 해당 행이 없으면 nil을 돌려줍니다.
-	if v := cb.Var("1", "SQ4"); v != nil {
-		v.FK = &kosac.FK{CodeSet: "CC_SIDO"}
-		if err := kosac.ApplyFK(cb, v, ref.CodeSetDefs["CC_SIDO"]); err != nil {
-			return nil, nil, err
-		}
-	}
-	if f := cb.File("1"); f != nil {
-		f.Cleansing = &kosac.Cleansing{ /* … */ }
-	}
-
-	if err := kosac.AssignIDs(cb, prev); err != nil {
-		return nil, nil, err
-	}
-	cb.Package = &kosac.Package{ /* … */ } // 해시는 호출자가 계산합니다.
-	xml, err := cb.XML()                   // cb.JSON()도 있습니다.
-	if err != nil {
-		return nil, nil, err
-	}
-	return xml, append(issues, check.ValidateXML(xml, validator)...), nil
-}
-
-// 네이티브형: Walla 내보내기에서 담당자가 볼 v3.2 양식을 만듭니다.
-// groups는 VAR_NAME → Walla 폼의 그룹(페이지) 라벨입니다.
-func native(export []byte, hints, groups map[string]string) ([]byte, []kosac.Issue, error) {
-	cb, issues, err := kosac.FromWallaDDI(export, kosac.WallaOptions{MeasHints: hints})
-	if err != nil {
-		return nil, nil, err
-	}
-	for _, v := range cb.Vars {
-		v.Rec.Set("VAR_GROUP", groups[v.Rec.Get("VAR_NAME")]) // 비워 두면 C06 R이 납니다.
-	}
-	draft, err := template.Write(cb)
-	return draft, issues, err
-}
-
-// 응답대상이나 클린징 조건이 응답 한 행에 맞는지 봅니다.
-// row는 변수 이름으로 원래 값을 주는 universe.Row입니다.
-func applies(row universe.Row) (bool, error) {
-	e, err := universe.ParseCondition("SQ3!=1 AND SQ3_1!=-8", "SQ3_1")
-	if err != nil {
-		return false, err
-	}
-	return e.Eval(row)
-}
+cb, issues, err := template.Read(input, template.ReadOptions{})
+if err != nil { return err }
+if cb == nil { return fmt.Errorf("양식 구조 반려: %v", issues) }
+issues = append(issues, check.Check(cb, referenceData)...)
+// 호출자가 반려·경고를 확인하고 초안과 담당자 입력을 확정합니다.
+kosac.DeriveDefaults(cb, referenceData)
+if err := kosac.AssignIDs(cb, previousModel); err != nil { return err }
+root, err := cb.Tree()
+if err != nil { return err }
+xmlOut, jsonOut := ddi.WriteXML(root), ddi.WriteJSON(root)
+issues = append(issues, check.ValidateXML(xmlOut, validator)...)
 ```
 
-## 입력과 결과
+위 코드는 호출 순서 예시입니다. `issues`의 반려·승인 정책과 실제 파일 저장은 호출자가 구현합니다.
+`previousModel`은 보관한 재단 모델입니다. 새 표준 XML을 `kosac.Parse`로 역변환하는 모델이 아닙니다.
 
-- `ref`는 `kosac.RefData`입니다. 비어 있는 필드가 있으면, 그 자료가 필요한 검사와 판정을 건너뜁니다.
-- `issues`의 각 항목에는 아래 필드가 있습니다.
+- `template.Read` → `template.Write` → `template.Read`는 버전별 원본 레코드를 보존합니다. 모델의 분석·승인·연결 정보는 양식에 없는 열까지 저장하지 않습니다.
+- `Tree/XML/JSON`은 입력 모델을 수정하지 않습니다. `DeriveDefaults`와 `AssignIDs`는 모델을 수정하므로 원본 모델을 별도로 보관하세요.
+- 표준 출력의 구조화되지 않은 관리 항목은 해당 범위의 `notes` 또는 `txt`로 기록합니다. 설명문을 전용 역변환 규약으로 사용하지 않습니다.
+- 새 출력은 `ddi.Parse`와 범용 `workbook.ToXLSX/FromXLSX`로 읽고 편집합니다. 이 워크북은 재단 제출 양식과 다릅니다.
+- `kosac.Parse`는 과거 `urn:kosac:survey-meta:3.3` 확장 XML·JSON의 읽기 호환용입니다. 새 표준 출력의 입력 API가 아닙니다.
+- 재단 양식의 관리 필드까지 다시 편집하려면 원본 XLSX와 모델을 보관해야 합니다.
 
-| 필드 | 내용 |
-|---|---|
-| `Rule` | 규칙 |
-| `Level` | 수준 |
-| `Sheet`·`Cell` 또는 `Path` | 위치 |
-| `FileNo`·`VarName`·`Code` | 프로그램이 읽는 키 |
-| `Message` | 한 문장 메시지 |
+### 자동 초안과 Walla 입력
 
-## 자동 판정(`DeriveDefaults`)
+`DeriveDefaults`는 빈 항목에 분석 역할·묶음·결측 분류 등의 초안을 채웁니다.
+이미 채운 항목은 덮어쓰지 않습니다. 초안은 담당자가 확인해야 합니다.
+v4.0에서는 입력에 없는 결측 코드를 추가하지 않습니다.
 
-- 빈 칸만 채웁니다. 그래서 담당자가 고친 값은 다시 호출해도 남습니다. 두 번 호출해도 결과가 같습니다.
-- 판정에 쓴 값(예: 역할)을 나중에 바꿔도, 그 값에서 나온 칸(예: 차원·측정 구분)은 다시 계산하지 않습니다. 다시 계산하려면, 그 칸을 비우고 `DeriveDefaults`를 다시 호출하세요.
-- `GridGroup`은 묶음 단위로 계산합니다. 멤버 중 하나라도 값이 있는 묶음은 바꾸지 않습니다. 다시 계산하려면, 그 묶음의 모든 멤버에서 `GridGroup`을 비우세요.
+`FromWallaDDI`는 Walla XML·JSON에서 CSV 기준의 재단 초안을 만듭니다.
+중복 Parquet 파일은 제외하고, 입력에 선언된 시스템 변수는 `SourceSystemVars`에 보관합니다.
+외부 기관 Excel에는 Walla 시스템 변수를 추가하지 않습니다.
 
-### 자동 판정의 한계
-
-- grid를 찾을 때, 문항 문장(Q_TEXT) 끝의 행 표시를 떼고 비교합니다. 지금 아는 행 표시는 2024 작성 예시의 `▶ [행]` 하나뿐입니다.
-- 다른 표기(예: `문항 - 행`, `문항(행)`)는 행 표시로 보지 않고, Q_TEXT 전체를 비교합니다. 그래서 실제 grid 문항이 묶이지 않는 경우가 있습니다. 잘못 묶는 것보다 묶지 않는 것이 안전하기 때문입니다.
-- 묶이지 않은 grid는 담당자가 확인 화면(F5)에서 GRID_GROUP을 확정할 때까지 묶이지 않은 상태로 남습니다.
-
-## 네이티브 코드북(Walla 내보내기)
-
-- `kosac.FromWallaDDI`가 만든 모델은 `Codebook.Native`가 참입니다.
-- 네이티브 코드북에서는 변수 이름으로 grid를 판정하지 않습니다. Walla 변수 이름은 접두가 모두 `f`입니다. 그래서 같은 페이지에서 문장이 같은 단일선택 문항이 가짜 grid로 묶이기 때문입니다. 묶음은 Walla의 varGrp 멤버십으로만 정합니다.
-- `Codebook.Native`는 XML에 `kosac:package/kosac:sourceSurvey@kind="native"`로 남습니다.
-- `FromWallaDDI`는 `cb.Package`를 nil로 둡니다. 이때도 조립은 `docDscr` 아래에 이 표시만 씁니다. 그래서 `kosac.Parse`로 다시 읽으면 `Native`가 참이고 `Package`는 nil입니다.
-- 나중에 `cb.Package`를 채우면, `Source.Kind` 자리에 `native`가 들어갑니다. `Source.Kind`는 비워 두거나 `"native"`로 두세요. 다른 값(예: `"upload"`)이면 `cb.XML()`이 오류를 냅니다.
-
-{{< callout type="warning" >}}
-네이티브 초안은 VAR_GROUP(영역)을 비워 둡니다. Walla 내보내기에는 영역 정보가 없기 때문입니다. 비워 두면 C06 `R`이 나옵니다. 호출자가 Walla 폼의 그룹(페이지) 라벨을 채우세요. 예: `v.Rec.Set("VAR_GROUP", pageLabel)`
-{{< /callout >}}
+- Walla 묶음은 원본 `varGrp`에서 가져옵니다. 변수명 접두로 grid를 추정하지 않습니다.
+- `Native`는 내부 모델 상태입니다. 새 XML의 제품 전용 표시로 저장하지 않습니다.
+- 영역, 조사 정보, 추가 v4.0 항목은 호출자가 채워야 합니다. 이 어댑터는 Walla XML 전체의 무손실 변환기가 아닙니다.

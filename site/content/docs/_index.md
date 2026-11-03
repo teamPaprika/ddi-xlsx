@@ -24,11 +24,11 @@ npm 레지스트리에는 아직 게시하지 않았습니다.
 | 기능 | 입력과 출력 | 현재 범위 |
 |---|---|---|
 | 범용 변환기 | DDI 2.5 XML·JSON ↔ 편집용 Excel | `Variables`, `Categories`, `Groups`, `Document` 시트를 씁니다. |
-| 재단 양식 엔진 | 재단 v3.2 Excel ↔ 재단 모델·XML | 양식 읽기·쓰기와 코드북 규칙 검사를 합니다. 현재 XML에는 `kosac:` 확장이 있습니다. |
+| 재단 양식 엔진 | 재단 v3.2·v4.0 Excel ↔ 재단 모델 → DDI 2.5 XML·JSON | 양식 검사와 표준 요소 매핑을 제공합니다. |
 | Node·브라우저 SDK | DDI XML·JSON ↔ 편집용 Excel | 범용 변환과 빈 양식 생성을 WASM으로 제공합니다. |
 
 {{< callout type="warning" >}}
-재단 엔진이 쓰는 현재 XML은 공식 DDI 2.5 XSD를 단독으로 통과하지 않습니다. 현재 검사는 확장 부분을 나눈 두 문서를 따로 검사합니다. 자세한 내용은 [재단 코드북 엔진](/docs/kosac)에 있습니다.
+재단 출력은 DDI 2.5 표준 요소와 속성을 사용합니다. 전체 XSD 검증에는 검증기가 필요합니다. 새 출력은 `ddi.Parse`로 읽으세요. 원본 재단 양식을 다시 편집하려면 XLSX와 모델을 보관하세요. 자세한 내용은 [재단 코드북 엔진](kosac/_index.md)에 있습니다.
 {{< /callout >}}
 
 ## 이 도구가 하지 않는 일
@@ -44,7 +44,6 @@ npm 레지스트리에는 아직 게시하지 않았습니다.
 
 아래 기능은 로컬 개발 작업에 있습니다. 현재 공개 버전에는 없습니다.
 
-- 재단 v4.0 양식 읽기·쓰기와 추가 규칙 검사
 - `checkCodebook`, `kosacTemplateXlsx` WASM API
 - 단일 HTML로 실행하는 브라우저 검사 화면과 JavaScript REPL
 

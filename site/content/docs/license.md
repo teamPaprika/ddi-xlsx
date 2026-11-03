@@ -127,7 +127,8 @@ DDI Alliance 배포본과 같은 파일입니다. W3C 원본과 비교하면 DOC
 |---|---|---|---|
 | `kosac/xsd/kosac-3.3.xsd` | 이 프로젝트가 쓴 kosac 확장 XSD 초안입니다. 요소 이름과 값 목록은 재단 요청서를 따릅니다. | 표시 없음 | CLI 내장, `kosac/xsd.FS` |
 | `kosac/xsd/CHANGES.md` | 재단 승인용 변경 기록입니다. | 표시 없음 | git 저장소 |
-| `kosac/template/blank_v3.2.xlsx` | 재단 작성 예시의 값을 지운 임시 양식입니다. 재단의 안내문, 항목 정의, 목록은 남아 있습니다. | 표시 없음 | CLI 내장, `kosac-template` 명령과 `template.Blank`가 씁니다. |
+| `kosac/template/blank_v3.2.xlsx` | 재단 작성 예시의 값을 지운 임시 양식입니다. 재단의 안내문, 항목 정의, 목록은 남아 있습니다. | 표시 없음 | CLI 내장, v3.2 모델의 `template.Write`가 씁니다. |
+| `kosac/template/blank_v4.0.xlsx` | 재단이 제공한 2026-10-19 개정 공식 빈 양식입니다. | 표시 없음 | CLI 내장, `kosac-template`, `template.Blank`, v4.0 모델의 `template.Write`가 씁니다. |
 
 저장소에는 이 자료의 라이선스나 이용 허락이 적혀 있지 않습니다.
 
