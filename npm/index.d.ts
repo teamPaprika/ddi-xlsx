@@ -50,3 +50,10 @@ export function checkCodebook(input: string | Uint8Array, options?: { format?: C
 
 /** Returns the foundation's empty v4.0 workbook, not the generic DDI editing workbook. */
 export function kosacTemplateXlsx(): Promise<Uint8Array>;
+
+/**
+ * Converts a foundation (KOSAC) v3.2 or v4.0 workbook to standard DDI Codebook 2.5 XML and JSON,
+ * like `ddi-xlsx kosac-xml`. `xml` and `json` are null when the form structure check (S05)
+ * rejects the workbook; `issues` says why. Check content rules (C) with `checkCodebook`; XSD runs in the CLI.
+ */
+export function kosacToDdi(xlsx: Uint8Array): Promise<{ xml: string | null; json: string | null; issues: CheckIssue[] }>;
