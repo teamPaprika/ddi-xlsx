@@ -15,7 +15,7 @@ layout: hextra-home
 
 <div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  DDI Codebook 2.5 문서(XML, JSON)를 xlsx 워크북으로 바꿉니다.&nbsp;<br class="hx:sm:block hx:hidden" />고친 워크북은 다시 DDI로 바꿉니다. 왕복에서 내용을 잃지 않습니다.
+  DDI Codebook 2.5 XML·JSON을 Excel 워크북으로 바꾸고, Excel에서 고친 워크북을 다시 DDI로 바꿉니다.&nbsp;<br class="hx:sm:block hx:hidden" />열에 들어가지 않는 요소는 셀에 XML 원문으로 남깁니다.
 {{< /hextra/hero-subtitle >}}
 </div>
 
