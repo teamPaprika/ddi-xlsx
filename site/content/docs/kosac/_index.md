@@ -1,6 +1,6 @@
 ---
 title: 재단 코드북 엔진
-weight: 11
+weight: 13
 ---
 
 재단 KOSAC-SURVEY-META v3.2·v4.0 양식을 읽고 모델로 보관합니다.

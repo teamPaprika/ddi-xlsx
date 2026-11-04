@@ -1,6 +1,6 @@
 ---
 title: 빈 양식으로 시작하기
-weight: 8
+weight: 10
 ---
 
 DDI 파일이 없으면, 빈 양식 워크북을 채워서 DDI를 만듭니다.
@@ -99,4 +99,4 @@ ddi-xlsx from-xlsx my-study.xlsx --xml my-study.xml --json my-study.json
 
 1. 항목이 `Variables` 시트의 ID이면, 그대로 둡니다.
 2. 항목이 ID가 아니고 그 이름의 변수가 정확히 하나이면, 그 변수의 ID로 바꿉니다.
-3. 둘 다 아니면, 경고를 내고 그대로 둡니다. 오류는 아닙니다.
+3. 둘 다 아니면, 경고를 내고 그대로 둡니다. 변환은 계속합니다.

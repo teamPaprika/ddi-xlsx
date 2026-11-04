@@ -2,7 +2,7 @@
 
 `ddi-xlsx`는 DDI Codebook 2.5 문서(XML 또는 JSON)를 편집할 수 있는 xlsx 워크북으로 바꾸고, 고친 워크북을 다시 DDI로 되돌리는 도구입니다.
 
-**문서: <https://teampaprika.github.io/ddi-xlsx/>**
+**문서: <https://teampaprika.github.io/ddi-xlsx/>** · **설치 없이 실행: [브라우저에서 실행](https://teampaprika.github.io/ddi-xlsx/docs/playground/)**
 
 브라우저 검사실은 `node demo/build.mjs`로 빌드합니다. 사용법과 검사 범위는 [검사실 문서](site/content/docs/browser-check.md)에 있습니다.
 
@@ -18,7 +18,7 @@
 |---|---|---|
 | 범용 변환기 | DDI 2.5 XML·JSON ↔ 편집용 Excel | `Variables`, `Categories`, `Groups`, `Document` 시트를 사용합니다. |
 | 재단 양식 엔진 | 재단 v3.2·v4.0 Excel ↔ 재단 모델 → DDI 2.5 XML·JSON | 양식 검사와 표준 요소 매핑을 제공합니다. 관리 정보는 해당 범위의 설명에 기록합니다. |
-| Node·브라우저 SDK | DDI XML·JSON ↔ 편집용 Excel | 범용 변환과 빈 양식 생성 함수를 WASM으로 제공합니다. |
+| Node·브라우저 SDK | DDI XML·JSON ↔ 편집용 Excel, 재단 양식 → DDI XML·JSON | 범용 변환, 재단 양식 변환, 코드북 검사, 빈 양식 생성 함수를 WASM으로 제공합니다. |
 
 재단 출력은 `kosac:` 확장 없이 생성합니다. `ValidateXML`은 전체 XML을 공식 DDI 2.5 XSD로 검사합니다. 검증기는 호출자가 제공합니다. [재단 코드북 엔진](https://teampaprika.github.io/ddi-xlsx/docs/kosac/)과 [108개 항목 매핑표](docs/kosac-ddi25-mapping.md)에 출력 계약과 이전 형식의 호환성이 있습니다.
 
@@ -42,6 +42,7 @@ go build -o dist/ddi-xlsx ./cmd/ddi-xlsx
 
 | 페이지 | 내용 |
 |---|---|
+| [브라우저에서 실행](https://teampaprika.github.io/ddi-xlsx/docs/playground/) | 설치 없이 검사, 모든 변환, 빈 양식, JavaScript 코드 실행 |
 | [설치](https://teampaprika.github.io/ddi-xlsx/docs/install/) | CLI 실행 파일, Go 모듈, 로컬 npm 패키지 |
 | [CLI 사용법](https://teampaprika.github.io/ddi-xlsx/docs/cli/) | 변환 명령, 출력 경로 규칙, 종료 코드 |
 | [Go 라이브러리](https://teampaprika.github.io/ddi-xlsx/docs/go/) | `workbook` 패키지 |

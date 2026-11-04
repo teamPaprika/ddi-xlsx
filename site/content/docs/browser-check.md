@@ -1,7 +1,11 @@
 ---
 title: 브라우저 코드북 검사실
-weight: 7
+weight: 8
 ---
+
+{{< callout type="info" >}}
+문서 사이트의 [브라우저에서 실행](/docs/playground) 페이지에서 같은 검사와 모든 변환을 바로 실행합니다. 이 페이지는 검사실을 HTML 파일 하나로 빌드하는 방법을 설명합니다.
+{{< /callout >}}
 
 검사실은 Go WASM과 [SDK](npm.md)를 Web Worker에서 실행합니다.
 파일 검사, 코드북 변환, JavaScript REPL을 제공합니다.
@@ -41,7 +45,7 @@ REPL은 `api`, `input`, `format`, `examples`, `state`, `console`, `download`를 
 `state`는 실행 사이에 값을 유지합니다. 런타임 초기화는 Worker와 `state`를 새로 만듭니다.
 오래 실행하는 코드는 런타임 초기화로 중지하세요.
 `download(name, data)`는 파일 받기 버튼을 만듭니다.
-이 함수는 REPL 보조 함수이며 SDK의 공개 함수가 아닙니다.
+이 함수는 REPL에서만 쓰는 보조 함수입니다.
 
 ## 검사 범위
 

@@ -1,0 +1,87 @@
+{{- /* Runs the npm SDK in the browser. Logic: static/playground/app.js and worker.js. */ -}}
+<link rel="stylesheet" href="{{ "playground/playground.css" | relURL }}">
+<div class="pg not-prose" id="pg" data-state="loading" data-worker="{{ "playground/worker.js" | relURL }}">
+  <div class="pg-status">
+    <span class="pg-dot" aria-hidden="true"></span>
+    <span id="pg-runtime">엔진을 불러오는 중입니다.</span>
+    <button type="button" class="pg-btn pg-quiet" id="pg-reset">엔진 다시 시작</button>
+  </div>
+  <div class="pg-grid">
+    <section class="pg-pane" aria-labelledby="pg-input-title">
+      <h2 class="pg-h" id="pg-input-title"><span class="pg-step" aria-hidden="true">1</span>입력</h2>
+      <label class="pg-drop" id="pg-drop">
+        <input type="file" id="pg-file" accept=".xml,.json,.xlsx">
+        <strong>파일을 여기에 놓거나, 눌러서 고르세요</strong>
+        <small>XML, JSON, Excel(.xlsx) 파일을 받습니다. 최대 크기는 20 MiB입니다. 검사와 변환은 파일을 브라우저 안에서만 처리합니다.</small>
+      </label>
+      <div class="pg-examples">
+        <span class="pg-label">예시 입력</span>
+        <div class="pg-chips">
+          <button type="button" class="pg-btn pg-chip" data-example="ddi-xml">DDI XML</button>
+          <button type="button" class="pg-btn pg-chip" data-example="ddi-json">DDI JSON</button>
+          <button type="button" class="pg-btn pg-chip" data-example="ddi-broken">참조 오류가 있는 DDI</button>
+          <button type="button" class="pg-btn pg-chip" data-example="ddi-xlsx">편집용 Excel</button>
+          <button type="button" class="pg-btn pg-chip" data-example="kosac-template">재단 v4.0 빈 양식</button>
+          <button type="button" class="pg-btn pg-chip" data-example="kosac-wrong">양식이 다른 Excel</button>
+        </div>
+      </div>
+      <div class="pg-current" id="pg-current" hidden>
+        <b id="pg-name"></b>
+        <small id="pg-size"></small>
+      </div>
+      <fieldset class="pg-kind" id="pg-kind">
+        <legend class="pg-label">입력 종류</legend>
+        <label><input type="radio" name="pg-kind" value="ddi"> DDI XML·JSON</label>
+        <label><input type="radio" name="pg-kind" value="ddi-xlsx"> 편집용 Excel</label>
+        <label><input type="radio" name="pg-kind" value="kosac-xlsx"> 재단 양식 Excel</label>
+      </fieldset>
+
+      <h2 class="pg-h"><span class="pg-step" aria-hidden="true">2</span>작업</h2>
+      <div class="pg-actions">
+        <button type="button" class="pg-btn pg-primary" data-action="check">검사</button>
+        <button type="button" class="pg-btn" data-action="toXlsx">편집용 Excel로 변환</button>
+        <button type="button" class="pg-btn" data-action="toDdi">DDI XML·JSON으로 변환</button>
+      </div>
+      <p class="pg-hint" id="pg-action-hint" aria-live="polite"></p>
+
+      <h2 class="pg-h"><span class="pg-step" aria-hidden="true">+</span>빈 양식 받기</h2>
+      <div class="pg-actions">
+        <button type="button" class="pg-btn" data-action="template">편집용 빈 양식</button>
+        <button type="button" class="pg-btn" data-action="kosacTemplate">재단 v4.0 빈 양식</button>
+      </div>
+    </section>
+
+    <section class="pg-pane" aria-label="실행 결과와 코드">
+      <div class="pg-tabs" role="tablist">
+        <button type="button" class="pg-tab" role="tab" id="pg-tab-result" aria-controls="pg-panel-result" aria-selected="true">결과</button>
+        <button type="button" class="pg-tab" role="tab" id="pg-tab-repl" aria-controls="pg-panel-repl" aria-selected="false" tabindex="-1">코드 실행</button>
+      </div>
+      <div role="tabpanel" id="pg-panel-result" aria-labelledby="pg-tab-result">
+        <div class="pg-msg" id="pg-msg" role="status" tabindex="-1">엔진을 불러오는 중입니다. 처음 열 때 약 13 MB를 받습니다.</div>
+        <div id="pg-result"></div>
+      </div>
+      <div role="tabpanel" id="pg-panel-repl" aria-labelledby="pg-tab-repl" hidden>
+        <p class="pg-hint" style="margin:0 0 .4rem">이 탭에서 JavaScript 코드로 SDK 함수를 호출합니다. 코드에서 아래 값을 씁니다.</p>
+        <ul class="pg-list pg-hint" style="margin:0 0 .4rem">
+          <li><code>api</code>: SDK 함수</li>
+          <li><code>input</code>: 입력 파일의 바이트(<code>Uint8Array</code>)</li>
+          <li><code>format</code>: 입력 종류(<code>ddi</code>, <code>ddi-xlsx</code>, <code>kosac-xlsx</code>)</li>
+          <li><code>examples</code>: 예시 XML 문자열(<code>valid</code>, <code>broken</code>)</li>
+          <li><code>state</code>: 실행 사이에 값을 유지하는 객체</li>
+          <li><code>console.log</code>: 출력에 한 줄을 씁니다.</li>
+          <li><code>download(name, data)</code>: 받기 버튼을 만듭니다.</li>
+        </ul>
+        <p class="pg-hint" style="margin:0 0 .6rem">코드가 <code>return</code>한 값은 출력의 맨 아래에 나옵니다.</p>
+        <label class="pg-label" for="pg-code">실행할 코드</label>
+        <textarea id="pg-code" spellcheck="false" autocomplete="off" autocapitalize="off">return await api.checkCodebook(input, { format });</textarea>
+        <div class="pg-actions" style="margin-top:.6rem">
+          <button type="button" class="pg-btn pg-primary" id="pg-run">실행</button>
+          <span class="pg-kbd">⌘ / Ctrl + Enter</span>
+        </div>
+        <pre class="pg-repl-out" id="pg-repl-out" tabindex="0">아직 실행하지 않았습니다.</pre>
+        <div class="pg-files pg-section" id="pg-repl-files"></div>
+      </div>
+    </section>
+  </div>
+</div>
+<script type="module" src="{{ "playground/app.js" | relURL }}"></script>

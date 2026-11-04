@@ -47,6 +47,7 @@ go build -o dist/ddi-xlsx ./cmd/ddi-xlsx
 
 ## 다음 단계
 
+- 설치 없이 먼저 해 보려면, [브라우저에서 실행](playground.md)을 여세요.
 - 이미 DDI 파일이 있으면, [CLI 사용법](cli.md)에서 `to-xlsx` 명령을 읽으세요.
 - 양식을 채워서 DDI를 만들려면, [빈 양식으로 시작하기](blank-template.md)를 읽으세요.
 - 재단 빈 양식은 `kosac-template` 명령으로 만듭니다. [KOSAC CLI](kosac/cli.md)를 읽으세요.

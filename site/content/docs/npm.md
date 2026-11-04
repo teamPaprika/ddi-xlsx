@@ -1,6 +1,6 @@
 ---
 title: Node·브라우저 SDK
-weight: 6
+weight: 7
 ---
 
 npm 패키지는 같은 변환기를 WebAssembly로 실행합니다. 설치 방법은 [설치](install.md)에 있습니다.
@@ -13,12 +13,19 @@ xlsxToDdi(xlsx: Uint8Array): Promise<{ xml: string; json: string; warnings: stri
 templateXlsx(): Promise<Uint8Array>
 checkCodebook(input: string | Uint8Array, options?: { format?: 'ddi' | 'ddi-xlsx' | 'kosac-xlsx' }): Promise<CheckReport>
 kosacTemplateXlsx(): Promise<Uint8Array>
+kosacToDdi(xlsx: Uint8Array): Promise<{ xml: string | null; json: string | null; issues: CheckIssue[] }>
 ```
+
+[브라우저에서 실행](playground.md) 페이지에서 이 함수를 설치 없이 실행합니다.
 
 - `ddiToXlsx`는 DDI XML이나 JSON을 워크북으로 바꿉니다.
 - `xlsxToDdi`는 워크북을 XML과 JSON으로 바꿉니다. 둘은 같은 트리를 담습니다.
 - `templateXlsx`는 빈 양식 워크북의 바이트를 돌려줍니다. 양식의 내용은 [빈 양식으로 시작하기](blank-template.md)에 있습니다.
 - `kosacTemplateXlsx`는 재단 v4.0 빈 양식을 반환합니다. 일반 DDI 편집용 양식과 구분합니다.
+- `kosacToDdi`는 재단 v3.2·v4.0 양식을 표준 DDI XML과 JSON으로 바꿉니다. 변환 순서는 CLI의 `kosac-xml`과 같습니다. XSD 검사는 CLI에서 합니다.
+  - 양식 구조 검사(S05)가 반려하면, `xml`과 `json`은 `null`입니다. `issues`에 반려 이유가 있습니다.
+  - 변환하면, `issues`에 S05 경고와 ID·참조 검사 결과가 있습니다. 내용 규칙(C)은 `checkCodebook`으로 검사하세요.
+  - 코드북을 조립할 수 없으면(예: 필수 항목 `TITLE`이 비어 있으면), `Error`로 거부됩니다.
 
 ## 코드북 검사
 
@@ -44,10 +51,9 @@ console.log(report.issues, report.steps);
 `steps`의 상태는 `pass`, `fail`, `warning`, `not_run`입니다.
 양식 구조가 반려되면 C 검사는 `not_run`입니다.
 
-WASM은 XSD 검사기와 외부 기준정보를 포함하지 않습니다.
-재단 양식의 응답 CSV 교차검사, 재코딩 실행·영향 건수 재현도 실행하지 않습니다.
-미실행 검사는 `not_run`으로 표시합니다. 발견 항목이 없어도 전체 제출 검사를 통과한 것은 아닙니다.
-`kosac:` 확장을 반려하는 검사는 XSD 실행과 별개입니다. [XML 검사](kosac/validation.md)를 참고하세요.
+WASM이 실행하는 단계는 READ, REF, S05, C입니다.
+XSD, REFERENCE, RESPONSE, RECODING 단계는 `not_run`으로 표시합니다. 각 단계의 `detail`에 그 단계를 실행하는 곳이 있습니다.
+`kosac:` 확장은 REF 단계가 `DDI-EXTENSION`으로 반려합니다. 자세한 내용은 [XML 검사](kosac/validation.md)에 있습니다.
 
 문서 오류는 `issues`로 반환합니다.
 지원하지 않는 `format`이나 입력 자료형, WASM 실행 실패는 예외로 거부합니다.

@@ -1,6 +1,6 @@
 ---
 title: 설치
-weight: 3
+weight: 4
 ---
 
 {{< tabs >}}

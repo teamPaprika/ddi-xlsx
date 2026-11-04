@@ -21,6 +21,7 @@ layout: hextra-home
 
 <div class="hx:mb-6">
 {{< hextra/hero-button text="빠른 시작" link="docs/getting-started" >}}
+{{< hextra/hero-button text="브라우저에서 실행" link="docs/playground" style="margin-left:.75rem;background:transparent;color:inherit;box-shadow:inset 0 0 0 1px currentColor" >}}
 </div>
 
 <div class="hx:mt-6"></div>
