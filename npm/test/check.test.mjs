@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { checkCodebook, ddiToXlsx, kosacTemplateXlsx, xlsxToDdi } from '../index.js';
+import { checkCodebook, ddiToXlsx, kosacTemplateXlsx, kosacToDdi, xlsxToDdi } from '../index.js';
 
 const xml = `<codeBook xmlns="ddi:codebook:2_5" version="2.5">
 <stdyDscr><citation><titlStmt><titl>Synthetic browser example</titl></titlStmt></citation></stdyDscr>
@@ -66,6 +66,22 @@ test('a generic workbook is rejected as a foundation template before C rules run
   const report = await checkCodebook(xlsx, { format: 'kosac-xlsx' });
   assert(report.issues.some((issue) => issue.Rule === 'S05' && issue.Level === 'R'));
   assert.equal(report.steps.find((s) => s.id === 'C').status, 'not_run');
+});
+
+test('kosacToDdi writes standard DDI, or returns only S05 issues for another form', async () => {
+  const { xlsx } = await ddiToXlsx(xml);
+  const rejected = await kosacToDdi(xlsx);
+  assert.equal(rejected.xml, null);
+  assert.equal(rejected.json, null);
+  assert(rejected.issues.some((issue) => issue.Rule === 'S05' && issue.Level === 'R'));
+  await assert.rejects(kosacToDdi(await kosacTemplateXlsx()), /TITLE/);
+  await assert.rejects(kosacToDdi(new Uint8Array([1, 2, 3])), /zip/);
+  const input = new Uint8Array(await readFile(new URL('../../testdata/kosac/v40_sample_2024.xlsx', import.meta.url)));
+  const out = await kosacToDdi(input);
+  assert.match(out.xml, /^<\?xml[^>]*>\n<codeBook xmlns="ddi:codebook:2_5"/);
+  assert.doesNotMatch(out.xml, /kosac:/);
+  assert.equal(JSON.parse(out.json).codeBook['@xmlns'], 'ddi:codebook:2_5');
+  assert(!out.issues.some((issue) => issue.Level === 'R'));
 });
 
 test('legacy foundation v3.2 reports its own version and unexecuted recoding', async () => {

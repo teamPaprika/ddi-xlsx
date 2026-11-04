@@ -1,6 +1,6 @@
 ---
 title: 받는 입력
-weight: 7
+weight: 9
 ---
 
 이 페이지의 조건은 범용 변환기(`to-xlsx`, `workbook.ToXLSX`, `ddiToXlsx`)에 적용합니다. 재단 Excel 입력은 [재단 코드북 엔진](/docs/kosac)에 있습니다.

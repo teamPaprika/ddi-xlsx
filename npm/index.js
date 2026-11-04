@@ -76,3 +76,13 @@ export async function checkCodebook(input, { format = 'ddi' } = {}) {
 export async function kosacTemplateXlsx() {
   return (await call('kosacTemplate')).xlsx;
 }
+
+export async function kosacToDdi(xlsx) {
+  const { xml, json, issues } = await call('kosacToDdi', xlsx);
+  const utf8 = new TextDecoder();
+  return {
+    xml: xml ? utf8.decode(xml) : null,
+    json: json ? utf8.decode(json) : null,
+    issues: JSON.parse(utf8.decode(issues)),
+  };
+}

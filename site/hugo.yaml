@@ -8,6 +8,17 @@ enableGitInfo: true
 module:
   imports:
     - path: github.com/imfing/hextra
+  mounts:
+    - source: content
+      target: content
+    - source: layouts
+      target: layouts
+    - source: static
+      target: static
+    # The playground loads the npm SDK and the wasm that scripts/build.sh writes.
+    - source: ../npm
+      target: static/playground/sdk
+      files: [index.js, wasm_exec.js, ddi-xlsx.wasm]
 
 markup:
   goldmark:
@@ -41,7 +52,7 @@ params:
     displayLogo: false
   footer:
     displayCopyright: false
-    displayPoweredBy: true
+    displayPoweredBy: false
   displayUpdatedDate: true
   dateFormat: "2006-01-02"
   editURL:

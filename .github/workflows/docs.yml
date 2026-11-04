@@ -2,9 +2,9 @@ name: docs
 
 on:
   pull_request:
+  # Every push to main deploys: the playground page runs the engine built from this commit.
   push:
     branches: [main]
-    paths: [site/**, .github/workflows/docs.yml]
   workflow_dispatch:
 
 permissions:
@@ -43,6 +43,10 @@ jobs:
         run: |
           wget -qO "$RUNNER_TEMP/hugo.deb" "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
           sudo dpkg -i "$RUNNER_TEMP/hugo.deb"
+      - name: Build the playground wasm
+        run: |
+          GOOS=js GOARCH=wasm go build -trimpath -ldflags='-s -w' -o npm/ddi-xlsx.wasm ./wasm
+          cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" npm/
       - run: hugo --gc --minify
         working-directory: site
         env:

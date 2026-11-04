@@ -5,9 +5,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"syscall/js"
 
+	"github.com/teamPaprika/ddi-xlsx/ddi"
+	"github.com/teamPaprika/ddi-xlsx/kosac"
+	"github.com/teamPaprika/ddi-xlsx/kosac/check"
 	ktemplate "github.com/teamPaprika/ddi-xlsx/kosac/template"
 	"github.com/teamPaprika/ddi-xlsx/workbook"
 )
@@ -41,8 +45,41 @@ func main() {
 		"kosacTemplate": handler(func([]byte) (map[string]any, error) {
 			return map[string]any{"xlsx": u8(ktemplate.Blank())}, nil
 		}),
+		"kosacToDdi": handler(kosacToDDI),
 	})
 	select {}
+}
+
+// kosacToDDI follows `ddi-xlsx kosac-xml` without XSD: when S05 rejects the
+// form, it returns the issues and no XML or JSON.
+func kosacToDDI(in []byte) (map[string]any, error) {
+	cb, issues, err := ktemplate.Read(in, ktemplate.ReadOptions{})
+	if err != nil {
+		return nil, err
+	}
+	out := map[string]any{}
+	if cb != nil {
+		kosac.DeriveDefaults(cb, kosac.RefData{})
+		if err := kosac.AssignIDs(cb, nil); err != nil {
+			return nil, err
+		}
+		root, err := cb.Tree()
+		if err != nil {
+			return nil, err
+		}
+		x := ddi.WriteXML(root)
+		issues = append(issues, check.ValidateXML(x, nil)...)
+		out["xml"], out["json"] = u8(x), u8(ddi.WriteJSON(root))
+	}
+	if issues == nil {
+		issues = []kosac.Issue{}
+	}
+	report, err := json.Marshal(issues)
+	if err != nil {
+		return nil, err
+	}
+	out["issues"] = u8(report)
+	return out, nil
 }
 
 // handler copies the Uint8Array argument, if any, into Go and wraps the

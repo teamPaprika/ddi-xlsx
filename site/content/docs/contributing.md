@@ -1,6 +1,6 @@
 ---
 title: 기여하기
-weight: 12
+weight: 14
 ---
 
 이 페이지는 코드와 문서를 바꾸는 절차를 설명합니다. 사람과 AI 에이전트(Claude Code, Codex)에게 같은 규칙을 적용합니다.
@@ -28,7 +28,7 @@ weight: 12
 | `xsd/ddi-codebook-2.5/` | 함께 넣어 둔 DDI Codebook 2.5 XSD |
 | `testdata/` | 테스트 fixture |
 | `docs/superpowers/` | 설계 문서(`specs/`)와 구현 계획(`plans/`) |
-| `site/` | 이 문서 사이트(Hugo, Hextra 테마) |
+| `site/` | 이 문서 사이트(Hugo, Hextra 테마)와 [브라우저에서 실행](playground.md) 페이지 |
 
 ## 작업 절차
 
@@ -173,6 +173,10 @@ hugo server
 ```
 
 브라우저에서 `http://localhost:1313/ddi-xlsx/`를 여세요.
+
+[브라우저에서 실행](playground.md) 페이지는 `npm/`의 SDK와 WASM을 씁니다. Hugo가 이 파일을 `/playground/sdk/`로 제공합니다(`site/hugo.yaml`의 `mounts`). 그래서 이 페이지를 미리 보려면, 먼저 저장소 루트에서 `scripts/build.sh`를 실행하세요. CI는 사이트를 빌드할 때마다 WASM을 새로 빌드합니다.
+
+플레이그라운드의 화면 코드는 `site/layouts/_shortcodes/playground.html`과 `site/static/playground/`에 있습니다. SDK 함수를 추가하거나 바꾸면, 이 화면에서도 실행되는지 확인하세요.
 
 ### 새 페이지 추가
 

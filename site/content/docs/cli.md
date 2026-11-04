@@ -1,6 +1,6 @@
 ---
 title: CLI 사용법
-weight: 4
+weight: 5
 ---
 
 ## 명령
