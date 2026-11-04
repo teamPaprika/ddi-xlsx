@@ -1,6 +1,6 @@
 //go:build js && wasm
 
-// Command wasm registers the converter on globalThis.__ddiXlsx for the npm
+// Command wasm registers conversion and checks on globalThis.__ddiXlsx for the npm
 // package's JavaScript wrapper.
 package main
 
@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"syscall/js"
 
+	ktemplate "github.com/teamPaprika/ddi-xlsx/kosac/template"
 	"github.com/teamPaprika/ddi-xlsx/workbook"
 )
 
@@ -33,6 +34,12 @@ func main() {
 				return nil, err
 			}
 			return map[string]any{"xlsx": u8(x)}, nil
+		}),
+		"checkDDI":      handler(checking("ddi")),
+		"checkWorkbook": handler(checking("ddi-xlsx")),
+		"checkKosac":    handler(checking("kosac-xlsx")),
+		"kosacTemplate": handler(func([]byte) (map[string]any, error) {
+			return map[string]any{"xlsx": u8(ktemplate.Blank())}, nil
 		}),
 	})
 	select {}

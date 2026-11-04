@@ -63,3 +63,16 @@ export async function xlsxToDdi(xlsx) {
 export async function templateXlsx() {
   return (await call('template')).xlsx;
 }
+
+export async function checkCodebook(input, { format = 'ddi' } = {}) {
+  const methods = { ddi: 'checkDDI', 'ddi-xlsx': 'checkWorkbook', 'kosac-xlsx': 'checkKosac' };
+  if (!Object.hasOwn(methods, format)) throw new Error('format must be ddi, ddi-xlsx, or kosac-xlsx');
+  const bytes = typeof input === 'string' && format === 'ddi' ? new TextEncoder().encode(input) : input;
+  if (!(bytes instanceof Uint8Array)) throw new TypeError('input must be a Uint8Array, or a string for ddi');
+  const { report } = await call(methods[format], bytes);
+  return JSON.parse(new TextDecoder().decode(report));
+}
+
+export async function kosacTemplateXlsx() {
+  return (await call('kosacTemplate')).xlsx;
+}

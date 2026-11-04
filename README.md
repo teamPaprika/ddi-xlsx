@@ -4,6 +4,8 @@
 
 **문서: <https://teampaprika.github.io/ddi-xlsx/>**
 
+브라우저 검사실은 `node demo/build.mjs`로 빌드합니다. 사용법과 검사 범위는 [검사실 문서](site/content/docs/browser-check.md)에 있습니다.
+
 연구자와 아카이브 담당자가 코드북을 스프레드시트에서 읽고 고칠 수 있게 하는 것이 목적입니다. 변수 라벨, 질문 문구, 값 라벨, 결측 표시, 노트, 그룹 구성, 연구 메타데이터는 셀만 고쳐서 바꿀 수 있습니다. 열에 들어가지 않는 내용은 같은 행의 `xml` 셀에 XML 원문으로 보관합니다. 그래서 DDI → xlsx → DDI 왕복에서 내용을 잃지 않습니다(예외는 [왕복 보장과 손실](https://teampaprika.github.io/ddi-xlsx/docs/roundtrip/) 참고).
 
 - 명령줄 도구(CLI): macOS, Linux, Windows용 실행 파일입니다.

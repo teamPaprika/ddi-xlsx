@@ -11,11 +11,47 @@ npm 패키지는 같은 변환기를 WebAssembly로 실행합니다. 설치 방�
 ddiToXlsx(input: string | Uint8Array): Promise<{ xlsx: Uint8Array; warnings: string[] }>
 xlsxToDdi(xlsx: Uint8Array): Promise<{ xml: string; json: string; warnings: string[] }>
 templateXlsx(): Promise<Uint8Array>
+checkCodebook(input: string | Uint8Array, options?: { format?: 'ddi' | 'ddi-xlsx' | 'kosac-xlsx' }): Promise<CheckReport>
+kosacTemplateXlsx(): Promise<Uint8Array>
 ```
 
 - `ddiToXlsx`는 DDI XML이나 JSON을 워크북으로 바꿉니다.
 - `xlsxToDdi`는 워크북을 XML과 JSON으로 바꿉니다. 둘은 같은 트리를 담습니다.
 - `templateXlsx`는 빈 양식 워크북의 바이트를 돌려줍니다. 양식의 내용은 [빈 양식으로 시작하기](blank-template.md)에 있습니다.
+- `kosacTemplateXlsx`는 재단 v4.0 빈 양식을 반환합니다. 일반 DDI 편집용 양식과 구분합니다.
+
+## 코드북 검사
+
+`checkCodebook`은 현재 Go 엔진의 검사를 실행합니다. `format`의 기본값은 `ddi`입니다.
+XML·JSON은 문자열이나 `Uint8Array`로, Excel은 `Uint8Array`로 전달하세요.
+
+| 형식 | 실행하는 검사 |
+|---|---|
+| `ddi` | XML·JSON 읽기, 지원하는 ID·변수·파일 참조 검사, `kosac:` 확장 반려 |
+| `ddi-xlsx` | 편집용 워크북을 DDI로 변환한 뒤 위 검사 실행 |
+| `kosac-xlsx` | 재단 v3.2·v4.0 양식 읽기(S05)와 코드북 규칙(C) 검사 |
+
+```js
+import { checkCodebook } from 'ddi-xlsx';
+
+const report = await checkCodebook(input, { format: 'kosac-xlsx' });
+console.log(report.issues, report.steps);
+```
+
+결과에는 `format`, `templateVersion`, `rejections`, `warnings`, `issues`, `steps`가 있습니다.
+`templateVersion`은 양식을 읽은 경우에만 있습니다.
+각 `issues` 항목은 규칙(`Rule`), 등급(`Level`), 위치, 실제값, 기대값, 메시지를 담습니다.
+`steps`의 상태는 `pass`, `fail`, `warning`, `not_run`입니다.
+양식 구조가 반려되면 C 검사는 `not_run`입니다.
+
+WASM은 XSD 검사기와 외부 기준정보를 포함하지 않습니다.
+재단 양식의 응답 CSV 교차검사, 재코딩 실행·영향 건수 재현도 실행하지 않습니다.
+미실행 검사는 `not_run`으로 표시합니다. 발견 항목이 없어도 전체 제출 검사를 통과한 것은 아닙니다.
+`kosac:` 확장을 반려하는 검사는 XSD 실행과 별개입니다. [XML 검사](kosac/validation.md)를 참고하세요.
+
+문서 오류는 `issues`로 반환합니다.
+지원하지 않는 `format`이나 입력 자료형, WASM 실행 실패는 예외로 거부합니다.
+브라우저에서 파일 검사와 JavaScript 코드를 실행하려면 [코드북 검사실](browser-check.md)을 사용하세요.
 
 ## Node 예시
 
