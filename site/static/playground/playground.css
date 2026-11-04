@@ -133,12 +133,13 @@
 .pg-tab[aria-selected="true"] { color: var(--pg-ink); border-bottom-color: var(--pg-accent); }
 
 .pg-msg {
-  margin: 0 0 1rem; padding: 0.65rem 0.85rem; border-left: 3px solid var(--pg-accent);
-  border-radius: 0.25rem; background: var(--pg-accent-soft); font-size: 0.8125rem; overflow-wrap: anywhere;
+  --pg-tone: var(--pg-accent);
+  margin: 0 0 1rem; padding: 0.65rem 0.85rem; border: 1px solid color-mix(in srgb, var(--pg-tone) 30%, transparent);
+  border-radius: 0.5rem; background: var(--pg-accent-soft); font-size: 0.8125rem; overflow-wrap: anywhere;
 }
-.pg-msg[data-tone="bad"] { border-color: var(--pg-bad); background: var(--pg-bad-soft); }
-.pg-msg[data-tone="ok"] { border-color: var(--pg-ok); background: var(--pg-ok-soft); }
-.pg-msg[data-tone="warn"] { border-color: var(--pg-warn); background: var(--pg-warn-soft); }
+.pg-msg[data-tone="bad"] { --pg-tone: var(--pg-bad); background: var(--pg-bad-soft); }
+.pg-msg[data-tone="ok"] { --pg-tone: var(--pg-ok); background: var(--pg-ok-soft); }
+.pg-msg[data-tone="warn"] { --pg-tone: var(--pg-warn); background: var(--pg-warn-soft); }
 .pg-msg .pg-time { margin-left: 0.5rem; color: var(--pg-muted); font-size: 0.75rem; }
 .pg-msg:focus { outline: none; }
 .pg-msg:focus-visible { outline: 2px solid var(--pg-accent); outline-offset: 2px; }
