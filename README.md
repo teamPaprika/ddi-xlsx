@@ -59,7 +59,7 @@ go build -o dist/ddi-xlsx ./cmd/ddi-xlsx
 
 ## 라이선스
 
-소스코드 저장소는 공개 상태입니다. 이 도구 자체의 라이선스는 아직 정하지 않았습니다. CLI 바이너리는 LGPL-3.0-or-later 스키마를 내장합니다. 그래서 도구의 라이선스는 LGPL-3.0 4절의 조건과 맞아야 합니다.
+Copyright 2026 Paprika Data Lab Inc. 이 도구의 소스코드는 Apache License 2.0(`Apache-2.0`)으로 배포합니다. 전문은 [`LICENSE`](LICENSE)에 있고, 저작권 고지는 [`NOTICE`](NOTICE)에 있습니다. 함께 넣어 둔 제3자 자료와 재단 자료는 이 라이선스에 들어가지 않습니다. 각 자료의 라이선스는 아래 표에 있습니다.
 
 저장소와 배포물에 들어 있는 제3자 자료는 아래와 같습니다. 조사 기준일은 2026-11-03입니다. 저작권 줄, 출처, 변경 사항, 의무는 [라이선스](https://teampaprika.github.io/ddi-xlsx/docs/license/) 페이지에 있습니다.
 
@@ -97,5 +97,4 @@ go build -o dist/ddi-xlsx ./cmd/ddi-xlsx
 3. `xml.xsd`에는 라이선스 표시가 없습니다.
 4. `internal/schema/table.go`가 LGPL 스키마의 2차적 저작물인지 정하지 않았습니다.
 5. 재단 자료의 이용 조건이 저장소에 적혀 있지 않습니다.
-6. CLI 바이너리나 npm 패키지를 배포하기 전에, 고지와 라이선스 전문을 배포물에 넣어야 합니다.
-7. 이 도구의 라이선스를 정해야 합니다.
+6. CLI 바이너리나 npm 패키지를 배포하기 전에, 고지와 라이선스 전문을 배포물에 넣어야 합니다. npm 패키지 디렉터리(`npm/`)에도 `LICENSE`와 `NOTICE`가 필요합니다.

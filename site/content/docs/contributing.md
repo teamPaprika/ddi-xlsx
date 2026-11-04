@@ -76,6 +76,10 @@ git switch -c my-change main
 - `scripts/build.sh`는 CLI 실행 파일 여섯 개를 `dist/`에, wasm을 `npm/ddi-xlsx.wasm`에 빌드합니다. 같은 Go 툴체인의 `wasm_exec.js`도 `npm/`에 복사합니다. wasm과 `wasm_exec.js`는 같은 Go 버전에서 나와야 하기 때문입니다.
 - npm 테스트에는 wasm이 필요합니다. 먼저 `scripts/build.sh`를 실행하세요.
 
+## 라이선스
+
+기여한 코드와 문서는 이 저장소의 라이선스인 Apache License 2.0으로 배포합니다. 자세한 내용은 [라이선스](license.md)에 있습니다.
+
 ## 커밋 메시지
 
 - 제목은 한국어 한 줄입니다. 바뀐 내용을 씁니다.
