@@ -50,14 +50,14 @@ test('legacy kosac extensions reject while XSD remains unexecuted', async () => 
   }
 });
 
-test('foundation v4 blank runs S05 and C rules without claiming reference/CSV/XSD checks', async () => {
+test('foundation v4.2.3 blank runs structure and profile rules without claiming reference/CSV/XSD checks', async () => {
   const input = await kosacTemplateXlsx();
   const report = await checkCodebook(input, { format: 'kosac-xlsx' });
-  assert.equal(report.templateVersion, '4.0');
-  assert.equal(report.steps.find((s) => s.id === 'S05').status, 'pass');
-  assert.equal(report.steps.find((s) => s.id === 'C').status, 'fail');
+  assert.equal(report.templateVersion, '4.2.3');
+  assert.equal(report.steps.find((s) => s.id === 'STRUCTURE').status, 'pass');
+  assert.equal(report.steps.find((s) => s.id === 'PROFILE').status, 'fail');
   assert(report.rejections > 0);
-  assert(report.issues.some((issue) => issue.Rule.startsWith('C') && issue.Sheet));
+  assert(report.issues.some((issue) => issue.Rule === 'S01' && issue.Sheet));
   for (const id of ['REFERENCE', 'RESPONSE', 'XSD']) assert.equal(report.steps.find((s) => s.id === id).status, 'not_run');
 });
 

@@ -24,7 +24,7 @@ npm 레지스트리에는 아직 게시하지 않았습니다.
 | 기능 | 입력과 출력 | 현재 범위 |
 |---|---|---|
 | 범용 변환기 | DDI 2.5 XML·JSON ↔ 편집용 Excel | `Variables`, `Categories`, `Groups`, `Document` 시트를 씁니다. |
-| 재단 양식 엔진 | 재단 v3.2·v4.0 Excel ↔ 재단 모델 → DDI 2.5 XML·JSON | 양식 검사와 표준 요소 매핑을 제공합니다. |
+| 재단 양식 엔진 | 재단 v3.2·v4.0·v4.2.3 Excel ↔ 재단 모델 → DDI 2.5 XML·JSON | 양식 검사와 표준 요소 매핑을 제공합니다. |
 | Node·브라우저 SDK | DDI XML·JSON ↔ 편집용 Excel, 재단 양식 → DDI XML·JSON | 범용 변환, 재단 양식 변환, 코드북 검사, 빈 양식 생성을 WASM으로 제공합니다. [브라우저에서 실행](/docs/playground)에서 설치 없이 씁니다. |
 
 {{< callout type="warning" >}}

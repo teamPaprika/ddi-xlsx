@@ -17,6 +17,10 @@ import (
 // store nothing uses. Native source system variables remain separate from 03 rows.
 func Parse(b []byte) (*Codebook, error) {
 	root, _, err := ddi.Parse(b)
+	if err == nil && IsProfile423DDI(root) {
+		// The profile export is standard DDI with KOSAC: notes; it has no inverse.
+		return nil, fmt.Errorf("코드북을 읽을 수 없습니다: 재단 v4.2.3 프로필 XML은 kosac.Parse로 읽지 않습니다. 원본 워크북을 보관하고, 표준 트리는 ddi.Parse로 읽으세요")
+	}
 	if err == nil {
 		err = kosacPrefix(root)
 	}

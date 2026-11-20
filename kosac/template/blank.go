@@ -13,5 +13,8 @@ var blank []byte
 //go:embed blank_v4.0.xlsx
 var blankV4 []byte
 
-// Blank returns the official empty v4.0 template.
-func Blank() []byte { return bytes.Clone(blankV4) }
+//go:embed blank_v4.2.3.xlsx
+var blank423 []byte
+
+// Blank returns the official empty v4.2.3 template.
+func Blank() []byte { return bytes.Clone(blank423) }

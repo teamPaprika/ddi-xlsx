@@ -116,17 +116,22 @@ CI가 PR마다 문서 검사와 사이트 빌드를 실행합니다. `main`에 m
 | `npm/index.js`, `npm/index.d.ts` | SDK 함수 |
 | `kosac/xsd/*.xsd` | kosac XSD 초안 |
 | `kosac/template/*.xlsx` | 내장 양식 |
+| `kosac/check/*.txt` | 내장 표준코드 목록 |
 
-문서는 `site/content/` 아래의 페이지와 `README.md`입니다.
+재단 코드북을 바꾸면 `site/content/docs/kosac/`의 해당 페이지를 고치세요.
+재단 검사 코드나 코드 목록을 바꾸면 `site/content/docs/kosac/validation.md`를 고치세요.
+WASM이나 npm API를 바꾸면 `site/content/docs/npm.md`를 고치세요.
+CLI·범용 DDI·편집용 Excel을 바꾸면 `site/content/` 아래의 해당 페이지 또는 `README.md`를 고치세요.
 
 ### 문서 검사
 
-`scripts/check-docs.sh`는 기본 브랜치(`origin/main`)와 현재 `HEAD` 사이의 변경을 봅니다. 위 표의 파일이 바뀌었고 문서가 바뀌지 않았으면, 검사가 실패합니다.
+`scripts/check-docs.sh`는 현재 `HEAD`를 기준 커밋과 비교합니다. 로컬에서는 `origin/main`을 사용합니다. CI에서는 PR의 대상 커밋이나 푸시 직전의 main 커밋을 사용합니다.
+기능과 함께 해당 문서를 추가하거나 수정하지 않으면 검사가 실패합니다.
 
 검사가 실패하면, 아래 중 하나를 하세요.
 
 1. 바뀐 동작을 문서에 쓰고 커밋하세요.
-2. 문서를 바꿀 필요가 없으면(리팩터링, 내부 수정, 테스트만 바꾼 경우), 커밋 메시지에 `[no-docs]`와 이유를 쓰세요.
+2. 문서를 바꿀 필요가 없으면, 관련 기능 파일을 바꾼 각 커밋의 메시지에 `[no-docs]`를 한 줄로 쓰고 다른 줄에 이유를 적으세요. 테스트 파일만 바뀌면 문서 검사를 요구하지 않습니다.
 
 검사는 아래 세 곳에서 실행됩니다.
 
@@ -134,7 +139,7 @@ CI가 PR마다 문서 검사와 사이트 빌드를 실행합니다. `main`에 m
 |---|---|---|
 | Claude Code | `git push`, `gh pr create` 전 | `.claude/settings.json` |
 | Codex | `git push`, `gh pr create` 전 | `.codex/hooks.json` |
-| GitHub Actions | PR마다 | `.github/workflows/docs.yml` |
+| GitHub Actions | PR 및 main 푸시 | `.github/workflows/docs.yml` |
 
 에이전트 훅이 실패하면, 에이전트는 push나 PR 생성을 하지 않고 실패 이유를 받습니다.
 
@@ -163,7 +168,7 @@ Codex는 신뢰한 프로젝트에서만 프로젝트 훅을 로드합니다. �
 | 검사 | 도구, 테스트, `xmllint`가 하는 자동 확인 |
 | 확인 | 사람이 직접 보는 일 |
 | 워크북 | 도구가 읽고 쓰는 xlsx 파일 |
-| 양식 | 빈 워크북. 재단 양식은 KOSAC v3.2·v4.0 xlsx |
+| 양식 | 빈 워크북. 재단 양식은 KOSAC v3.2·v4.0·v4.2.3 xlsx |
 | 오류 | 도구가 입력을 거부하는 결과 |
 | 경고 | 도구가 알리지만 변환은 끝나는 결과 |
 

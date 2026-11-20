@@ -9,7 +9,7 @@
 <div class="input-pane">
   <div class="section-heading"><h2>입력 파일</h2><span id="input-info">아직 선택하지 않음</span></div>
   <label class="file-picker" for="input-file"><span>XML·JSON·Excel 파일 고르기</span><small>파일은 브라우저의 작업 스레드로 전달합니다. 최대 20 MiB.</small><input type="file" id="input-file" accept=".xml,.json,.xlsx"></label>
-  <label class="field" for="format">입력 형식<select id="format" aria-describedby="format-hint"><option value="" disabled>Excel 양식을 선택하세요</option><option value="ddi" selected>DDI Codebook 2.5 XML·JSON</option><option value="ddi-xlsx">ddi-xlsx 일반 편집용 Excel</option><option value="kosac-xlsx">재단 코드북 Excel v4.0·v3.2</option></select></label>
+  <label class="field" for="format">입력 형식<select id="format" aria-describedby="format-hint"><option value="" disabled>Excel 양식을 선택하세요</option><option value="ddi" selected>DDI Codebook 2.5 XML·JSON</option><option value="ddi-xlsx">ddi-xlsx 일반 편집용 Excel</option><option value="kosac-xlsx">재단 코드북 Excel v4.2.3·v4.0·v3.2</option></select></label>
   <p class="hint" id="format-hint">문서 읽기와 지원하는 ID·변수·파일 참조를 검사합니다. XSD는 실행하지 않습니다.</p>
   <details class="examples" open><summary>예시로 시작하기</summary><div class="example-list"><button data-example="valid">기본 DDI <small>텍스트 코드 01·02</small></button><button data-example="broken">끊어진 파일 참조 <small>F404 오류</small></button><button data-example="workbook">일반 편집용 Excel <small>DDI에서 실제 변환</small></button><button data-example="foundation">재단 v4 빈 양식 <small>필수값 누락 확인</small></button><button data-example="wrong-template">다른 양식 제출 <small>재단 S05 구조 오류</small></button></div></details>
   <div class="section-heading repl-heading"><h2>JavaScript REPL</h2><button id="restore-code" type="button">검사 코드로 되돌리기</button></div>
@@ -24,9 +24,9 @@
   <div id="report" hidden>
     <div class="report-summary"><strong id="report-summary"></strong><span id="report-format"></span><button id="save-report">검사 결과 JSON 받기</button></div>
     <div id="steps" class="steps"></div>
-    <div class="finding-controls"><h3 id="finding-count">발견 항목</h3><label class="sr-only" for="severity">발견 항목 수준</label><select id="severity"><option value="all">전체</option><option value="R">반려 항목</option><option value="W">경고</option></select><label class="sr-only" for="finding-search">발견 항목 검색</label><input id="finding-search" type="search" placeholder="규칙·시트·변수 검색"></div>
+    <div class="finding-controls"><h3 id="finding-count">발견 항목</h3><label class="sr-only" for="severity">발견 항목 수준</label><select id="severity"><option value="all">전체</option><option value="R">반려 항목</option><option value="W">경고</option><option value="I">보고</option></select><label class="sr-only" for="finding-search">발견 항목 검색</label><input id="finding-search" type="search" placeholder="규칙·시트·변수 검색"></div>
     <div id="findings" class="findings"></div>
-    <p class="hint">R은 반려 항목, W는 경고입니다. 발견 항목이 없어도 미실행 검사는 통과로 보지 않습니다.</p>
+    <p class="hint">R은 반려 항목, W는 경고, I는 재단 확인용 보고입니다. 발견 항목이 없어도 미실행 검사는 통과로 보지 않습니다.</p>
   </div>
   <div id="downloads" class="downloads"></div>
   <details class="console" id="console-panel"><summary>REPL 출력</summary><pre id="output" tabindex="0">아직 실행하지 않았습니다.</pre></details>

@@ -5,6 +5,7 @@ type Level string
 const (
 	R Level = "R" // rejects the submission
 	W Level = "W" // passes with a warning
+	I Level = "I" // informational report for foundation review
 )
 
 // Issue is one finding of the template read or a check.

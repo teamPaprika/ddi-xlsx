@@ -77,9 +77,9 @@ test('the single HTML runs its embedded browser worker, WASM and REPL without ex
   assert.equal((await send({ ...args, code: 'return 6 * 7;' })).result, 42);
   const foundation = await send({ type: 'example', example: 'foundation' });
   const checked = await send({ type: 'run', input: foundation.bytes, format: foundation.format, code: 'return await api.checkCodebook(input, { format });' });
-  assert.equal(checked.result.templateVersion, '4.0');
+  assert.equal(checked.result.templateVersion, '4.2.3');
   assert(checked.result.rejections > 0);
-  assert.equal(checked.result.steps.find((step) => step.id === 'RECODING').status, 'not_run');
+  assert.equal(checked.result.steps.find((step) => step.id === 'RESPONSE').status, 'not_run');
   for (const [year, rejections, warnings] of [['2024', 1, 155], ['2025', 13, 672]]) {
     const input = new Uint8Array(await readFile(new URL(`../testdata/kosac/v40_sample_${year}.xlsx`, import.meta.url)));
     const checked = await send({ type: 'run', input, format: 'kosac-xlsx', code: 'return await api.checkCodebook(input, { format });' });

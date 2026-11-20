@@ -19,7 +19,7 @@ export type CheckFormat = 'ddi' | 'ddi-xlsx' | 'kosac-xlsx';
 
 export interface CheckIssue {
   Rule: string;
-  Level: 'R' | 'W';
+  Level: 'R' | 'W' | 'I';
   Sheet: string;
   Cell: string;
   Path: string;
@@ -36,10 +36,11 @@ export interface CheckReport {
   templateVersion?: string;
   rejections: number;
   warnings: number;
+  reports?: number;
   steps: Array<{
     id: string;
     name: string;
-    status: 'pass' | 'fail' | 'warning' | 'not_run';
+    status: 'pass' | 'fail' | 'warning' | 'report' | 'not_run';
     detail: string;
   }>;
   issues: CheckIssue[];
@@ -48,12 +49,12 @@ export interface CheckReport {
 /** Runs the existing Go checks. XSD, response-data checks and external reference data are not supplied. */
 export function checkCodebook(input: string | Uint8Array, options?: { format?: CheckFormat }): Promise<CheckReport>;
 
-/** Returns the foundation's empty v4.0 workbook, not the generic DDI editing workbook. */
+/** Returns the foundation's empty v4.2.3 workbook, not the generic DDI editing workbook. */
 export function kosacTemplateXlsx(): Promise<Uint8Array>;
 
 /**
- * Converts a foundation (KOSAC) v3.2 or v4.0 workbook to standard DDI Codebook 2.5 XML and JSON,
- * like `ddi-xlsx kosac-xml`. `xml` and `json` are null when the form structure check (S05)
+ * Converts a foundation (KOSAC) v3.2, v4.0 or v4.2.3 workbook to standard DDI Codebook 2.5 XML and JSON,
+ * like `ddi-xlsx kosac-xml`. `xml` and `json` are null when the form structure check
  * rejects the workbook; `issues` says why. Check content rules (C) with `checkCodebook`; XSD runs in the CLI.
  */
 export function kosacToDdi(xlsx: Uint8Array): Promise<{ xml: string | null; json: string | null; issues: CheckIssue[] }>;

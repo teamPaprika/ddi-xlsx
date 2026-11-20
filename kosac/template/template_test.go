@@ -73,7 +73,7 @@ func read(t *testing.T, x []byte, opt ReadOptions) (*kosac.Codebook, []kosac.Iss
 		t.Fatal(err)
 	}
 	for _, is := range issues {
-		if is.Rule != "S05" || is.Message == "" || is.Sheet == "" {
+		if (is.Rule != "S05" && is.Rule != "STRUCTURE") || is.Message == "" || is.Sheet == "" {
 			t.Errorf("issue without rule, sheet or message: %+v", is)
 		}
 	}

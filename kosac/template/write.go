@@ -3,6 +3,8 @@ package template
 import (
 	"bytes"
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 
 	"github.com/teamPaprika/ddi-xlsx/kosac"
@@ -21,14 +23,20 @@ func Write(cb *kosac.Codebook) ([]byte, error) {
 	if version == "" {
 		version = "4.0"
 	}
-	if version != "3.2" && version != "4.0" {
+	if version != "3.2" && version != "4.0" && version != kosac.Profile423 {
 		return nil, fmt.Errorf("지원하지 않는 양식 버전: %s", version)
 	}
 	if version == "3.2" && cb.HasV4Fields() {
 		return nil, fmt.Errorf("v4.0 항목을 v3.2 양식에 쓰면 유실됩니다")
 	}
 	layout := kosac.LayoutFor(version)
+	if err := checkOutputFields(cb, layout, version); err != nil {
+		return nil, err
+	}
 	source := blankV4
+	if version == kosac.Profile423 {
+		source = blank423
+	}
 	if version == "3.2" {
 		source = blank
 	}
@@ -61,6 +69,12 @@ func Write(cb *kosac.Codebook) ([]byte, error) {
 		// Every cell is set, even to empty, or the blank's list default would
 		// read back in place of an empty value.
 		v := cb.Study.Get(k)
+		if version == kosac.Profile423 && k == "RULE_VERSION" {
+			if v != "" && v != kosac.RuleVersion423 {
+				return nil, fmt.Errorf("v4.2.3 양식의 고정 규칙 버전은 %s입니다", kosac.RuleVersion423)
+			}
+			v = kosac.RuleVersion423
+		}
 		if v == "" {
 			err = f.SetCellValue(at.Loc.Sheet, at.Loc.Cell, nil)
 		} else {
@@ -108,9 +122,62 @@ func Write(cb *kosac.Codebook) ([]byte, error) {
 			}
 		}
 	}
+	for _, sheet := range slices.Sorted(maps.Keys(cb.Supplemental)) {
+		if sheet != "10_미확인사유" && sheet != "11_변환내역" {
+			return nil, fmt.Errorf("지원하지 않는 보조 시트: %s", sheet)
+		}
+		if _, err := f.NewSheet(sheet); err != nil {
+			return nil, err
+		}
+		for i, row := range cb.Supplemental[sheet] {
+			for j, value := range row {
+				if err := f.SetCellStr(sheet, cellName(j, i), value); err != nil {
+					return nil, err
+				}
+			}
+		}
+	}
 	buf, err := f.WriteToBuffer()
 	if err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func checkOutputFields(cb *kosac.Codebook, layout kosac.Layout, version string) error {
+	if len(cb.Recodes) > 0 && version != "4.0" || len(cb.Supplemental) > 0 && version != kosac.Profile423 {
+		return fmt.Errorf("양식 %s에 이력 시트를 기록할 수 없습니다", version)
+	}
+	// Only fields from a different supported layout represent a lossy version change.
+	alternate := kosac.LayoutFor(kosac.Profile423)
+	if version == kosac.Profile423 {
+		alternate = kosac.LayoutFor("4.0")
+	}
+	check := func(r kosac.Record, keys, other []string) error {
+		for _, key := range other {
+			if r.Get(key) != "" && !slices.Contains(keys, key) {
+				return fmt.Errorf("양식 %s에 %s 항목이 없습니다", version, key)
+			}
+		}
+		return nil
+	}
+	if err := check(cb.Study, layout.Study, alternate.Study); err != nil {
+		return err
+	}
+	for _, f := range cb.Files {
+		if err := check(f.Rec, layout.Files, alternate.Files); err != nil {
+			return err
+		}
+	}
+	for _, v := range cb.Vars {
+		if err := check(v.Rec, layout.Vars, alternate.Vars); err != nil {
+			return err
+		}
+	}
+	for _, c := range cb.Codes {
+		if err := check(c.Rec, layout.Codes, alternate.Codes); err != nil {
+			return err
+		}
+	}
+	return nil
 }

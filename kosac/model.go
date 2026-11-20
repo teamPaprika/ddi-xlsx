@@ -1,4 +1,4 @@
-// Package kosac models v3.2 and v4.0 codebooks: the template's
+// Package kosac models v3.2, v4.0 and v4.2.3 codebooks: the template's
 // sheets as records keyed by template KEY, plus the values the engine and the
 // operator add. Every value is the string written, so checks can judge it as
 // written.
@@ -44,7 +44,8 @@ func (r Record) Set(key, value string) {
 }
 
 type Codebook struct {
-	Template TemplateMeta
+	Template     TemplateMeta
+	Supplemental map[string][][]string // Optional review and conversion logs from v4.2.3.
 	// SourceSystemVars contains only system columns declared in an imported DDI.
 	// External Excel imports leave it empty; output never fabricates these columns.
 	SourceSystemVars []*ddi.Node

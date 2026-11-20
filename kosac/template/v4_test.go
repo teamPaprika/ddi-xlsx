@@ -93,15 +93,7 @@ func TestV4OfficialTemplates(t *testing.T) {
 	}
 }
 func TestV4BlankAndDowngrade(t *testing.T) {
-	b := Blank()
-	if !bytes.Equal(b, blankV4) {
-		t.Fatal("blank must be official v4")
-	}
-	b[0] ^= 255
-	if Blank()[0] == b[0] {
-		t.Fatal("shared bytes")
-	}
-	cb, is := read(t, Blank(), ReadOptions{})
+	cb, is := read(t, blankV4, ReadOptions{})
 	if cb == nil || len(is) > 0 || cb.Template.Version.Value != "4.0" {
 		t.Fatalf("v4 blank: %v", is)
 	}

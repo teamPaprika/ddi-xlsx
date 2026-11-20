@@ -1,5 +1,5 @@
-// Package check runs the foundation's codebook rules C01–C18 on a KOSAC
-// codebook model.
+// Package check runs the foundation's codebook rules C01–C18 (v3.2, v4.0)
+// or S01–S17 (v4.2.3) on a KOSAC codebook model.
 package check
 
 import (
@@ -20,11 +20,16 @@ func Check(cb *kosac.Codebook, ref kosac.RefData) []kosac.Issue {
 		return nil
 	}
 	c := newChecker(cb, ref)
-	for _, rule := range []func(){
+	rules := []func(){
 		c.c01, c.c02, c.c03, c.c04, c.c05, c.c06, c.c07, c.c08, c.c09,
 		c.c10, c.c11, c.c12, c.c13, c.c14, c.c15, c.c16, c.c17, c.c18,
 		c.unverifiedRows, c.v4,
-	} {
+	}
+	// v4.2.3 has its own workbook rules (S01–S17); the C rules do not apply.
+	if is423(cb) {
+		rules = c.rules423()
+	}
+	for _, rule := range rules {
 		rule()
 	}
 	sortIssues(c.issues)
