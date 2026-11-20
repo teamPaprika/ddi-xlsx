@@ -19,17 +19,18 @@ env:
 
 jobs:
   check:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - run: scripts/check-docs.sh
+      - if: github.event_name != 'workflow_dispatch'
+        run: scripts/check-docs.sh
         env:
-          DOCS_BASE: origin/${{ github.base_ref }}
+          DOCS_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
 
   build:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

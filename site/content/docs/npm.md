@@ -21,10 +21,10 @@ kosacToDdi(xlsx: Uint8Array): Promise<{ xml: string | null; json: string | null;
 - `ddiToXlsx`는 DDI XML이나 JSON을 워크북으로 바꿉니다.
 - `xlsxToDdi`는 워크북을 XML과 JSON으로 바꿉니다. 둘은 같은 트리를 담습니다.
 - `templateXlsx`는 빈 양식 워크북의 바이트를 돌려줍니다. 양식의 내용은 [빈 양식으로 시작하기](blank-template.md)에 있습니다.
-- `kosacTemplateXlsx`는 재단 v4.0 빈 양식을 반환합니다. 일반 DDI 편집용 양식과 구분합니다.
-- `kosacToDdi`는 재단 v3.2·v4.0 양식을 표준 DDI XML과 JSON으로 바꿉니다. 변환 순서는 CLI의 `kosac-xml`과 같습니다. XSD 검사는 CLI에서 합니다.
-  - 양식 구조 검사(S05)가 반려하면, `xml`과 `json`은 `null`입니다. `issues`에 반려 이유가 있습니다.
-  - 변환하면, `issues`에 S05 경고와 ID·참조 검사 결과가 있습니다. 내용 규칙(C)은 `checkCodebook`으로 검사하세요.
+- `kosacTemplateXlsx`는 재단 v4.2.3 빈 양식을 반환합니다. 일반 DDI 편집용 양식과 구분합니다.
+- `kosacToDdi`는 재단 v3.2·v4.0·v4.2.3 양식을 표준 DDI XML과 JSON으로 바꿉니다. 변환 순서는 CLI의 `kosac-xml`과 같습니다. XSD 검사는 CLI에서 합니다.
+  - 양식 구조 검사가 반려하면, `xml`과 `json`은 `null`입니다. `issues`에 반려 이유가 있습니다.
+  - 변환하면, `issues`에 S05 경고와 ID·참조 검사 결과가 있습니다. 버전별 내용 규칙은 `checkCodebook`으로 검사하세요.
   - 코드북을 조립할 수 없으면(예: 필수 항목 `TITLE`이 비어 있으면), `Error`로 거부됩니다.
 
 ## 코드북 검사
@@ -36,7 +36,7 @@ XML·JSON은 문자열이나 `Uint8Array`로, Excel은 `Uint8Array`로 전달하
 |---|---|
 | `ddi` | XML·JSON 읽기, 지원하는 ID·변수·파일 참조 검사, `kosac:` 확장 반려 |
 | `ddi-xlsx` | 편집용 워크북을 DDI로 변환한 뒤 위 검사 실행 |
-| `kosac-xlsx` | 재단 v3.2·v4.0 양식 읽기(S05)와 코드북 규칙(C) 검사 |
+| `kosac-xlsx` | 재단 v3.2·v4.0·v4.2.3 양식 읽기와 버전별 코드북 규칙 검사 |
 
 ```js
 import { checkCodebook } from 'ddi-xlsx';
@@ -48,10 +48,11 @@ console.log(report.issues, report.steps);
 결과에는 `format`, `templateVersion`, `rejections`, `warnings`, `issues`, `steps`가 있습니다.
 `templateVersion`은 양식을 읽은 경우에만 있습니다.
 각 `issues` 항목은 규칙(`Rule`), 등급(`Level`), 위치, 실제값, 기대값, 메시지를 담습니다.
-`steps`의 상태는 `pass`, `fail`, `warning`, `not_run`입니다.
-양식 구조가 반려되면 C 검사는 `not_run`입니다.
+`steps`의 상태는 `pass`, `fail`, `warning`, `report`, `not_run`입니다.
+v4.2.3의 재단 확인 항목은 `issues`에서 `Level: "I"`로 표시합니다. 개수는 `reports`에 들어 있습니다.
+양식 구조가 반려되면 내용 검사는 `not_run`입니다.
 
-WASM이 실행하는 단계는 READ, REF, S05, C입니다.
+WASM은 입력에 따라 READ, REF, 양식 구조를 검사합니다. 구조·내용 단계 ID는 v4.2.3에서 STRUCTURE·PROFILE, 이전 양식에서 S05·C입니다.
 XSD, REFERENCE, RESPONSE, RECODING 단계는 `not_run`으로 표시합니다. 각 단계의 `detail`에 그 단계를 실행하는 곳이 있습니다.
 `kosac:` 확장은 REF 단계가 `DDI-EXTENSION`으로 반려합니다. 자세한 내용은 [XML 검사](kosac/validation.md)에 있습니다.
 

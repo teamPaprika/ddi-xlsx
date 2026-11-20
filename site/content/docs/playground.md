@@ -15,8 +15,8 @@ toc: false
 |---|---|---|
 | DDI XML·JSON | 검사, 편집용 Excel로 변환 | `to-xlsx` |
 | 편집용 Excel | 검사, DDI XML·JSON으로 변환 | `from-xlsx` |
-| 재단 양식 Excel(v3.2, v4.0) | 검사, DDI XML·JSON으로 변환 | `kosac-check`, `kosac-xml` |
-| 없음 | 편집용 빈 양식 받기, 재단 v4.0 빈 양식 받기 | `template`, `kosac-template` |
+| 재단 양식 Excel(v3.2, v4.0, v4.2.3) | 검사, DDI XML·JSON으로 변환 | `kosac-check`, `kosac-xml` |
+| 없음 | 편집용 빈 양식 받기, 재단 v4.2.3 빈 양식 받기 | `template`, `kosac-template` |
 
 - 입력 종류에 맞는 작업만 켜집니다.
 - 결과 파일의 "입력으로 쓰기"를 누르면, 그 파일이 새 입력이 됩니다. 그래서 DDI XML → 편집용 Excel → DDI XML 왕복을 이 페이지에서 확인합니다.
@@ -28,7 +28,7 @@ toc: false
 | 검사 | 실행하는 곳 |
 |---|---|
 | 문서 읽기, ID·참조(READ, REF) | 이 페이지 |
-| 재단 양식 구조(S05), 내용 규칙(C) | 이 페이지 |
+| 재단 양식 구조, 버전별 내용 규칙 | 이 페이지 |
 | DDI 2.5 XSD | CLI와 `xmllint`. 방법은 [CLI 사용법](cli.md#출력-xml-검사)에 있습니다. |
 | 공통코드·기관 기준정보 대조 | Go API(`check.Check`에 `kosac.RefData`를 줍니다) |
 | 응답 CSV 교차 검사, 재코딩 실행 | 응답 데이터가 있는 시스템 |

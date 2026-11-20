@@ -31,7 +31,7 @@ issues = append(issues, check.ValidateXML(xmlOut, validator)...)
 
 `DeriveDefaults`는 빈 항목에 분석 역할·묶음·결측 분류 등의 초안을 채웁니다.
 이미 채운 항목은 덮어쓰지 않습니다. 초안은 담당자가 확인해야 합니다.
-v4.0에서는 입력에 없는 결측 코드를 추가하지 않습니다.
+v4.0에서는 입력에 없는 결측 코드를 추가하지 않습니다. v4.2.3에서는 `DeriveDefaults`가 모델을 그대로 둡니다. 이 버전의 변환기는 작성자가 기록한 변수와 범주를 사용합니다.
 
 `FromWallaDDI`는 Walla XML·JSON에서 CSV 기준의 재단 초안을 만듭니다.
 중복 Parquet 파일은 제외하고, 입력에 선언된 시스템 변수는 `SourceSystemVars`에 보관합니다.

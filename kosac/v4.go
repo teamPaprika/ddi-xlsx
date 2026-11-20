@@ -6,6 +6,9 @@ import (
 	"strings"
 )
 
+const Profile423 = "4.2.3"
+const RuleVersion423 = "20261105-r3"
+
 const SheetRecodes = "05_재코딩이력"
 
 var StudyExtraV4 = []string{"SERIES_NAME", "STUDY_ROUND", "ACCESS_RESTRICTIONS", "CLEANING_LOG", "SCALE_EXCEPTION", "SOURCE_FILES"}
@@ -34,6 +37,35 @@ type Layout struct {
 }
 
 func LayoutFor(version string) Layout {
+	if strings.TrimSpace(version) == Profile423 {
+		return Layout{
+			Study: strings.Fields(`
+            RULE_VERSION TITLE PROJECT_TITLE PROJECT_NO PURPOSE SUMMARY FUNDER PI_ORG FIELD_ORG
+            PI_NAME FIELD_START FIELD_END KEYWORDS QUESTIONNAIRE REPORT_FILE EXTRA_FILES UNIVERSE
+            POP_SOURCE ANALYSIS_UNIT SAMPLING_TYPE SAMPLING_DESC SAMPLE_FRAME STRATA_VARS
+            CLUSTER_VAR TARGET_N VALID_N SPLIT_BALLOT SPLIT_VAR MODE TOOL CONTACT_N RESPONSE_RATE
+            RR_FORMULA EXCLUDE_N EXCLUDE_RULE WEIGHT_YN WEIGHT_VAR WEIGHT_METHOD SCHOOL_CODE_YEAR
+            SURVEY_TYPE DATA_NO BIZ_NAME BIZ_YEAR SERIES_NAME STUDY_ROUND ACCESS_RESTRICTIONS
+            SCALE_EXCEPTION SOURCE_FILES CB_PRODUCER CB_DATE CB_VERSION NATION GEO_COVER
+            TIME_PERIOD CITATION_REQ PROGRAM_CD RELATED_PROGRAM_CD SUB_PROGRAM_CD DEPT_CD
+            FIELD_ORG_CD AREA_CD TARGET_CD STUDY_ID
+        `),
+			Files: strings.Fields(`
+            FILE_NO FILE_NAME FILE_FORMAT CONTENT UNIT ID_VAR LINK_VAR LINK_FILE_NO NOTE VALID_N
+            SURVEY_TIME TIME_VAR UNIQUE_KEY VARIABLE_N LINK_TARGET_VAR
+        `),
+			Vars: strings.Fields(`
+            FILE_NO VAR_NAME VAR_LABEL Q_NO Q_TEXT VAR_GROUP MEAS_LEVEL RESP_UNIVERSE MR_TYPE
+            REVERSE DERIVATION STD_ID PII SENSITIVE NOTE DATA_TYPE DDI_INTERVAL
+            MISSING_STATUS_VAR ACCESS_LEVEL CODE_SYSTEM SOURCE_VAR KEY_ROLE ITEM_KEY SCALE
+            UNIVERSE_EXPR
+        `),
+			Codes: strings.Fields(`
+            FILE_NO VAR_NAME CODE CODE_LABEL NOTE
+        `),
+			FirstDataRow: 3,
+		}
+	}
 	l := Layout{StudyKeys, FileKeys, VarKeys, CodeKeys, 4}
 	if strings.TrimSpace(version) == "4.0" {
 		l = Layout{append(slices.Clone(StudyKeys), StudyExtraV4...), append(slices.Clone(FileKeys), FileExtraV4...), append(slices.Clone(VarKeys), VarExtraV4...), append(slices.Clone(CodeKeys), CodeExtraV4...), 3}

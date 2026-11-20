@@ -4,6 +4,7 @@ package main
 
 import (
 	"encoding/json"
+	"slices"
 
 	"github.com/teamPaprika/ddi-xlsx/ddi"
 	"github.com/teamPaprika/ddi-xlsx/kosac"
@@ -24,6 +25,7 @@ type checkReport struct {
 	TemplateVersion string        `json:"templateVersion,omitempty"`
 	Rejections      int           `json:"rejections"`
 	Warnings        int           `json:"warnings"`
+	Reports         int           `json:"reports,omitempty"`
 	Steps           []checkStep   `json:"steps"`
 	Issues          []kosac.Issue `json:"issues"`
 }
@@ -37,18 +39,38 @@ func checking(format string) func([]byte) (map[string]any, error) {
 			if err != nil {
 				r.readError(err)
 			}
-			r.addStep("S05", "재단 양식 구조", r.Issues, "_meta의 양식 버전, 필수 시트, 머신 키를 검사합니다.")
+			structureID := "S05"
+			profile := cb != nil && cb.Template.Version.Value == kosac.Profile423 || slices.ContainsFunc(issues, func(i kosac.Issue) bool { return i.Rule == "STRUCTURE" })
+			if profile {
+				structureID = "STRUCTURE"
+			}
+			r.addStep(structureID, "재단 양식 구조", r.Issues, "_meta의 양식 버전, 필수 시트, 머신 키를 검사합니다.")
 			if cb != nil && err == nil {
 				r.TemplateVersion = cb.Template.Version.Value
 				issues = check.Check(cb, kosac.RefData{})
 				r.Issues = append(r.Issues, issues...)
-				r.addStep("C", "코드북 규칙", issues, "공통 규칙과 양식 버전별 규칙을 검사합니다.")
+				if r.TemplateVersion == kosac.Profile423 {
+					r.addStep("PROFILE", "재단 v4.2.3 코드북 규칙", issues, "코드북의 조사·파일·변수·코드 정의를 검사합니다. 응답 원자료를 필요로 하는 규칙은 실행하지 않습니다.")
+				} else {
+					r.addStep("C", "코드북 규칙", issues, "공통 규칙과 양식 버전별 규칙을 검사합니다.")
+				}
 			} else {
-				r.Steps = append(r.Steps, checkStep{"C", "코드북 규칙", "not_run", "S05 반려 항목을 고치면, 이 단계를 실행합니다."})
+				id := "C"
+				if profile {
+					id = "PROFILE"
+				}
+				r.Steps = append(r.Steps, checkStep{id, "코드북 규칙", "not_run", "양식 구조 오류를 고치면 이 단계를 실행합니다."})
+			}
+			if !profile {
+				r.Steps = append(r.Steps,
+					checkStep{"RECODING", "재코딩 실행·재현", "not_run", "재코딩 변환을 실행하고 영향 건수를 재현하는 단계입니다. 응답 데이터가 있는 시스템에서 실행합니다. 05 이력의 형식과 참조는 v4.0 양식의 C 단계에서 검사합니다."})
+			}
+			referenceDetail := "공통코드와 기관 기준정보를 대조하는 단계입니다. Go API에서 check.Check에 kosac.RefData를 주면 실행합니다."
+			if profile {
+				referenceDetail = "양식 규칙에서 내장 표준코드표를 사용합니다. 외부 기관 기준정보 대조는 실행하지 않습니다."
 			}
 			r.Steps = append(r.Steps,
-				checkStep{"RECODING", "재코딩 실행·재현", "not_run", "재코딩 변환을 실행하고 영향 건수를 재현하는 단계입니다. 응답 데이터가 있는 시스템에서 실행합니다. 05 이력의 형식과 참조는 v4.0 양식의 C 단계에서 검사합니다."},
-				checkStep{"REFERENCE", "공통코드·기관 기준정보 대조", "not_run", "공통코드와 기관 기준정보를 대조하는 단계입니다. Go API에서 check.Check에 kosac.RefData를 주면 실행합니다."},
+				checkStep{"REFERENCE", "외부 기준정보 대조", "not_run", referenceDetail},
 				checkStep{"RESPONSE", "응답 CSV 교차검사", "not_run", "응답 CSV를 코드북과 대조하는 단계입니다. 응답 데이터가 있는 시스템에서 실행합니다."})
 		} else {
 			var xml []byte
@@ -84,6 +106,8 @@ func checking(format string) func([]byte) (map[string]any, error) {
 				r.Rejections++
 			} else if issue.Level == kosac.W {
 				r.Warnings++
+			} else if issue.Level == kosac.I {
+				r.Reports++
 			}
 		}
 		out, err := json.Marshal(r)
@@ -107,6 +131,8 @@ func (r *checkReport) addStep(id, name string, issues []kosac.Issue, detail stri
 		}
 		if issue.Level == kosac.W {
 			status = "warning"
+		} else if issue.Level == kosac.I && status == "pass" {
+			status = "report"
 		}
 	}
 	r.Steps = append(r.Steps, checkStep{id, name, status, detail})

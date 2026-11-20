@@ -15,6 +15,9 @@ import (
 // dedicated standard slot are readable descriptions, not a private codec.
 // Keep the original workbook/model when those fields must remain editable.
 func (cb *Codebook) Tree() (*ddi.Node, error) {
+	if cb.is423() {
+		return cb.tree423()
+	}
 	profile, err := cb.profileTree()
 	if err != nil {
 		return nil, err

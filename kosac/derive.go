@@ -32,6 +32,9 @@ var (
 // accepted one gets the prescribed label. One whose label is not keeps it and,
 // when untyped, is typed MISSING rather than its code's type.
 func DeriveDefaults(cb *Codebook, ref RefData) []Suggestion {
+	if cb.is423() {
+		return nil // the foundation profile exports only what the workbook states
+	}
 	d := &deriver{cb: cb, ref: ref, files: map[string]*File{}, codes: map[[2]string][]*Code{}}
 	for _, f := range cb.Files {
 		if no := f.Rec.Get("FILE_NO"); d.files[no] == nil {

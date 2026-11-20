@@ -300,7 +300,7 @@ function issueCard(issue) {
     .filter(Boolean).join(' · ');
   return el('article', { class: 'pg-issue' },
     el('div', { class: 'pg-issue-head' },
-      el('span', { class: 'pg-stat', 'data-tone': issue.Level === 'R' ? 'bad' : 'warn' }, issue.Level === 'R' ? '반려' : '경고'),
+      el('span', { class: 'pg-stat', 'data-tone': issue.Level === 'R' ? 'bad' : 'warn' }, ({ R: '반려', W: '경고', I: '보고' })[issue.Level]),
       el('b', {}, issue.Rule),
       el('code', {}, location)),
     el('p', {}, issue.Message),
@@ -313,7 +313,7 @@ function issueCard(issue) {
 function issueList(issues) {
   const list = el('div', { class: 'pg-issues' });
   const level = el('select', { 'aria-label': '발견 항목 수준' },
-    el('option', { value: 'all' }, '전체'), el('option', { value: 'R' }, '반려'), el('option', { value: 'W' }, '경고'));
+    el('option', { value: 'all' }, '전체'), el('option', { value: 'R' }, '반려'), el('option', { value: 'W' }, '경고'), el('option', { value: 'I' }, '보고'));
   const search = el('input', { type: 'search', placeholder: '규칙, 시트, 변수, 메시지 검색', 'aria-label': '발견 항목 검색' });
   const count = el('span', { class: 'pg-label' });
   function draw() {
@@ -329,11 +329,11 @@ function issueList(issues) {
   return el('div', { class: 'pg-section' }, count, el('div', { class: 'pg-filter' }, level, search), list);
 }
 
-const STEP = { pass: ['통과', 'ok'], fail: ['반려', 'bad'], warning: ['경고', 'warn'], not_run: ['실행 안 함', undefined] };
+const STEP = { pass: ['통과', 'ok'], fail: ['반려', 'bad'], warning: ['경고', 'warn'], report: ['보고', undefined], not_run: ['실행 안 함', undefined] };
 
 function renderCheck(report, elapsed) {
   const notRun = report.steps.filter((s) => s.status === 'not_run').length;
-  message(`반려 ${report.rejections}개, 경고 ${report.warnings}개를 찾았습니다.`,
+  message(`반려 ${report.rejections}개, 경고 ${report.warnings}개${report.reports ? `, 보고 ${report.reports}개` : ''}를 찾았습니다.`,
     report.rejections ? 'bad' : report.warnings ? 'warn' : 'ok', elapsed);
   put(
     el('div', { class: 'pg-summary' },

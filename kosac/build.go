@@ -148,7 +148,10 @@ func newBuilder(cb *Codebook) *builder {
 			}
 		}
 	}
-	b.weight = b.studyVar("WEIGHT_VAR", typed(cb.Study.Get("WEIGHT_VAR")))
+	// The foundation profile resolves its weights itself, without system vars.
+	if !cb.is423() {
+		b.weight = b.studyVar("WEIGHT_VAR", typed(cb.Study.Get("WEIGHT_VAR")))
+	}
 	return b
 }
 

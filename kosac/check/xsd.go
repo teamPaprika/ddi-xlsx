@@ -28,7 +28,7 @@ func ValidateXML(xml []byte, v Validator) []kosac.Issue {
 	if err != nil {
 		return []kosac.Issue{{Rule: "XSD-DDI", Level: kosac.R, Actual: err.Error(), Message: "XML을 읽을 수 없어 검증하지 못했습니다."}}
 	}
-	issues := ref(root)
+	issues := append(ref(root), profileXML423(root)...)
 	found := false
 	kosac.Walk(root, func(n, _ *ddi.Node, path string) bool {
 		if found {

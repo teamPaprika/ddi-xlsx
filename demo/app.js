@@ -51,7 +51,7 @@ function formatHint() {
   $('#format-hint').textContent = !formats[$('#format').value]
     ? '재단 코드북과 일반 DDI 편집용 Excel 중에서 선택하세요.'
     : $('#format').value === 'kosac-xlsx'
-    ? '재단 v4.0·v3.2의 S05와 코드북 규칙을 검사합니다. 일반 DDI 편집용 Excel과 다른 양식입니다.'
+    ? '재단 v4.2.3·v4.0·v3.2의 양식 구조와 코드북 규칙을 검사합니다. 일반 DDI 편집용 Excel과 다른 양식입니다.'
     : $('#format').value === 'ddi-xlsx'
       ? 'Variables·Categories·Groups·Document 시트의 일반 편집용 양식입니다. DDI로 되돌린 뒤 참조를 검사합니다.'
       : '문서 읽기와 지원하는 ID·변수·파일 참조를 검사합니다. XSD는 실행하지 않습니다.';
@@ -131,7 +131,7 @@ function findings() {
   for (const issue of issues) {
     const item = element('article', undefined, 'finding');
     const head = element('div', undefined, 'finding-head');
-    head.append(element('span', issue.Level === 'R' ? '반려' : '경고', issue.Level === 'R' ? 'badge rejection' : 'badge warning'), element('b', issue.Rule));
+    head.append(element('span', ({ R: '반려', W: '경고', I: '보고' })[issue.Level], issue.Level === 'R' ? 'badge rejection' : 'badge warning'), element('b', issue.Rule));
     const location = issue.Sheet ? issue.Sheet + (issue.Cell ? '!' + issue.Cell : '') : issue.Path || '문서 전체';
     head.append(element('code', location)); item.append(head, element('p', issue.Message));
     const context = [issue.FileNo && `파일 ${issue.FileNo}`, issue.VarName && `변수 ${issue.VarName}`, issue.Code && `코드 ${issue.Code}`].filter(Boolean).join(' / ');
@@ -144,10 +144,10 @@ function findings() {
 function renderReport(report) {
   lastReport = report;
   $('#report').hidden = false;
-  $('#report-summary').textContent = `반려 ${report.rejections}개 · 경고 ${report.warnings}개`;
+  $('#report-summary').textContent = `반려 ${report.rejections}개 · 경고 ${report.warnings}개${report.reports ? ` · 보고 ${report.reports}개` : ''}`;
   $('#report-format').textContent = formats[report.format] + (report.templateVersion ? ` v${report.templateVersion}` : '');
   const steps = $('#steps'); steps.replaceChildren();
-  const names = { pass: '통과', fail: '오류', warning: '경고', not_run: '미실행' };
+  const names = { pass: '통과', fail: '오류', warning: '경고', report: '보고', not_run: '미실행' };
   for (const step of report.steps) {
     const row = element('div', undefined, 'step');
     const explanation = element('div'); explanation.append(element('b', step.name), element('small', step.detail));
